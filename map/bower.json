@@ -1,0 +1,33 @@
+{
+  "name": "Kaplan Map",
+  "homepage": "https://judaicadh.github.io/kaplan/map",
+  "authors": [
+    "Judaica DH at the Penn Libraries <judaicadh@gmail.com>"
+  ],
+  "description": "Kaplan Collection of Early American Judaica Map",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "leaflet-geosearch": "^2.5.1",
+    "leaflet-hash": "*",
+    "leaflet-minimap": "^3.5.0",
+    "leaflet-groupedlayercontrol": "^0.6.0",
+    "leaflet.fullscreen": "^1.4.3",
+    "Leaflet.MakiMarkers": "^3.1.0",
+    "leaflet.zoomhome": "^0.2.0",
+    "sidebar-v2": "^0.3.1"
+  },
+  "keywords": [
+    "map",
+    "judaica",
+    "kaplan"
+  ],
+  "private": true
+}

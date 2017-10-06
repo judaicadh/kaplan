@@ -1,0 +1,45 @@
+[data-pie-id] > *:nth-child(7n+1), [data-bar-id] > *:nth-child(7n+1), [data-line-id] > *:nth-child(7n+1) {
+  color: #998CE3; visibility: visible !important; overflow: visible;}
+[data-pie-id] > *:nth-child(7n+2), [data-bar-id] > *:nth-child(7n+2), [data-line-id] > *:nth-child(7n+2) {
+  color: #39C2C9; visibility: visible !important; overflow: visible;}
+[data-pie-id] > *:nth-child(7n+3), [data-bar-id] > *:nth-child(7n+3), [data-line-id] > *:nth-child(7n+3) {
+  color: #FFA71A; visibility: visible !important; text-anchor:right}
+[data-pie-id] > *:nth-child(7n+4), [data-bar-id] > *:nth-child(7n+4), [data-line-id] > *:nth-child(7n+4) {
+  color: #6AEDC7; visibility: visible !important;}
+[data-pie-id] > *:nth-child(7n+5), [data-bar-id] > *:nth-child(7n+5), [data-line-id] > *:nth-child(7n+5) {
+  color: #F866B9; visibility: visible !important;}
+
+
+
+
+
+
+
+#pie, #donut, #bar {
+  max-height: 450px; }
+  
+ 
+ }
+
+
+svg:not(:root){
+	  overflow: visible;
+	  
+  }
+
+.tooltip {
+    margin-left: -5px;
+  border-radius: 33px;
+  padding: 52px
+  
+  }
+
+ul[data-pie-id] {
+  list-style: none;
+
+  
+  padding: 10px;
+
+  }
+
+

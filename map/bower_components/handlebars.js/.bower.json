@@ -1,0 +1,15 @@
+{
+  "name": "handlebars.js",
+  "homepage": "https://github.com/wycats/handlebars.js",
+  "version": "4.0.10",
+  "_release": "4.0.10",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.0.10",
+    "commit": "2191029df32f980711f7b254a28801d451f53cd5"
+  },
+  "_source": "https://github.com/wycats/handlebars.js.git",
+  "_target": "^4.0.10",
+  "_originalSource": "handlebars.js",
+  "_direct": true
+}

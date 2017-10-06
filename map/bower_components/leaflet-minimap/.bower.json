@@ -1,0 +1,47 @@
+{
+  "name": "leaflet-minimap",
+  "description": "A plugin for Leaflet that provides a minimap in the corner of the map view.",
+  "main": [
+    "dist/Control.MiniMap.min.js",
+    "dist/Control.MiniMap.min.css"
+  ],
+  "authors": [
+    "Norkart AS"
+  ],
+  "license": "BSD-2-Clause",
+  "keywords": [
+    "maps",
+    "leaflet",
+    "client",
+    "minimap"
+  ],
+  "homepage": "https://github.com/Norkart/Leaflet-MiniMap",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "example",
+    "buildscripts",
+    "src"
+  ],
+  "dependencies": {
+    "leaflet": ">=0.7.3"
+  },
+  "version": "3.5.0",
+  "_release": "3.5.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.5.0",
+    "commit": "5168407cb2155506d291d31778f48c70b54ece9c"
+  },
+  "_source": "https://github.com/Norkart/Leaflet-MiniMap.git",
+  "_target": "^3.5.0",
+  "_originalSource": "leaflet-minimap",
+  "_direct": true
+}

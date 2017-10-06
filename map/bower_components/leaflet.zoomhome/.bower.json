@@ -1,0 +1,40 @@
+{
+  "name": "leaflet.zoomhome",
+  "version": "0.2.0",
+  "authors": [
+    "Torf <mail@torf.cc> (http://www.torf.cc)",
+    "toms (https://gis.stackexchange.com/users/9847/toms)"
+  ],
+  "homepage": "http://www.github.com/torfuspolymorphus/leaflet.zoomhome",
+  "description": "Leaflet zoom control with a home button for resetting the view.",
+  "keywords": [
+    "leaflet",
+    "plugin"
+  ],
+  "license": "CC-BY-SA-3.0",
+  "main": [
+    "dist/leaflet.zoomhome.js",
+    "dist/leaflet.zoomhome.min.js",
+    "dist/leaflet.zoomhome.css"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "leaflet": ">= 0.7.0"
+  },
+  "_release": "0.2.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.0",
+    "commit": "01b772e8dd001f645298eeece78d2bbe39813867"
+  },
+  "_source": "https://github.com/torfuspolymorphus/leaflet.zoomhome.git",
+  "_target": "^0.2.0",
+  "_originalSource": "leaflet.zoomhome",
+  "_direct": true
+}
