@@ -5,7 +5,7 @@ description: >
   1550-1890
 
 baseurl: "/kaplan" # the subpath of your site, e.g. /blog/
-url: https://judaicadh.github.io/kaplan # the base hostname & protocol for your site
+url: https://judaicadh.github.io # the base hostname & protocol for your site
 
 # theme options from https://bootswatch.com/
 # comment out this to use default Bootstrap
