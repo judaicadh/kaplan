@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>The Arnold and Deanne Kaplan of Early American Judaica</title>
+    <meta name="description" content="1550-1890
+">
+     <link rel="stylesheet" href="https://bootswatch.com/4/journal/bootstrap.min.css">
+
+
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css">
+      <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.0/leaflet.groupedlayercontrol.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.62.0/L.Control.Locate.min.css">
+      <link rel="stylesheet" href="../css/leaflet.zoomhome.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.5.0/Control.MiniMap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.css">
+
+      <link rel="stylesheet" href="../css/app.css">
+    <!-- Begin Jekyll SEO tag v2.2.2 -->
+<title>The Arnold and Deanne Kaplan of Early American Judaica | 1550-1890</title>
+<meta property="og:title" content="The Arnold and Deanne Kaplan of Early American Judaica" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="1550-1890" />
+<meta property="og:description" content="1550-1890" />
+<link rel="canonical" href="http://localhost:4000/kaplan/tradecardmap.html" />
+<meta property="og:url" content="http://localhost:4000/kaplan/tradecardmap.html" />
+<meta property="og:site_name" content="The Arnold and Deanne Kaplan of Early American Judaica" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"WebPage","headline":"The Arnold and Deanne Kaplan of Early American Judaica","description":"1550-1890","url":"http://localhost:4000/kaplan/tradecardmap.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+
+</head>
+
+
+<body>
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+   <a href="#" class="navbar-brand" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-angle-down"></i></a>
+  <a class="navbar-brand" href="#">The Kaplan Collection</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor03">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item">
+        <a class="nav-link" href="http://judaicadh.github.io/kaplan">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="http://judaicadh.github.io/kaplan/about">About</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="http://judaicadh.github.io/kaplan/map">Map<span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Search">
+      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+
+
+                    <div id="sidebar">
+        <div class="sidebar-wrapper">
+          <div id="features">
+
+
+              <div class="row">
+                <div class="col-8">
+                  <input type="text" class="form-control search" placeholder="Filter" />
+                </div>
+                <div class="col-4">
+                  <button type="button" class="btn btn-primary pull-right sort" data-sort="feature-name" id="sort-btn"><i class="fa fa-sort"></i></button>
+                </div>
+              </div>
+
+            <div class="sidebar-table">
+              <table class="table table-hover" id="feature-list">
+                <thead class="hidden">
+
+                </thead>
+                <tbody class="list">
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="main-content">
+
+
+
+                                <div id="map"></div>
+
+
+
+
+       </div>
+
+
+<div class="modal" id="featureModal" tabindex="-1">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+          <div class="modal-header">
+        <h4 class="modal-title" id="feature-title"></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+
+
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-8">
+                <div id="feature-info">
+
+                </div>
+              </div>
+              <div class="col-4">
+                <h5 >Address:</h5>
+                  <p id="feature-address"></p>
+                   <h5>Subjects:</h5>
+                  <p id="feature-subjects"></p>
+                  <h5>Date:</h5>
+                  <p id="feature-year"></p>
+                  <h5>Language(s) on Trade Card:</h5>
+                  <p id="feature-language"></p>         </div>
+          </div>
+
+          <div class="modal-footer">
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+    <div class="modal fade" id="attributionModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">
+              Developed by <a href='http://bryanmcbride.com'>bryanmcbride.com</a>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div id="attribution"></div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+
+
+
+    <script>
+  var baseurl = '/kaplan'
+</script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      <script src="https://code.jquery.com/jquery-migrate-3.0.1.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
+  </script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+           <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js"></script>
+
+
+
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
+      <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.js"></script>
+  <script src="http://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/leaflet-sidebar@0.2.0/src/L.Control.Sidebar.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.0/leaflet.groupedlayercontrol.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.62.0/L.Control.Locate.min.js"></script>
+
+      <script src="../js/leaflet.zoomhome.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.5.0/Control.MiniMap.min.js"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.js"></script>
+      <script src="../js/app.js"></script>
+
+
+</body>
+
+</html>

@@ -1,47 +1,53 @@
-
-exclude:
-  - "/vendor/"
-  - "Gemfile"
-  - "Gemfile.lock"
-  - "README.md"
-  - "LICENSE.md"
-  - "*.gemspec"
-
-
-
-
-keep_files:
-  - "CNAME"
-  - ".git"
-  - ".gitignore"
-
-
 # Site settings
-title: Kaplan Collection of Early American Judaica
-subtitle: "1555-1890"
-url: "https://judaicadh.github.io" # the base hostname & protocol for your site
-# baseurl: "/the/subpath/of/your/site" # Set this value to "" if you want your site to be root
-baseurl: "/kaplan"
-plugins:
-- jekyll-sitemap
-- jekyll-feed
-- jekyll-mentions
-- jekyll-paginate
+title: The Arnold and Deanne Kaplan of Early American Judaica
+email: judaicadh@gmail.com
+description: >
+  1550-1890
 
+baseurl: "/kaplan" # the subpath of your site, e.g. /blog/
+url: https://judaicadh.github.io/kaplan # the base hostname & protocol for your site
 
-
-
+# theme options from https://bootswatch.com/
+# comment out this to use default Bootstrap
+#bootwatch: custom
 
 # Build settings
 markdown: kramdown
+highlighter: rouge
+gems:
+  - jekyll-feed
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-sitemap
 
-# Google analytics
-# ga_tracking_id: "UA-XXXX-1"
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - .idea/
+  - .gitignore
+  - README.md
+timezone: Europe/Berlin
+defaults:
+- scope:
+    path: _posts
+    type: posts
+  values:
+    layout: post
+    sectionid: blog
 
-# Category descriptions (for archive pages)
-descriptions:
-  - cat: jekyll
-    desc: "Posts describing Jekyll setup techniques."
+- scope:
+    path: _docs
+    type: docs
+  values:
+    layout: docs
+    sectionid: docs
+    seo:
+      type: "WebPage"
 
-  - cat: dummy
-    desc: "Just some placeholder posts, lorem ipsum and the rest."
+collections:
+  docs:
+    permalink: /:collection/:path/
+    output: true
+  posts:
+    permalink: /blog/:year/:month/:day/:title/
+    output: true
