@@ -189,7 +189,7 @@ var tradecards = L.geoJson(null, {
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
       });
-      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="/img/tradecards-15.svg"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="img/tradecards-15.svg"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       tradecardsSearch.push({
         name: layer.feature.properties.NAME,
         source: "Trade Cards",
@@ -357,7 +357,7 @@ var groupedOverlays = {
 },
   "Points of Interest": {
 
-   "<img src='/img/tradecards-15.svg' width='28' height='28'>&nbsp;Trade Cards": tradecardsLayer
+   "<img src='img/tradecards-15.svg' width='28' height='28'>&nbsp;Trade Cards": tradecardsLayer
   }
 };
 var miniMap = new L.Control.MiniMap(baseLayersCopy.gl, { toggleDisplay: true }).addTo(map);
@@ -469,7 +469,7 @@ $(document).one("ajaxStop", function () {
   displayKey: "name",
   source: tradecardsBH.ttAdapter(),
   templates: {
-    header: "<h4 class='typeahead-header'><img src='/img/tradecards-15.svg' width='24' height='28'>&nbsp;Trade Cards</h4>",
+    header: "<h4 class='typeahead-header'><img src='img/tradecards-15.svg' width='24' height='28'>&nbsp;Trade Cards</h4>",
     suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{address}}</small>"].join(""))
   }
   }, {
@@ -477,7 +477,7 @@ $(document).one("ajaxStop", function () {
     displayKey: "name",
     source: geonamesBH.ttAdapter(),
     templates: {
-      header: "<h4 class='typeahead-header'><img src='/img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
+      header: "<h4 class='typeahead-header'><img src='img/globe.png' width='25' height='25'>&nbsp;GeoNames</h4>"
     }
   }).on("typeahead:selected", function (obj, datum) {
 
