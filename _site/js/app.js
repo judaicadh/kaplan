@@ -165,7 +165,7 @@ var tradecards = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
     return L.marker(latlng, {
       icon: L.icon({
-        iconUrl: "/img/tradecards-15.svg",
+        iconUrl: "img/tradecards-15.svg",
         iconSize: [34, 38],
         iconAnchor: [12, 28],
         popupAnchor: [0, -25]
