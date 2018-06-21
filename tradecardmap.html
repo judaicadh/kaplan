@@ -1,10 +1,67 @@
----
-layout: map
----
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="An Interactive Map of the Arnold and Deanne Kaplan Collection of Early American Judaica">
+      <meta name="author" content="Judaica DH at the Penn Libraries">
+      <meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@judaicadh" />
+<meta name="twitter:title" content="An Interactive Map of the Arnold and Deanne Kaplan Collection of Early American Judaica" />
+<meta name="twitter:description" content="View the map on our website." />
+<meta name="twitter:image" content="https://judaicadh.github.io/img/portfolio/kaplan.jpg" />
+      <title>Kaplan Collection of Early American Judaica</title>
+      <link rel="stylesheet" href="https://bootswatch.com/4/materia/bootstrap.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+                   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css">
+      <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css" rel="stylesheet" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.0/leaflet.groupedlayercontrol.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.62.0/L.Control.Locate.min.css">
+      <link rel="stylesheet" href="assets/leaflet.zoomhome/dist/leaflet.zoomhome.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.5.0/Control.MiniMap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.css">
+
+      <link rel="stylesheet" href="assets/css/app.css">
+
+
+
+   </head>
+   <body>
 
 
 
 
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+   <a href="#" class="navbar-brand" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-angle-down"></i></a>
+  <a class="navbar-brand" href="#">The Kaplan Collection</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor03">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item">
+        <a class="nav-link" href="http://judaicadh.github.io/kaplan">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="http://judaicadh.github.io/kaplan/about">About</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="http://judaicadh.github.io/kaplan/tradedcardmap">Trade Card Map<span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Search">
+      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+      <div class="container-fluid">
 
         <div id="sidebar">
         <div class="sidebar-wrapper">
@@ -101,5 +158,35 @@ layout: map
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+     </div>
+
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      <script src="https://code.jquery.com/jquery-migrate-3.0.1.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
+  </script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+           <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js"></script>
 
 
+
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
+      <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.js"></script>
+  <script src="http://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+      <script src="assets/sidebar-v2/js/leaflet-sidebar.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.0/leaflet.groupedlayercontrol.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.62.0/L.Control.Locate.min.js"></script>
+
+      <script src="assets/leaflet.zoomhome/dist/leaflet.zoomhome.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.5.0/Control.MiniMap.min.js"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.js"></script>
+      <script src="assets/js/app.js"></script>
+
+   </body>
+</html>
