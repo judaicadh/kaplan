@@ -17,6 +17,10 @@ $("#about-btn").click(function() {
   return false;
 });
 
+$('[data-toggle="collapse"]').click(function() {
+  $('.collapse.in').collapse('hide')
+});
+
 $("#full-extent-btn").click(function() {
   map.fitBounds(featureList.getBounds());
   $(".navbar-collapse.in").collapse("hide");
