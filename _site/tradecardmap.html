@@ -2,28 +2,30 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="An Interactive Map of the Arnold and Deanne Kaplan Collection of Early American Judaica">
+      <meta name="author" content="Judaica DH at the Penn Libraries">
+      <meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@judaicadh" />
+<meta name="twitter:title" content="An Interactive Map of the Arnold and Deanne Kaplan Collection of Early American Judaica" />
+<meta name="twitter:description" content="View the map on our website." />
+<meta name="twitter:image" content="https://judaicadh.github.io/img/portfolio/kaplan.jpg" />
+      <title>Kaplan Collection of Early American Judaica</title>
+      <link rel="stylesheet" href="https://bootswatch.com/4/materia/bootstrap.min.css">
 
-    <title>The Arnold and Deanne Kaplan of Early American Judaica</title>
-    <meta name="description" content="1550-1890
-">
-     <link rel="stylesheet" href="https://bootswatch.com/4/materia/bootstrap.min.css">
-
-
-      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css">
-      <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+                   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css">
+      <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css" rel="stylesheet" />
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.0/leaflet.groupedlayercontrol.min.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.62.0/L.Control.Locate.min.css">
-      <link rel="stylesheet" href=" /kaplan/css/leaflet.zoomhome.css ">
+      <link rel="stylesheet" href="assets/leaflet.zoomhome/dist/leaflet.zoomhome.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.5.0/Control.MiniMap.min.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.css">
 
-      <link rel="stylesheet" href="/kaplan/css/app.js ">
+      <link rel="stylesheet" href="/kaplan/css/app.css">
     <!-- Begin Jekyll SEO tag v2.2.3 -->
 <title>The Arnold and Deanne Kaplan of Early American Judaica | 1550-1890</title>
 <meta property="og:title" content="The Arnold and Deanne Kaplan of Early American Judaica" />
@@ -46,7 +48,7 @@
 
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
    <a href="#" class="navbar-brand" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-angle-down"></i></a>
-  <a class="navbar-brand" href="#">The Kaplan Collection</a>
+  <a class="navbar-brand" href="/kaplan/" >The Kaplan Collection</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -55,14 +57,17 @@
     <ul class="navbar-nav mr-auto">
 
       <li class="nav-item">
-        <a class="nav-link" href="">Home</a>
+        <a class="nav-link" href="/kaplan/" >Home</a>
       </li>
       <li class="nav-item">
-                  <a href="/kaplan/about/">About</a>
+
+                 <a class="nav-link" href="/kaplan/about/" >About</a>
 
       </li>
       <li class="nav-item">
-       <a href="/kaplan/tradecardmap/">Trade Card Map</a>
+                       <a class="nav-link" href="/kaplan/tradecardmap/" >Trade Card Map</a>
+
+
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
@@ -173,16 +178,13 @@
 
 
 
-    <script>
-  var baseurl = '/kaplan'
-</script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-
+     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      <script src="https://code.jquery.com/jquery-migrate-3.0.1.js">
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
   </script>
-
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
+  </script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
            <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js"></script>
@@ -192,18 +194,17 @@
 
       <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
       <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.js"></script>
-  <script src="https://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/leaflet-sidebar@0.2.0/src/L.Control.Sidebar.min.js"></script>
+  <script src="http://rawgit.com/mapbox/mapbox-gl-leaflet/master/leaflet-mapbox-gl.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/leaflet-sidebar-v2@3.0.2/js/leaflet-sidebar.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.0/leaflet.groupedlayercontrol.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.62.0/L.Control.Locate.min.js"></script>
 
-      <script src="/kaplan/js/leaflet.zoomhome.min.js "></script>
+      <script src="/kaplan/js/leaflet.zoomhome.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.5.0/Control.MiniMap.min.js"></script>
 
       <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/1.4.3/Control.FullScreen.min.js"></script>
-      <script src="/kaplan/js/app.js "></script>
-
+      <script src="/kaplan/js/app.js"></script>
 
 </body>
 
