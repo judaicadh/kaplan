@@ -173,11 +173,12 @@ var tradecards = L.geoJson(null, {
       }),
       title: feature.properties.FullTitle,
       riseOnHover: true
-    });
+    }); 
   },
   onEachFeature: function (feature, layer) {
     if (feature.properties) {
-    var content = ("<img style='max-width: 100%;' class='img-responsive' src='" + feature.properties.Image + "'>");
+    var content = ("<a href='" + feature.properties.Link + "'target='_blank'> <img style='max-width: 100%;' class='img-responsive' src='" + feature.properties.Image + "'></a>");
+    var url = ("<a href='" + feature.properties.Link + "'target='_blank' + '></a>");
       layer.on({
         click: function (e) {
           $("#feature-title").html(feature.properties.FullTitle);
@@ -185,6 +186,7 @@ var tradecards = L.geoJson(null, {
           $("#feature-address").html(feature.properties.Address);
           $("#feature-subjects").html(feature.properties.Subject);
            $("#feature-language").html(feature.properties.Language);
+              $("#feature-link").html(feature.properties.url);
           $("#feature-year").html(feature.properties.Date);
           $("#featureModal").modal("show");
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
@@ -201,7 +203,7 @@ var tradecards = L.geoJson(null, {
     }
   }
 });
-$.getJSON("https://gist.githubusercontent.com/lauraneckstein/e30855061f081a485e321f8a7bbf677b/raw/82abb450eb8b343881b10dfa5094afc0a8b72a10/map.geojson", function (data) {
+$.getJSON("https://gist.githubusercontent.com/lauraneckstein/8d1fe8deab83506900c43624c0833949/raw/c3c33703e509d77d919a001d0964b20c551d8e85/map.geojson", function (data) {
   tradecards.addData(data);
   map.addLayer(tradecardsLayer);
 });
