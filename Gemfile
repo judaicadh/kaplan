@@ -14,7 +14,7 @@ group :jekyll_plugins do
    gem "jekyll-sitemap"
    gem "jekyll-redirect-from"
    gem "jekyll-seo-tag"
-   gem 'bootstrap', '~> 4.1.1'
+   gem 'bootstrap', '~> 4.1.3'
    gem 'autoprefixer-rails', '~> 8.6', '>= 8.6.3'
    gem 'popper_js', '~> 1.12', '>= 1.12.9'
    gem 'rake', '~> 12.3', '>= 12.3.1'
