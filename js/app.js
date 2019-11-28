@@ -109,6 +109,7 @@ featureList = new List("features", {
         accessToken: 'not-needed',
         style: 'https://api.maptiler.com/maps/pastel/style.json?key=3HlEmtrAVPpBFb6HcUKC'
       });
+/*
 var Toner = L.tileLayer("https://tile.stamen.com/toner/{z}/{x}/{y}.png",{
   maxZoom: 19,
   attribution: '"Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>."'
@@ -133,6 +134,7 @@ var us1859 = L.tileLayer("https://maps.georeferencer.com/georeferences/468270909
 var us1880 = L.tileLayer("http://maps.georeferencer.com/georeferences/769587602490/2017-06-16T16:11:55.286870Z/map/{z}/{x}/{y}.svg?key=hmpAOeUBKMlwNo4fmiyl", {
   maxZoom: 19,
   attribution: '<a href="http://davidrumsey.georeferencer.com/maps/400938382023">Map Showing Geographical Divisions of the U.S. Geological Survey, 1880 by Clarence King, Created with the David Rumsey Georeferencer</a>'});
+*/
 
 
 
@@ -207,7 +209,8 @@ var baseLayers = {
   gl: L.mapboxGL({
   accessToken: '{token}',
   style:'https://openmaptiles.github.io/klokantech-3d-gl-style/style-cdn.json'
-}),
+})/*
+,
  Toner: L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.{ext}', {
   attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   subdomains: 'abcd',
@@ -234,6 +237,7 @@ Watercolor: L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z
 Satellite : L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 })
+*/
 };
 
 
@@ -317,11 +321,13 @@ if (document.body.clientWidth <= 767) {
 
 var baseLayersCopy = {
 
-gl: L.mapboxGL({
-  accessToken: '{token}',
-  style:'https://openmaptiles.github.io/klokantech-3d-gl-style/style-cdn.json'
-}),
+gl:  L.mapboxGL({
+        attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+        accessToken: 'not-needed',
+        style: 'https://api.maptiler.com/maps/pastel/style.json?key=3HlEmtrAVPpBFb6HcUKC'
+      })
 
+/*
   Toner: L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.{ext}', {
   attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   subdomains: 'abcd',
@@ -347,8 +353,10 @@ Terrain: L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/
 
 Satellite : L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-})};
+})
+*/};
 
+/*
 var groupedOverlays = {
 "Historic Maps": {
   "US 1859": us1859,
@@ -359,23 +367,13 @@ var groupedOverlays = {
    "<img src='img/tradecards-15.svg' width='28' height='28'>&nbsp;Trade Cards": tradecardsLayer
   }
 };
+*/
 var miniMap = new L.Control.MiniMap(baseLayersCopy.gl, { toggleDisplay: true }).addTo(map);
 
     map.on('baselayerchange', function (e) {
             miniMap.changeLayer(baseLayersCopy[e.name]);
        });
-var baseLayers = {
-  "Klokantech 3D": gl,
-  "Terrain": Terrain,
-  "Toner": Toner,
-  "Satellite": Satellite,
-  "Watercolor": Watercolor
-};
-
-var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
-  collapsed: isCollapsed
-}).addTo(map);
-
+ 
 
 
 
@@ -469,7 +467,7 @@ $(document).one("ajaxStop", function () {
   source: tradecardsBH.ttAdapter(),
   templates: {
     header: "<h4 class='typeahead-header'><img src='img/tradecards-15.svg' width='24' height='28'>&nbsp;Trade Cards</h4>",
-    suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{address}}</small>"].join(""))
+    suggestion: Handlebars.compile(["{{name}}<br>&nbsp;<small>{{Address}}</small>"].join(""))
   }
   }, {
     name: "GeoNames",
