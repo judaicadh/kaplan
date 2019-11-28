@@ -356,24 +356,41 @@ Satellite : L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Wo
 })
 */};
 
-/*
+
 var groupedOverlays = {
+/*
 "Historic Maps": {
   "US 1859": us1859,
   "US 1880": us1880
-},
+},*/
   "Points of Interest": {
 
    "<img src='img/tradecards-15.svg' width='28' height='28'>&nbsp;Trade Cards": tradecardsLayer
   }
 };
-*/
+
+/*
 var miniMap = new L.Control.MiniMap(baseLayersCopy.gl, { toggleDisplay: true }).addTo(map);
 
     map.on('baselayerchange', function (e) {
             miniMap.changeLayer(baseLayersCopy[e.name]);
        });
- 
+*/
+
+var baseLayers = {
+  "Klokantech 3D": gl
+/*,
+  "Terrain": Terrain,
+  "Toner": Toner,
+  "Satellite": Satellite,
+  "Watercolor": Watercolor
+*/
+
+};
+
+var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
+  collapsed: isCollapsed
+}).addTo(map);
 
 
 
@@ -418,7 +435,7 @@ $(document).one("ajaxStop", function () {
   var geonamesBH = new Bloodhound({
     name: "GeoNames",
     datumTokenizer: function (d) {
-      return Bloodhound.tokenizers.whitespace(d.name);
+      return Bloodhound.tokenizers.whitespace(d.FullTitle);
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     remote: {
