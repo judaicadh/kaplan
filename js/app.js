@@ -89,7 +89,7 @@ function syncSidebar() {
     tradecards.eachLayer(function (layer) {
     if (map.hasLayer(tradecardsLayer)) {
       if (map.getBounds().contains(layer.getLatLng())) {
-        $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img src="' + layer.feature.properties.Image + '" class="img-thumbnail" alt="' + layer.feature.properties.NAME + '"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+        $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img src="' + layer.feature.properties.Image + '" class="img-thumbnail" alt="' + layer.feature.properties.FullTitle + '"></td><td class="feature-name">' + layer.feature.properties.FullTitle + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       }
     }
   });
@@ -104,12 +104,11 @@ featureList = new List("features", {
 
 
 /* Basemap Layers */
-
-var gl = L.mapboxGL({
-  accessToken: '{token}',
-  style:'https://openmaptiles.github.io/klokantech-3d-gl-style/style-cdn.json'
-});
-
+ var gl = L.mapboxGL({
+        attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+        accessToken: 'not-needed',
+        style: 'https://api.maptiler.com/maps/pastel/style.json?key=3HlEmtrAVPpBFb6HcUKC'
+      });
 var Toner = L.tileLayer("https://tile.stamen.com/toner/{z}/{x}/{y}.png",{
   maxZoom: 19,
   attribution: '"Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>."'
@@ -170,7 +169,7 @@ var tradecards = L.geoJson(null, {
         iconAnchor: [12, 28],
         popupAnchor: [0, -25]
       }),
-      title: feature.properties.NAME,
+      title: feature.properties.FullTitle,
       riseOnHover: true
     });
   },
@@ -179,19 +178,19 @@ var tradecards = L.geoJson(null, {
     var content = ("<img style='max-width: 100%;' class='img-responsive' src='" + feature.properties.Image + "'>");
       layer.on({
         click: function (e) {
-          $("#feature-title").html(feature.properties.NAME);
+          $("#feature-title").html(feature.properties.FullTitle);
           $("#feature-info").html(content);
           $("#feature-address").html(feature.properties.Address);
-          $("#feature-subjects").html(feature.properties.Subjects);
+          $("#feature-subjects").html(feature.properties.Subject);
            $("#feature-language").html(feature.properties.Language);
-          $("#feature-year").html(feature.properties.Year);
+          $("#feature-year").html(feature.properties.Date);
           $("#featureModal").modal("show");
           highlight.clearLayers().addLayer(L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], highlightStyle));
         }
       });
-      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="img/tradecards-15.svg"></td><td class="feature-name">' + layer.feature.properties.NAME + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="img/tradecards-15.svg"></td><td class="feature-name">' + layer.feature.properties.FullTitle + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       tradecardsSearch.push({
-        name: layer.feature.properties.NAME,
+        name: layer.feature.properties.FullTitle,
         source: "Trade Cards",
         id: L.stamp(layer),
         lat: layer.feature.geometry.coordinates[1],
@@ -200,7 +199,7 @@ var tradecards = L.geoJson(null, {
     }
   }
 });
-$.getJSON("https://gist.githubusercontent.com/lauraneckstein/8ea9908b3ec8290a6bcfdd457b5475fb/raw/3ebdc1f87bc63feeacc6abb6962fe81bb11b8d10/tradecard.geojson", function (data) {
+$.getJSON("https://gist.githubusercontent.com/lauraneckstein/e30855061f081a485e321f8a7bbf677b/raw/82abb450eb8b343881b10dfa5094afc0a8b72a10/map.geojson", function (data) {
   tradecards.addData(data);
   map.addLayer(tradecardsLayer);
 });
