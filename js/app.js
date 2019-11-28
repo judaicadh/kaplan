@@ -178,7 +178,7 @@ var tradecards = L.geoJson(null, {
   onEachFeature: function (feature, layer) {
     if (feature.properties) {
     var content = ("<a href='" + feature.properties.Link + "'target='_blank'> <img style='max-width: 100%;' class='img-responsive' src='" + feature.properties.Image + "'></a>");
-    var url = ("<a href='" + feature.properties.Link + "'target='_blank' + '></a>");
+    var url = ("<a href='" + feature.properties.Link + "'target='_blank'></a>");
       layer.on({
         click: function (e) {
           $("#feature-title").html(feature.properties.FullTitle);
