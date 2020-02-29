@@ -17,7 +17,7 @@ group :jekyll_plugins do
    gem 'bootstrap', '~> 4.1.1'
    gem 'autoprefixer-rails', '~> 8.6', '>= 8.6.3'
    gem 'popper_js', '~> 1.12', '>= 1.12.9'
-   gem 'rake', '~> 12.3', '>= 12.3.1'
+   gem 'rake', '~> 12.3'
    gem 'sass', '~> 3.5', '>= 3.5.6'
 end
 
