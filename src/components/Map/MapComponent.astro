@@ -1,0 +1,32 @@
+---
+import { onMount } from 'solid-js';
+const { locations } = Astro.props;  // Locations is an array of { lat, lng, title }
+
+let mapElement;
+
+onMount(() => {
+    if (locations.length === 0) return;  // Handle empty location arrays
+
+    // Initialize the map with the first location or set a default center
+    const mapCenter = locations.length ? [locations[0].lat, locations[0].lng] : [0, 0];
+    const map = L.map(mapElement).setView(mapCenter, 2);  // Set the default zoom level to 2
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(map);
+
+    // Add markers for each location
+    locations.forEach(({ lat, lng, title }) => {
+        L.marker([lat, lng]).addTo(map).bindPopup(title);
+    });
+
+    // Ensure map is resized correctly when displayed
+    setTimeout(() => {
+        map.invalidateSize();  // Fix map size issues when hidden/showing
+    }, 100);
+});
+---
+
+<!-- Map container -->
+<div ref={mapElement} style="height: 500px;" class="w-full border rounded"></div>

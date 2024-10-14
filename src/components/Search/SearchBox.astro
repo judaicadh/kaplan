@@ -1,0 +1,13 @@
+---
+import { searchBox } from 'instantsearch.js/es/widgets';
+
+export function setup({ search }) {
+    search.addWidgets([
+        searchBox({
+            container: '#search-box',
+            placeholder: 'Search archival items...',
+        }),
+    ]);
+}
+---
+<div id="search-box"></div>

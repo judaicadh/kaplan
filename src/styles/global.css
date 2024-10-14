@@ -1,0 +1,10 @@
+
+@import 'instantsearch.css/themes/algolia-min.css';
+@import 'flowbite';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Custom styles */
+
+/* Import Flowbite styles */

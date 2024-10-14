@@ -1,0 +1,12 @@
+---
+const { href, text } = Astro.props;
+const isActive =
+    Astro.url.pathname === href ||
+    (href !== '/' && Astro.url.pathname.startsWith(href));
+---
+
+<li>
+    <a href={href} class={`text-gray-600 hover:text-blue-600 ${isActive ? 'font-semibold' : ''}`}>
+        {text}
+    </a>
+</li>

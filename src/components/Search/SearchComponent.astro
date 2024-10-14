@@ -1,0 +1,58 @@
+---
+const appId = import.meta.env.PUBLIC_ALGOLIA_APP_ID;
+const apiKey = import.meta.env.PUBLIC_ALGOLIA_SEARCH_API_KEY;
+const indexName = 'Kaplan';
+---
+
+<!-- Search Interface Containers -->
+<div id="search-box"></div>
+<div id="current-refinements"></div>
+<div id="refinement-list"></div>
+<div id="hits"></div>
+<div id="pagination"></div>
+
+<!-- Include InstantSearch CSS -->
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"
+/>
+
+<!-- Include AlgoliaSearch and InstantSearch.js via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+
+<!-- Initialize InstantSearch.js -->
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+  const searchClient = algoliasearch("${appId}", "${apiKey}");
+
+  const search = instantsearch({
+   indexName: "${indexName}",
+   searchClient: searchClient,
+  });
+
+  search.addWidgets([
+   instantsearch.widgets.searchBox({
+    container: '#search-box',
+    placeholder: 'Search the collection...',
+   }),
+   // Add other widgets as needed
+   instantsearch.widgets.hits({
+    container: '#hits',
+    templates: {
+     item: `
+            <div class="p-4 border-b">
+              <h2 class="text-xl font-semibold">{{#helpers.highlight}}{ "attribute": "title" }{{/helpers.highlight}}</h2>
+              <p class="text-gray-700">{{#helpers.snippet}}{ "attribute": "description" }{{/helpers.snippet}}</p>
+            </div>
+          `,
+    },
+   }),
+   instantsearch.widgets.pagination({
+    container: '#pagination',
+   }),
+  ]);
+
+  search.start();
+ });
+</script>
