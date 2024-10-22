@@ -1,0 +1,55 @@
+---
+// src/components/MultiURIDereferencer.astro
+
+const { peopleURI, geographyURI, typeURI, subtypeURI } = Astro.props;
+
+// Function to fetch data from the provided URI
+async function fetchData(uri) {
+    try {
+        const response = await fetch(uri);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+}
+
+// Fetch data when the component is loaded
+const peopleData = await fetchData(peopleURI);
+const geographyData = await fetchData(geographyURI);
+const typeData = await fetchData(typeURI);
+const subtypeData = await fetchData(subtypeURI);
+---
+
+<div>
+    <h3>People Information:</h3>
+    {peopleData ? (
+            <pre>{JSON.stringify(peopleData, null, 2)}</pre>
+    ) : (
+            <p>Loading people data...</p>
+    )}
+
+    <h3>Geography Information:</h3>
+    {geographyData ? (
+            <pre>{JSON.stringify(geographyData, null, 2)}</pre>
+    ) : (
+            <p>Loading geography data...</p>
+    )}
+
+    <h3>Type Information:</h3>
+    {typeData ? (
+            <pre>{JSON.stringify(typeData, null, 2)}</pre>
+    ) : (
+            <p>Loading type data...</p>
+    )}
+
+    <h3>Subtype Information:</h3>
+    {subtypeData ? (
+            <pre>{JSON.stringify(subtypeData, null, 2)}</pre>
+    ) : (
+            <p>Loading subtype data...</p>
+    )}
+</div>

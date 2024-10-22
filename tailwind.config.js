@@ -26,6 +26,9 @@ module.exports = {
     },
   },
   plugins: [
+    require('flowbite/plugin')({
+      wysiwyg: true,
+    }),
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
     require('flowbite/plugin'),

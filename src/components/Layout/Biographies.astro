@@ -1,0 +1,14 @@
+---
+// src/components/Biography.astro
+
+const { person } = Astro.props;
+---
+
+<article>
+    <h1>{person.name}</h1>
+    {person.image && <img src={person.image} alt={`Image of ${person.name}`} />}
+    <p><strong>Born:</strong> {new Date(person.birthDate).toLocaleDateString()}</p>
+    <p><strong>Died:</strong> {new Date(person.deathDate).toLocaleDateString()}</p>
+    <p><strong>Occupation:</strong> {person.occupation}</p>
+    {person.description && <p>{person.description}</p>}
+</article>

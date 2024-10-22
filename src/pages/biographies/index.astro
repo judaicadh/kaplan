@@ -1,0 +1,44 @@
+---
+// src/pages/biographies/index.astro
+
+import { fetchWikidata } from '../../utils/sparql.js';
+import Layout from '../../layouts/BioLayout.astro';
+
+const sparqlQuery = `
+SELECT ?person ?personLabel WHERE {
+  ?person wdt:P31 wd:Q5;
+          wdt:P106 wd:Q129730; # Example: occupation as 'physician'
+          rdfs:label ?personLabel FILTER (lang(?personLabel) = "en").
+}
+LIMIT 100
+`;
+
+let biographies = [];
+
+try {
+    const wikidataResponse = await fetchWikidata(sparqlQuery);
+    const results = wikidataResponse.results.bindings;
+
+    biographies = results.map(result => ({
+        id: result.person.value.split('/').pop(),
+        name: result.personLabel.value,
+    }));
+} catch (error) {
+    console.error(error);
+}
+---
+
+<Layout title="Biographies">
+    <h1>Biographies</h1>
+    {biographies.length > 0 ? (
+            <ul>
+                {biographies.map(bio => (
+                        <li key={bio.id}>
+                            <a href={`/biographies/${bio.id}/`}>{bio.name}</a>
+                        </li>
+                ))}
+            </ul>
+    ) : (
+            <p>No biographies found.</p>
+    )}
+</Layout>

@@ -1,7 +1,7 @@
 
 @import 'instantsearch.css/themes/algolia-min.css';
 @import 'flowbite';
-
+@import 'https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

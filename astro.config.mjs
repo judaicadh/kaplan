@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import preact from '@astrojs/preact';
 import vue from "@astrojs/vue";
 import react from "@astrojs/react";
 import tailwind from '@astrojs/tailwind';
@@ -10,5 +11,9 @@ export default defineConfig({
   // Necessary for GitHub Pages
   // Integrations and other settings
   base: '/kaplan/',
-  integrations: [vue(), react(), tailwind()]
+  integrations: [ preact({
+    include: ['**/preact/*'],
+  }),  react({
+    experimentalReactChildren: true,
+  }), tailwind()],
 });
