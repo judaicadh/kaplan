@@ -8,3 +8,20 @@
 /* Custom styles */
 
 /* Import Flowbite styles */
+.search-panel {
+    display: flex;
+    gap: 20px;
+}
+
+.search-panel__filters {
+    width: 250px;
+}
+
+.search-panel__results {
+    flex-grow: 1;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}

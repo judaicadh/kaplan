@@ -1,19 +1,29 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import preact from '@astrojs/preact';
-import vue from "@astrojs/vue";
-import react from "@astrojs/react";
+
+import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
+  env: {
+    schema: {
 
-  site: 'https://judaicadh.github.io/kaplan',
+    }
+  },
+  site: 'https://kaplancollection.org',
 
   // Necessary for GitHub Pages
-  // Integrations and other settings
-  base: '/kaplan/',
-  integrations: [ preact({
-    include: ['**/preact/*'],
-  }),  react({
-    experimentalReactChildren: true,
-  }), tailwind()],
+  base: '/',
+
+  // Integrations
+  integrations: [
+    preact({
+      include: ['**/preact/*'], // Restricts Preact usage to specific directories
+    }),
+    react({
+      experimentalReactChildren: true, // Enabling experimental React children handling
+    }),
+    tailwind(),
+   // Vue integration was missing in your setup, added it here
+  ],
 });

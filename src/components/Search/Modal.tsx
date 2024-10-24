@@ -5,7 +5,7 @@ const Modal = ({ isOpen, onClose, hit }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
-            <div className="bg-white p-6 rounded-lg max-w-lg mx-auto shadow-lg relative">
+            <div className="relative mx-auto max-w-lg rounded-lg bg-white p-6 shadow-lg">
                 {/* Close button */}
                 <button
                     className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
@@ -17,17 +17,17 @@ const Modal = ({ isOpen, onClose, hit }) => {
                 <img
                     src={hit.thumbnail || 'default-thumbnail.jpg'}
                     alt={hit['title from colenda']}
-                    className="w-full h-64 object-cover rounded"
+                    className="h-64 w-full rounded object-cover"
                 />
-                <h2 className="text-xl font-semibold mt-4">{hit['title from colenda']}</h2>
-                <p className="text-gray-600 mt-2">{hit.description}</p>
+                <h2 className="mt-4 text-xl font-semibold">{hit['title from colenda']}</h2>
+                <p className="mt-2 text-gray-600">{hit.description}</p>
                 {/* Additional Info */}
                 <div className="mt-4">
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+          <span className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
             {hit.object_type}
           </span>
                     {hit.geography && (
-                        <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                        <span className="mr-2 mb-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
               {hit.geography}
             </span>
                     )}

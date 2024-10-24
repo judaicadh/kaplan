@@ -16,18 +16,18 @@ const Hit = ({ hit }) => {
         <>
             <div
                 onClick={handleOpenModal}
-                className="max-w-sm rounded overflow-hidden shadow-lg bg-white cursor-pointer"
+                className="max-w-sm cursor-pointer overflow-hidden rounded bg-white shadow-lg"
             >
                 <img
                     src={hit.thumbnail || 'default-thumbnail.jpg'}
                     alt={hit['title from colenda'] || 'No title available'}
-                    className="w-full h-48 object-cover"
+                    className="h-48 w-full object-cover"
                 />
                 <div className="px-6 py-4">
-                    <div className="font-bold text-xl mb-2">
+                    <div className="mb-2 text-xl font-bold">
                         <Highlight attribute="title from colenda" hit={hit} />
                     </div>
-                    <p className="text-gray-700 text-base">
+                    <p className="text-base text-gray-700">
                         <Snippet hit={hit} attribute="Description" />
                     </p>
                 </div>

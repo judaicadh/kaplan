@@ -1,10 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SearchApp from '../components/Search/SearchApp.tsx';
----
+import FullSearch from '../components/Search/FullSearch.tsx'
+
+ ---
 <BaseLayout />
 
-<div>
-    <h1 class="text-2xl font-bold mb-4">Search the Kaplan Collection</h1>
-    <SearchApp client:only="preact" />
-</div>
