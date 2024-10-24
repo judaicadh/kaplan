@@ -1,6 +1,6 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/example/public_html/  # Replace with your actual deployment path
+    - export DEPLOYPATH=/home/kaplanco/public_html/  # Replace with your actual deployment path
     - npm run build  # Builds the Astro site (make sure your build script is set correctly in package.json)
     - /bin/cp -R dist/* $DEPLOYPATH  # Copies the built files from the 'dist' folder to your deployment path
     - /bin/cp -R images $DEPLOYPATH/images  # Optionally, copy images folder if it's separate from the dist folder
