@@ -3,7 +3,7 @@ import preact from '@astrojs/preact';
 
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
-import github from '@astrojs/github';
+
 
 export default defineConfig({
 
@@ -23,8 +23,5 @@ export default defineConfig({
     tailwind(),
    // Vue integration was missing in your setup, added it here
   ],
-  output: 'static',
-  adapter: github({
-    // GitHub Pages adapter, but no need for a site URL with a custom domain
-  }),
+
 });
