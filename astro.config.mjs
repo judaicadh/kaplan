@@ -1,15 +1,11 @@
-import { defineConfig, envField } from 'astro/config';
+import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
-  env: {
-    schema: {
 
-    }
-  },
   site: 'https://kaplancollection.org',
 
   // Necessary for GitHub Pages
