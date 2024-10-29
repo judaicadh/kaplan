@@ -1,5 +1,5 @@
+@import '@algolia/autocomplete-theme-classic/dist/theme.css';
 
-@import 'instantsearch.css/themes/algolia-min.css';
 @import 'flowbite';
 
 @tailwind base;
@@ -7,31 +7,5 @@
 @tailwind utilities;
 /* Custom styles */
 
-/* Inside your main CSS file or inline for testing */
-
-/* Custom styling for detached search bar */
-.aa-Input {
-    padding-left: 2.5rem; /* Adjust as needed */
-}
-
-.aa-InputWrapperSuffix {
-    right: 1rem; /* Adjust for spacing */
-}
-
-.aa-VoiceSearchButton {
-    position: absolute;
-    right: 1.25rem;
-}
-.aa-DetachedSearchButtonIcon {
-    visibility: visible;
-}
-.aa-Autocomplete[aria-labelledby="autocomplete-1-label"] {
-    visibility: hidden;
-}
 
 
-
-/* Keep visibility for other instances */
-.aa-Autocomplete:not([aria-labelledby="autocomplete-1-label"]) {
-    visibility: visible;
-}

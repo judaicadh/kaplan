@@ -3,7 +3,7 @@ import React, { useEffect, useRef, createElement, Fragment } from 'react';
 import { createRoot,  } from 'react-dom/client';
 import { autocomplete, getAlgoliaResults } from '@algolia/autocomplete-js';
 import { createRedirectUrlPlugin } from '@algolia/autocomplete-plugin-redirect-url';
-import '../../styles/global.css';
+
 import type { AutocompleteComponents } from '@algolia/autocomplete-js';
 import type { Hit } from '@algolia/client-search';
 import type { Root } from 'react-dom/client';
@@ -53,7 +53,7 @@ type ProductHit = Hit<{
 								queries: [
 									{
 										indexName: 'Dev_Kaplan',
-										query,
+										query: query,
 									},
 								],
 							});
@@ -106,9 +106,9 @@ function ProductItem({ hit, components }) {
 	return (
 		<article className="aa-ItemWrapper">
 			<div className="aa-ItemContent">
-				<div className="aa-ItemIcon">
+				<div className={"aa-ItemIcon"}>
 					<a href={`/item/${hit.slug}`}>
-						<img src={hit.thumbnail} alt={hit.title} />
+						<img src={hit.thumbnail} alt={hit.title}  />
 					</a>
 				</div>
 				<a href={`/item/${hit.slug}`}>

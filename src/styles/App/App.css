@@ -28,10 +28,6 @@ h2 {
 .header {
   align-items: center;
   background: linear-gradient(to bottom, #1d689d, #7db9e8);
-  background-image: url('./assets/cover.png');
-  background-image: url('./assets/cover.png'),
-    linear-gradient(to top, #7db9e8, #1d689d);
-  background-position: center;
   background-size: cover;
   color: #fff;
   display: flex;

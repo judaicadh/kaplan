@@ -6,7 +6,7 @@
       "@components/*": ["src/components/*"],
     },
 
-    "jsx": "react",
+    "jsx": "react-jsx",
     "jsxImportSource": "react",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -17,11 +17,12 @@
     "noImplicitAny": false,
     "sourceMap": true,
     "lib": ["esnext", "dom"],
-    "rootDir": "src"
+    "rootDir": "src",
+    "skipLibCheck": true
   },
   "include": [
     "src",
     "src/env.d.ts",
-    "src/global.d.ts" // if present
+    // if present
   ]
 }

@@ -325,8 +325,8 @@ a[class^='ais-'] {
   transform: rotate(180deg);
 }
 
-.ais-HierarchicalMenu-item--selected
-  .ais-HierarchicalMenu-item:not(.ais-HierarchicalMenu-item--selected)
+.ais-HierarchicalMenu-item--selected,
+  .ais-HierarchicalMenu-item:not(.ais-HierarchicalMenu-item--selected),
   .ais-HierarchicalMenu-link::before {
   transform: rotate(0);
 }

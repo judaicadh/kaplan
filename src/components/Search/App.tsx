@@ -45,9 +45,6 @@ function createURL(routeState) {
 	const { q } = routeState;
 	const queryParameters = {};
 
-	if (q) {
-		queryParameters.q = q;
-	}
 
 
 	const queryString = new URLSearchParams(queryParameters).toString();
@@ -106,7 +103,7 @@ const routing = {
 };
 
 function App() {
-	const containerRef = useRef(null);
+	const containerRef = useRef<HTMLDivElement>(null);
 	const searchParams = new URLSearchParams(window.location.search);
 	const initialQuery = searchParams.get('q') || '';
 
@@ -115,10 +112,15 @@ function App() {
 		window.scrollTo(0, 0);
 	}
 
+
 	function closeFilters() {
+		// Remove the filtering class from the body
 		document.body.classList.remove('filtering');
-		containerRef.current?.scrollIntoView();
+
+		// Scroll containerRef into view if it is defined
+		containerRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}
+
 
 	return (
 		<div id="container">
