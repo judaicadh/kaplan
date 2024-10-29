@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define file paths
-const csvFilePath = path.join(__dirname, '../src/data/input/Kaplan20240808 (19).csv');
+const csvFilePath = path.join(__dirname, '../src/data/input/Kaplan20240808 (21).csv');
 const jsonFilePath = path.join(__dirname, '../src/data/items.json');
 
 (async () => {
@@ -34,7 +34,10 @@ const jsonFilePath = path.join(__dirname, '../src/data/items.json');
             cross: item.OBJECTS_CUSTOMFIELD_2?.toString() || "", // Ensure cross is a string
             column_type: item.OBJECTS_COLTYPE?.toString() || "", // Ensure column_type is a string
             dateC: item.OBJECTS_DATE?.toString() || "", // Ensure dateC is a string
-            geography: item.OBJECTS_CUSTOMFIELD_3 ? item.OBJECTS_CUSTOMFIELD_3.split('|').map(sub => sub.trim()) : [], // Array from pipe-separated geography
+            geography: item.geographic_subject ? item.geographic_subject.split('|').map(sub => sub.trim()) : [],
+            subject: item.subject ? item.subject.split('|').map(sub => sub.trim()) : [],
+            language: item.language ? item.language.split('|').map(sub => sub.trim()) : [],// Array from pipe-separated geography
+            name: item.name ? item.name.split('|').map(sub => sub.trim()) : [],
             object_type: item.OBJECTS_OBJTYPE ? item.OBJECTS_OBJTYPE.split('|').map(sub => sub.trim()) : [], // Array for object_type
             people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map(sub => sub.trim()) : [] , // Array for people
         }));

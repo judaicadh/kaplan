@@ -1,27 +1,36 @@
 import { defineConfig } from 'astro/config';
-import preact from '@astrojs/preact';
 
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
-
+import icon from 'astro-icon';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-
   site: 'https://kaplancollection.org',
+  vite: {
+    optimizeDeps: {
+      include: ['algoliasearch/lite'],
+    }
+  }, // Close vite object here
+  base: '/', // For GitHub Pages, adjust if deploying to a subfolder
 
-  // Necessary for GitHub Pages
-  base: '/',
+  typescript: {
+    tsconfig: './tsconfig.json', // Path to TypeScript config
+  },
 
-  // Integrations
   integrations: [
-    preact({
-      include: ['**/preact/*'], // Restricts Preact usage to specific directories
-    }),
     react({
-      experimentalReactChildren: true, // Enabling experimental React children handling
+      experimentalReactChildren: true, // Enables experimental React children handling
     }),
     tailwind(),
-   // Vue integration was missing in your setup, added it here
-  ],
+    icon({
+      include: {
+        // Include only three `mdi` icons in the bundle
+        mdi: ['magnify', 'account-plus', 'account-minus']
+        // Include all `uis` icons
 
+      }
+    }),
+    sitemap(),
+  ],
 });

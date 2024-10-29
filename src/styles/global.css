@@ -1,27 +1,37 @@
 
 @import 'instantsearch.css/themes/algolia-min.css';
 @import 'flowbite';
-@import 'https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 /* Custom styles */
 
-/* Import Flowbite styles */
-.search-panel {
-    display: flex;
-    gap: 20px;
+/* Inside your main CSS file or inline for testing */
+
+/* Custom styling for detached search bar */
+.aa-Input {
+    padding-left: 2.5rem; /* Adjust as needed */
 }
 
-.search-panel__filters {
-    width: 250px;
+.aa-InputWrapperSuffix {
+    right: 1rem; /* Adjust for spacing */
 }
 
-.search-panel__results {
-    flex-grow: 1;
+.aa-VoiceSearchButton {
+    position: absolute;
+    right: 1.25rem;
+}
+.aa-DetachedSearchButtonIcon {
+    visibility: visible;
+}
+.aa-Autocomplete[aria-labelledby="autocomplete-1-label"] {
+    visibility: hidden;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
+
+
+/* Keep visibility for other instances */
+.aa-Autocomplete:not([aria-labelledby="autocomplete-1-label"]) {
+    visibility: visible;
 }

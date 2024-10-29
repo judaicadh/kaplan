@@ -16,10 +16,10 @@ function formatRecord(record) {
     return {
         ...record,
         objectID: record.id, // Use the ID as the objectID
-        url: `${siteBaseUrl}${record.slug}`, // Construct URL from slug
+        url: `${siteBaseUrl}item/${record.slug}`,
+        hasRealThumbnail: record.thumbnail !== "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",// Construct URL with /item/ in the path
     };
 }
-
 // Format and push data to Algolia
 async function pushDataToAlgolia() {
     try {

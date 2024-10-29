@@ -1,8 +1,27 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "extends": "astro/tsconfigs/base",
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+    },
+
+    "jsx": "react",
+    "jsxImportSource": "react",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "lib": ["esnext", "dom"],
+    "rootDir": "src"
+  },
+  "include": [
+    "src",
+    "src/env.d.ts",
+    "src/global.d.ts" // if present
+  ]
 }

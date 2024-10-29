@@ -1,7 +1,13 @@
 ---
+
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FullSearch from '../components/Search/FullSearch.tsx'
+import App from '../components/Search/App'
 
- ---
-<BaseLayout />
 
+console.log("App Component Loaded"); // For debugging
+
+---
+
+<BaseLayout>
+	<App client:only="react" /> <!-- This will render the App component inside the layout’s slot -->
+</BaseLayout>

@@ -1,22 +1,14 @@
+---
+import { Schema } from "astro-seo-schema";
+
+const { title, description, schemaData } = Astro.props;
+---
+
 <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/png" href="../images/favicon-32x32.png" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
+	<title>{title || "Default Site Title"}</title>
+		<meta name="description" content={description || "Default site description"} />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <linknpm i @material-tailwind/react
-            rel="stylesheet"
-            href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-            crossorigin=""
-    />
-    <script type="module" src="../public/js/algolia-search.mjs"></script>
-    <script type="module" src="../src/utils/algoliaClient.js"></script>
-    <link rel="stylesheet" href="../src/styles/theme.css" />
-    <link rel="stylesheet" href="../src/styles/app.css" />
-    <link rel="stylesheet" href="../src/styles/app.mobile.css" />
-    <link rel="stylesheet" href="../src/styles/PriceSlider.css" />
-
-
-
+		<!-- Render schema data if provided -->
+	{schemaData && <Schema item={schemaData} />}
 </head>
