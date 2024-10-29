@@ -251,7 +251,7 @@ mark {
 }
 
 .hits-empty-state-title {
-  font-family: Hind;
+  font-family: Hind, serif;
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0;
