@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define file paths
-const csvFilePath = path.join(__dirname, '../src/data/input/Kaplan20240808 (21).csv');
+const csvFilePath = path.join(__dirname, '../src/data/input/Kaplan20240808 (23).csv');
 const jsonFilePath = path.join(__dirname, '../src/data/items.json');
 
 (async () => {
@@ -21,7 +21,8 @@ const jsonFilePath = path.join(__dirname, '../src/data/items.json');
             id: item.id?.toString() || "", // Ensure id is a string, in case it's a number
             link: item.colendalink?.toString() || "", // Convert to string if not already
             slug: item.slug?.toString() || "", // Ensure slug is a string
-            date: item.date?.toString() || "", // Ensure date is a string
+            date: item.date?.toString() || "",
+            collection: item.Collection?.toString() || "",
             peopleURI: item.peopleuri?.toString() || "", // Ensure peopleURI is a string
             title: item['title from colenda']?.toString() || "Untitled", // Ensure title is a string
             type: item.type ? item.type.split('|').map(sub => sub.trim()) : [], // Array from pipe-separated values

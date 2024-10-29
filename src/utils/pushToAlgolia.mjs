@@ -1,44 +1,68 @@
-import algoliasearch from 'algoliasearch';
+import { algoliasearch } from "algoliasearch";
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 
 const records = require('../data/items.json'); // Path to your JSON file
 
-// Initialize the Algolia client
 const client = algoliasearch('ZLPYTBTZ4R', 'd020c7e559db5854ac9f75c026d0734a');
-const index = client.initIndex('Dev_Kaplan');
+const indexName = 'Dev_Kaplan';
 
-// Define your site's base URL
-const siteBaseUrl = 'https://kaplancollection.org/';  // Replace with your actual site base URL
+const siteBaseUrl = 'https://kaplancollection.org/';
 
-// Function to format the record
+function processDate(dateString) {
+    if (dateString.startsWith('circa')) {
+        const year = parseInt(dateString.match(/\d+/)[0], 10);
+        return {
+            minTimestamp: new Date(`${year - 5}-01-01`).getTime() / 1000,
+            maxTimestamp: new Date(`${year + 5}-12-31`).getTime() / 1000,
+        };
+    } else {
+        const timestamp = new Date(dateString).getTime() / 1000;
+        return { minTimestamp: timestamp, maxTimestamp: timestamp };
+    }
+}
+
 function formatRecord(record) {
+    const dateInfo = processDate(record.dateC);
     return {
         ...record,
-        objectID: record.id, // Use the ID as the objectID
+        objectID: record.id,
         url: `${siteBaseUrl}item/${record.slug}`,
-        hasRealThumbnail: record.thumbnail !== "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",// Construct URL with /item/ in the path
+        hasRealThumbnail: record.thumbnail !== "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",
+        minTimestamp: dateInfo.minTimestamp,
+        maxTimestamp: dateInfo.maxTimestamp,
     };
 }
-// Format and push data to Algolia
+var response = await client.GetTaskAsync("Dev_Kaplan", 123L);
+
 async function pushDataToAlgolia() {
     try {
-        const formattedRecords = records.map((record) => {
-            console.log("Original Record:", record); // Log the original record
+        const formattedRecords = records.map(formatRecord);
 
-            const formattedRecord = formatRecord(record);
-
-            console.log("Formatted Record:", formattedRecord); // Log the formatted record
-            return formattedRecord;
+        const { taskID } = await client.partialUpdateObjects({
+            indexName: "Dev_Kaplan",
+            objects: formattedRecords,
         });
+        console.log(`Records uploaded with task ID: ${taskID}`);
 
-        // Push the formatted records to Algolia
-        const response = await index.saveObjects(formattedRecords);
-        console.log('Algolia response:', response);
+        // Wait for indexing to complete with custom maxRetries and timeout
+        await client.waitForTask({
+            indexName,
+            taskID,
+            maxRetries: 5,
+            timeout: (retryCount) => 1000 * (retryCount + 1) // Exponential backoff
+        });
+        console.log('Indexing complete.');
+
+        const results = await client.searchSingleIndex({
+            indexName,
+            searchParams: { query: "sample query" }
+        });
+        console.log('Search results:', results.hits);
+
     } catch (error) {
         console.error('Error pushing data to Algolia:', error.message, error.stack);
     }
 }
 
-// Run the function to push the data to Algolia
 pushDataToAlgolia();

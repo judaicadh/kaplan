@@ -44,7 +44,9 @@ const history = createBrowserHistory();
 function createURL(routeState) {
 	const { q } = routeState;
 	const queryParameters = {};
-
+	if (q) {
+		queryParameters.q = q;
+	}
 
 
 	const queryString = new URLSearchParams(queryParameters).toString();
@@ -136,74 +138,79 @@ function App() {
 			>
 				<header className="header">
 					<p className="header-title">Explore the Kaplan Collection</p>
-					<SearchBox  placeholder="Rebecca Gratz, Billhead, Trade Card..." defaultValue={initialQuery}  loadingIconComponent={({ classNames }) => (
-						<div className={classNames.loadingIcon}>Loading</div>
-					)}/>
+					<SearchBox placeholder="Rebecca Gratz, Billhead, Trade Card..." defaultValue={initialQuery}
+										 loadingIconComponent={({ classNames }) => (
+											 <div className={classNames.loadingIcon}>Loading</div>
+										 )} />
 				</header>
-				<Configure attributesToSnippet={['description:10']} snippetEllipsisText="…" removeWordsIfNoResults="allOptional" />
-				<ScrollTo>
-					<main className="container" ref={containerRef}>
-						<div className="container-wrapper">
-							<section className="container-filters">
-								<Stats />
-								<div className="container-header">
 
-									<h2>Filters</h2>
-									<ClearRefinements translations={{ resetButtonText: 'Clear all' }} />
+			<Configure attributesToSnippet={['description:10']} snippetEllipsisText="…"
+								 removeWordsIfNoResults="allOptional" />
+			<ScrollTo>
+				<main className="container" ref={containerRef}>
+					<div className="container-wrapper">
+						<section className="container-filters">
+							<Stats />
+							<div className="container-header">
 
-								</div>
-								<div className="container-body">
+								<h2>Filters</h2>
+								<ClearRefinements translations={{ resetButtonText: 'Clear all' }} />
 
-									<DynamicWidgets>
+							</div>
+							<div className="container-body">
 
-										<Panel header="Types">
+								<DynamicWidgets>
 
-											<RefinementList attribute="type" searchable={true} showMore={true} searchablePlaceholder="Search for Object Types…" />
-										</Panel>
+									<Panel header="Types">
 
-
-									</DynamicWidgets>
-
-									<Panel header="Name">
-										<RefinementList attribute="name" searchable={true} showMore={true} searchablePlaceholder="Search for People and Businesses" />
-									</Panel>
-									<Panel header="Thumbnails">
-										<ToggleRefinement attribute="hasRealThumbnail" label="Only Items with Images"  />
+										<RefinementList attribute="type" searchable={true} showMore={true}
+																		searchablePlaceholder="Search for Object Types…" />
 									</Panel>
 
 
-								</div>
-							</section>
-							<footer className="container-filters-footer">
-								<ClearFiltersMobile containerRef={containerRef} />
-							</footer>
-						</div>
-						<section className="container-results">
-							<header className="container-header container-options">
-								<CurrentRefinements  />
+								</DynamicWidgets>
 
-								<SortBy items={[{ label: 'Sort by name', value: 'title' }, { label: 'Sort by type', value: 'type.' }]} />
-								<HitsPerPage items={[
-									{ label: '20 hits per page', value: 20, default: true },
-									{ label: '40 hits per page', value: 40 },
-									{ label: '60 hits per page', value: 60 },
-									{ label: '100 hits per page', value: 100 }
-								]} />
-							</header>
-							<Hits hitComponent={HitTest} />
-							<footer className="container-footer">
-								<Configure hitsPerPage={20} />
+								<Panel header="Name">
+									<RefinementList attribute="name" searchable={true} showMore={true}
+																	searchablePlaceholder="Search for People and Businesses" />
+								</Panel>
+								<Panel header="Thumbnails">
+									<ToggleRefinement attribute="hasRealThumbnail" label="Only Items with Images" />
+								</Panel>
 
-								<Pagination  />
-							</footer>
+
+							</div>
 						</section>
-					</main>
-				</ScrollTo>
-			</InstantSearch>
-		</div>
-	);
-}
+						<footer className="container-filters-footer">
+							<ClearFiltersMobile containerRef={containerRef} />
+						</footer>
+					</div>
+					<section className="container-results">
+						<header className="container-header container-options">
+							<CurrentRefinements />
 
+							<SortBy items={[{ label: 'Sort by name', value: 'title' }, { label: 'Sort by type', value: 'type.' }]} />
+							<HitsPerPage items={[
+								{ label: '20 hits per page', value: 20, default: true },
+								{ label: '40 hits per page', value: 40 },
+								{ label: '60 hits per page', value: 60 },
+								{ label: '100 hits per page', value: 100 }
+							]} />
+						</header>
+						<Hits hitComponent={HitTest} />
+						<footer className="container-footer">
+							<Configure hitsPerPage={20} />
+
+							<Pagination />
+						</footer>
+					</section>
+				</main>
+			</ScrollTo>
+		</InstantSearch>
+</div>
+)
+	;
+}
 
 
 export default App;
