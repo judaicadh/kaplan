@@ -1,21 +1,31 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 
-import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
-import icon from 'astro-icon';
-import sitemap from '@astrojs/sitemap';
+import react from "@astrojs/react";
+import tailwind from "@astrojs/tailwind";
+import icon from "astro-icon";
+import sitemap from "@astrojs/sitemap";
+import robotsTxt from "astro-robots-txt";
 
 export default defineConfig({
-  site: 'https://kaplancollection.org',
+  site: "https://kaplancollection.org",
   vite: {
+    resolve: {
+      alias: {
+        // alias icons to their ESM version
+        '@mui/icons-material': '@mui/icons-material/esm',
+      },
+    },
+    ssr: {
+      noExternal: /@mui\/.*?/,
+    },
     optimizeDeps: {
-      include: ['algoliasearch/lite'],
-    }
+      include: ["algoliasearch/lite"],
+    },
   }, // Close vite object here
-  base: '/', // For GitHub Pages, adjust if deploying to a subfolder
+  base: "/", // For GitHub Pages, adjust if deploying to a subfolder
 
   typescript: {
-    tsconfig: './tsconfig.json', // Path to TypeScript config
+    tsconfig: "./tsconfig.json", // Path to TypeScript config
   },
 
   integrations: [
@@ -26,11 +36,11 @@ export default defineConfig({
     icon({
       include: {
         // Include only three `mdi` icons in the bundle
-        mdi: ['magnify', 'account-plus', 'account-minus']
+        mdi: ["magnify", "account-plus", "account-minus"],
         // Include all `uis` icons
-
-      }
+      },
     }),
     sitemap(),
+    robotsTxt(),
   ],
 });

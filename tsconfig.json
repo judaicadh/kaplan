@@ -2,8 +2,9 @@
   "extends": "astro/tsconfigs/base",
   "compilerOptions": {
     "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {
-      "@components/*": ["src/components/*"],
+      "@components/*": ["src/components/*"]
     },
 
     "jsx": "react-jsx",
@@ -22,7 +23,7 @@
   },
   "include": [
     "src",
-    "src/env.d.ts",
+    "src/env.d.ts"
     // if present
   ]
 }

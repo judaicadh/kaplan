@@ -95,7 +95,7 @@
 
   .filters-button {
     align-items: center;
-    background-color: #1d689d;
+    background-color: #ffffff;
     border: none;
     border-radius: 8px;
     bottom: 2rem;
@@ -255,7 +255,7 @@
 
   /* Hide all desktop-specific design on mobile */
 
-  [data-layout='desktop'] {
+  [data-layout="desktop"] {
     display: none;
   }
 }

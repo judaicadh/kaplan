@@ -1,0 +1,44 @@
+/* DateRangeSlider.css */
+
+.date-range-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.slider-inputs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.slider-input {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.slider-input:last-child {
+  margin-right: 0;
+}
+
+.slider-input label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.slider-track {
+  position: relative;
+}
+
+.slider-track input[type="range"] {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.slider-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+}

@@ -1,11 +1,13 @@
-@import '@algolia/autocomplete-theme-classic/dist/theme.css';
+@import "@algolia/autocomplete-theme-classic/dist/theme.css";
 
-@import 'flowbite';
+@import "flowbite";
+@import 'leaflet/dist/leaflet.css';
+@import 'react-leaflet-markercluster/dist/styles.min.css';
+
+
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 /* Custom styles */
-
-
 

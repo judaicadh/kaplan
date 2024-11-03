@@ -5,5 +5,5 @@ export function formatNumber(number: string | number): string {
 export function cx(
   ...classNames: Array<string | number | boolean | undefined | null>
 ) {
-  return classNames.filter(Boolean).join(' ');
+  return classNames.filter(Boolean).join(" ");
 }

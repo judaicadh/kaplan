@@ -5,7 +5,7 @@ type HitProps = {
   hit: AlgoliaHit<{
     name: string;
     type: string[];
-    date: number;
+    date: string;
     description: string;
     title: string;
     geography: string[];
@@ -35,7 +35,7 @@ export function HitTest({ hit }: HitProps) {
           <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
           <p className="text-gray-500 dark:text-gray-400">{hit.title}</p>
         </a>
-          <Snippet hit={hit} attribute="description" />
+
       </div>
     </article>
 );

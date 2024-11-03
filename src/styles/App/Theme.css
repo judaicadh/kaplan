@@ -1,11 +1,11 @@
 /* Global */
 
-[class^='ais-'] {
+[class^="ais-"] {
   box-sizing: border-box;
   font-size: 0.9rem;
 }
 
-a[class^='ais-'] {
+a[class^="ais-"] {
   color: #21243d;
   text-decoration: none;
 }
@@ -14,7 +14,7 @@ a[class^='ais-'] {
   We need to target all elements for widgets containing
   multiple sub elements (e.g. RangeSlider)
 */
-[class^='ais-'][class$='--disabled'] * {
+[class^="ais-"][class$="--disabled"] * {
   cursor: not-allowed;
 }
 
@@ -55,7 +55,7 @@ a[class^='ais-'] {
 
 .ais-Highlight-highlighted,
 .ais-Snippet-highlighted {
-  background: rgb(29, 104, 157);
+  background: rgb(144, 196, 230);
 }
 
 /* Hits */
@@ -275,7 +275,7 @@ a[class^='ais-'] {
 .ais-RefinementList-item--selected .ais-RefinementList-checkbox::after {
   background-color: #fff;
   border-radius: 4px;
-  content: '';
+  content: "";
   height: 4px;
   left: 50%;
   position: absolute;
@@ -326,8 +326,8 @@ a[class^='ais-'] {
 }
 
 .ais-HierarchicalMenu-item--selected,
-  .ais-HierarchicalMenu-item:not(.ais-HierarchicalMenu-item--selected),
-  .ais-HierarchicalMenu-link::before {
+.ais-HierarchicalMenu-item:not(.ais-HierarchicalMenu-item--selected),
+.ais-HierarchicalMenu-link::before {
   transform: rotate(0);
 }
 
@@ -370,9 +370,10 @@ a[class^='ais-'] {
 .ais-ToggleRefinement-checkbox::after {
   background-image: linear-gradient(to top, #f5f5fa, #fff);
   border-radius: 100%;
-  box-shadow: 0 4px 11px 0 rgba(37, 44, 97, 0.15),
+  box-shadow:
+    0 4px 11px 0 rgba(37, 44, 97, 0.15),
     0 2px 3px 0 rgba(93, 100, 148, 0.2);
-  content: '';
+  content: "";
   height: 16px;
   position: absolute;
   transition: transform 150ms ease-out;
@@ -393,8 +394,6 @@ a[class^='ais-'] {
   right: 10px;
   pointer-events: none;
 }
-
-
 
 .ais-SortBy-select,
 .ais-HitsPerPage-select {
@@ -439,7 +438,8 @@ a[class^='ais-'] {
 .ais-RangeSlider .rheostat-handle {
   background-image: linear-gradient(to top, #f5f5fa, #fff);
   border: none;
-  box-shadow: 0 4px 11px 0 rgba(37, 44, 97, 0.15),
+  box-shadow:
+    0 4px 11px 0 rgba(37, 44, 97, 0.15),
     0 2px 3px 0 rgba(93, 100, 148, 0.2);
   margin-left: -5px;
   top: -9px;

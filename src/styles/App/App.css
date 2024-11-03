@@ -10,9 +10,18 @@ h2 {
 }
 
 body {
-  font-family: Open Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol';
+  font-family:
+    Open Sans,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol";
   -webkit-font-smoothing: antialiased;
 }
 
@@ -230,7 +239,7 @@ mark {
 }
 
 .hit-em {
-  color: #1d689d;
+  color: #8bafc8;
   font-size: 11px;
   font-weight: 600;
 }
@@ -302,7 +311,7 @@ mark {
 .ais-ToggleRefinement-checkbox::before {
   align-items: center;
   color: rgba(33, 36, 61, 0.32);
-  content: 'No';
+  content: "No";
   display: flex;
   font-size: 0.8rem;
   height: 16px;
@@ -311,7 +320,7 @@ mark {
 }
 
 .ais-ToggleRefinement-checkbox:checked::before {
-  content: 'Yes';
+  content: "Yes";
 }
 
 .ais-ToggleRefinement-count {
@@ -331,7 +340,50 @@ mark {
 /* Hide all mobile-specific design on desktop */
 
 @media (min-width: 900px) {
-  [data-layout='mobile'] {
+  [data-layout="mobile"] {
     display: none;
   }
+}
+
+.map-container {
+  width: 100%;
+  height: 600px; /* Adjust height as needed */
+}
+
+@media (max-width: 768px) {
+  .map-container {
+    height: 400px; /* Adjust height for smaller screens */
+  }
+}
+
+/* App.css */
+
+/* Default embedded map style */
+.markercluster-map {
+  width: 100%;
+  height: 500px;
+  transition: height 0.3s;
+}
+
+/* Full-screen map style for detached mode */
+.markercluster-map.detached {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+}
+
+/* Style for a close button in full-screen mode */
+.map-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1001;
+  background: white;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 16px;
 }

@@ -1,15 +1,14 @@
-import React from 'react';
-import { useInstantSearch } from 'react-instantsearch';
-
+import React from "react";
+import { useInstantSearch } from "react-instantsearch";
 
 export function ResultsNumberMobile() {
-	const {
-		results: { nbHits },
-	} = useInstantSearch();
+  const {
+    results: { nbHits },
+  } = useInstantSearch();
 
-	return (
-		<div>
-			<strong>{(nbHits)}</strong> results
-		</div>
-	);
+  return (
+    <div>
+      <strong>{nbHits}</strong> results
+    </div>
+  );
 }

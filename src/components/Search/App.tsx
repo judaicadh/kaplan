@@ -19,7 +19,7 @@ import { createBrowserHistory } from "history";
 import type { Location as HistoryLocation } from "history";
 import { Panel } from "../Search/Panel"; // Ensure this path is correct
 import HitTest from "@components/Search/Hit";
-import "../../styles/App/RangeSlider.css";
+
 import "leaflet/dist/leaflet.css";
 import "../../styles/App/App.css";
 import "instantsearch.css/themes/reset.css";

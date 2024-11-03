@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define file paths
-const csvFilePath = path.join(__dirname, '../src/data/input/Kaplan20240808 (23).csv');
+const csvFilePath = path.join(__dirname, '../src/data/input/Kaplan20240808 (25).csv');
 const jsonFilePath = path.join(__dirname, '../src/data/items.json');
 
 (async () => {
@@ -18,29 +18,37 @@ const jsonFilePath = path.join(__dirname, '../src/data/items.json');
 
         // Format the data
         const formattedData = jsonObj.map(item => ({
-            id: item.id?.toString() || "", // Ensure id is a string, in case it's a number
-            link: item.colendalink?.toString() || "", // Convert to string if not already
-            slug: item.slug?.toString() || "", // Ensure slug is a string
+            id: item.id?.toString() || "",
+            link: item.colendalink?.toString() || "",
+            slug: item.slug?.toString() || "",
             date: item.date?.toString() || "",
             collection: item.Collection?.toString() || "",
-            peopleURI: item.peopleuri?.toString() || "", // Ensure peopleURI is a string
-            title: item['title from colenda']?.toString() || "Untitled", // Ensure title is a string
-            type: item.type ? item.type.split('|').map(sub => sub.trim()) : [], // Array from pipe-separated values
-            subtype: item.subtype ? item.subtype.split('|').map(sub => sub.trim()) : [], // Same logic for subtype
-            PhysicalLocation: item['Updated Location']?.toString() || "", // Ensure PhysicalLocation is a string
-            description: item.description?.toString() || "", // Ensure description is a string
-            thumbnail: item.thumbnail?.toString() || "https://placehold.co/600x600.jpg?text=Image+Coming+Soon", // Ensure thumbnail is a string
-            manifestUrl: item.manifestUrl?.toString() || "", // Ensure manifestUrl is a string
-            franklinLink: item['Franklin Link']?.toString() || "", // Ensure franklinLink is a string
-            cross: item.OBJECTS_CUSTOMFIELD_2?.toString() || "", // Ensure cross is a string
-            column_type: item.OBJECTS_COLTYPE?.toString() || "", // Ensure column_type is a string
-            dateC: item.OBJECTS_DATE?.toString() || "", // Ensure dateC is a string
+            peopleURI: item.peopleuri?.toString() || "",
+            title: item['title from colenda']?.toString() || "Untitled",
+            type: item.type ? item.type.split('|').map(sub => sub.trim()) : [],
+            subtype: item.subtype ? item.subtype.split('|').map(sub => sub.trim()) : [],
+            PhysicalLocation: item['Updated Location']?.toString() || "",
+            description: item.description?.toString() || "",
+            thumbnail: item.thumbnail?.toString() || "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",
+            manifestUrl: item.manifestUrl?.toString() || "",
+            franklinLink: item['Franklin Link']?.toString() || "",
+            cross: item.OBJECTS_CUSTOMFIELD_2?.toString() || "",
+            column_type: item.OBJECTS_COLTYPE?.toString() || "",
+            dateC: item.OBJECTS_DATE?.toString() || "",
             geography: item.geographic_subject ? item.geographic_subject.split('|').map(sub => sub.trim()) : [],
             subject: item.subject ? item.subject.split('|').map(sub => sub.trim()) : [],
-            language: item.language ? item.language.split('|').map(sub => sub.trim()) : [],// Array from pipe-separated geography
+            language: item.language ? item.language.split('|').map(sub => sub.trim()) : [],
             name: item.name ? item.name.split('|').map(sub => sub.trim()) : [],
-            object_type: item.OBJECTS_OBJTYPE ? item.OBJECTS_OBJTYPE.split('|').map(sub => sub.trim()) : [], // Array for object_type
-            people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map(sub => sub.trim()) : [] , // Array for people
+            object_type: item.OBJECTS_OBJTYPE ? item.OBJECTS_OBJTYPE.split('|').map(sub => sub.trim()) : [],
+            people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map(sub => sub.trim()) : [],
+
+            // New _geoloc field
+            _geoloc: item._geoloc
+              ? item._geoloc.split('|').map(pair => {
+                  const [lng, lat] = pair.split(',').map(coord => parseFloat(coord.trim()));
+                  return { lat, lng };
+              })
+              : []
         }));
 
         // Write JSON to file

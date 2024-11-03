@@ -8,7 +8,7 @@ const { title, description, schemaData } = Astro.props;
 	<title>{title || "Default Site Title"}</title>
 		<meta name="description" content={description || "Default site description"} />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-
+		<link rel="stylesheet" href="/src/styles/global.css">
 		<!-- Render schema data if provided -->
 	{schemaData && <Schema item={schemaData} />}
 </head>
