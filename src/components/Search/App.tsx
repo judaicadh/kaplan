@@ -27,7 +27,7 @@ import "../../styles/App/Theme.css";
 import "../../styles/App/App.css";
 import "../../styles/App/App.mobile.css";
 import "../../styles/App/Pagination.css";
-import MarkerClusterGroup from 'react-leaflet-markercluster';
+
 import { MapContainer, TileLayer } from "react-leaflet";
 import "react-leaflet-markercluster/dist/styles.min.css";
 import KaplanGeoSearch from '@components/Map/GeoSearch.tsx';
