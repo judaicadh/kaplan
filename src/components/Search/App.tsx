@@ -32,30 +32,35 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import "react-leaflet-markercluster/dist/styles.min.css";
 import KaplanGeoSearch from '@components/Map/GeoSearch.tsx';
 import { Checkbox } from 'flowbite-react'; // Adjust the import path if necessary
+const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77');
 
-const searchClient = algoliasearch("ZLPYTBTZ4R", "be46d26dfdb299f9bee9146b63c99c77");
-
+// Custom router setup
 const history = createBrowserHistory();
 
-function createURL(routeState: any) {
+function createURL(routeState) {
   const { q } = routeState;
-  const queryParameters: { [key: string]: string } = {};
+  const queryParameters = {};
   if (q) {
     queryParameters.q = q;
   }
-  return `${window.location.pathname}${queryParameters.q ? `?${queryParameters.q}` : ""}`;
+
+
+  const queryString = new URLSearchParams(queryParameters).toString();
+
+  return `${window.location.pathname}?${queryString}`;
 }
 
-function getStateFromLocation(location: HistoryLocation) {
+function getStateFromLocation(location) {
   const searchParams = new URLSearchParams(location.search);
   return {
-    q: searchParams.get("q") || "",
+    q: searchParams.get('q') || '',
+
   };
 }
 
 const routing = {
   router: {
-    onUpdate(callback: (state: any) => void) {
+    onUpdate(callback) {
       return history.listen(({ location }) => {
         callback(getStateFromLocation(location));
       });
@@ -63,122 +68,143 @@ const routing = {
     read() {
       return getStateFromLocation(history.location);
     },
-    write(routeState: any) {
+    write(routeState) {
       const url = createURL(routeState);
       if (history.location.pathname + history.location.search !== url) {
         history.push(url);
       }
     },
     createURL,
-    dispose() {},
+    dispose() {
+      // Clean up listeners
+    },
   },
   stateMapping: {
-    stateToRoute(uiState: any) {
+    stateToRoute(uiState) {
       const indexUiState = uiState.Dev_Kaplan || {};
       return {
         q: indexUiState.query,
+
+        // Map other UI state parameters as needed
       };
     },
-    routeToState(routeState: any) {
+    routeToState(routeState) {
       return {
         Dev_Kaplan: {
           query: routeState.q,
+
+          // Map other route state parameters as needed
         },
       };
     },
   },
 };
 
-const App: React.FC = () => {
+function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const searchParams = new URLSearchParams(window.location.search);
-  const initialQuery = searchParams.get("q") || "";
+  const initialQuery = searchParams.get('q') || '';
 
-  const [isDetached, setIsDetached] = useState(false);
+  function openFilters() {
+    document.body.classList.add('filtering');
+    window.scrollTo(0, 0);
+  }
 
-  // Track screen size and toggle detached mode based on width
-  useEffect(() => {
-    const handleResize = () => setIsDetached(window.innerWidth <= 600);
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+
+  function closeFilters() {
+    // Remove the filtering class from the body
+    document.body.classList.remove('filtering');
+
+    // Scroll containerRef into view if it is defined
+    containerRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }
+
 
   return (
     <div id="container">
-      <header></header>
-      <InstantSearch searchClient={searchClient} indexName="Dev_Kaplan" routing={routing} insights>
+
+      <InstantSearch
+        searchClient={searchClient}
+        indexName="Dev_Kaplan"
+
+        routing={routing}
+        insights
+      >
         <header className="header">
           <p className="header-title">Explore the Kaplan Collection</p>
-          <SearchBox placeholder="Rebecca Gratz, Billhead, Trade Card..." defaultValue={initialQuery} />
+          <SearchBox placeholder="Rebecca Gratz, Billhead, Trade Card..." defaultValue={initialQuery}
+                     loadingIconComponent={({ classNames }) => (
+                       <div className={classNames.loadingIcon}>Loading</div>
+                     )} />
         </header>
 
-        <Configure removeWordsIfNoResults="allOptional" />
+        <Configure attributesToSnippet={['description:10']} snippetEllipsisText="…"
+                   removeWordsIfNoResults="allOptional" />
 
-        <main className="container" ref={containerRef}>
-          <div className="container-wrapper">
-            <section className="container-filters">
-              <Stats />
-              <div className="container-header">
-                <h2>Filters</h2>
-                <ClearRefinements translations={{ resetButtonText: "Clear all" }} />
-              </div>
-              <div className="container-body">
-                <DynamicWidgets>
-                  <Panel header="Types">
-                    <RefinementList attribute="type" searchable showMore searchablePlaceholder="Search for Object Types…" />
+          <main className="container" ref={containerRef}>
+            <div className="container-wrapper">
+              <section className="container-filters">
+                <Stats />
+                <div className="container-header">
+
+                  <h2>Filters</h2>
+                  <ClearRefinements translations={{ resetButtonText: 'Clear all' }} />
+
+                </div>
+                <div className="container-body">
+
+                  <DynamicWidgets>
+
+                    <Panel header="Types">
+
+                      <RefinementList attribute="type" searchable={true} showMore={true}
+                                      searchablePlaceholder="Search for Object Types…" />
+                    </Panel>
+
+
+                  </DynamicWidgets>
+
+                  <Panel header="Name">
+                    <RefinementList attribute="name" searchable={true} showMore={true}
+                                    searchablePlaceholder="Search for People and Businesses" />
                   </Panel>
-                </DynamicWidgets>
-                <Panel header="Name">
-                  <RefinementList attribute="name" searchable showMore searchablePlaceholder="Search for People and Businesses" />
-                </Panel>
-                <Panel header="Thumbnails">
-                  <ToggleRefinement attribute="hasRealThumbnail" label="Only Items with Images" />
-                </Panel>
+                  <Panel header="Thumbnails">
+                    <ToggleRefinement attribute="hasRealThumbnail" label="Only Items with Images" />
+                  </Panel>
 
-                <Panel header="Map">
-                  <MapContainer
-                    className={`markercluster-map ${isDetached ? 'detached' : ''}`}
-                    style={{ height: isDetached ? '100vh' : '500px' }}
-                    doubleClickZoom
-                    center={[38.85, -60.35]}
-                    zoom={1}
-                    zoomControl
-                    scrollWheelZoom
-                    closePopupOnClick
-                  >
-                    <TileLayer
-                      attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                    />
-                    <KaplanGeoSearch />
-                  </MapContainer>
-                  {isDetached && (
-                    <button className="map-close-button" onClick={() => setIsDetached(false)}>
-                      Close Map
-                    </button>
-                  )}
-                </Panel>
-              </div>
+
+                </div>
+              </section>
+              <footer className="container-filters-footer">
+
+              </footer>
+            </div>
+            <section className="container-results">
+              <header className="container-header container-options">
+                <CurrentRefinements />
+
+                <SortBy items={[{ label: 'Sort by name', value: 'title' }, { label: 'Sort by type', value: 'type.' }]} />
+                <HitsPerPage items={[
+                  { label: '20 hits per page', value: 20, default: true },
+                  { label: '40 hits per page', value: 40 },
+                  { label: '60 hits per page', value: 60 },
+                  { label: '100 hits per page', value: 100 }
+                ]} />
+              </header>
+              <Hits hitComponent={HitTest} />
+              <footer className="container-footer">
+                <Configure hitsPerPage={20} />
+
+                <Pagination />
+              </footer>
             </section>
-          </div>
+          </main>
 
-          <section className="container-results">
-            <header className="container-header container-options">
-              <CurrentRefinements />
-              <SortBy items={[{ label: 'Sort by name', value: 'Dev_Kaplan' }, { label: 'Sort by type', value: 'Dev_Kaplan_type' }]} />
-              <HitsPerPage items={[{ label: '20 hits per page', value: 20, default: true }, { label: '40 hits per page', value: 40 }, { label: '60 hits per page', value: 60 }, { label: '100 hits per page', value: 100 }]} />
-            </header>
-            <Hits hitComponent={HitTest} />
-            <footer className="container-footer">
-              <Configure hitsPerPage={20} />
-              <Pagination />
-            </footer>
-          </section>
-        </main>
       </InstantSearch>
     </div>
-  );
-};
+  )
+    ;
+}
+
 
 export default App;
