@@ -14,6 +14,9 @@ type HitProps = {
     url?: string;
     hasRealThumbnail: boolean;
     subject: string[];
+    _geoloc: number[];
+    minTimestamp: number[];
+    maxTimestamp: number[];
   }>;
 };
 

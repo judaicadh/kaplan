@@ -5,10 +5,22 @@ const { title, description, schemaData } = Astro.props;
 ---
 
 <head>
-	<title>{title || "Default Site Title"}</title>
+	<title>{title}</title>
 		<meta name="description" content={description || "Default site description"} />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="/src/styles/global.css">
+		<script
+			type="module"
+			src="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/duet.esm.js"
+			></script>
+		<script
+			nomodule
+			src="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/duet.js"
+			></script>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/themes/default.css"
+		/>
 		<!-- Render schema data if provided -->
 	{schemaData && <Schema item={schemaData} />}
 </head>

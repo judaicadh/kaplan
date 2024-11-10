@@ -1,4 +1,5 @@
 @import "@algolia/autocomplete-theme-classic/dist/theme.css";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 @import "flowbite";
 @import 'leaflet/dist/leaflet.css';
@@ -11,3 +12,6 @@
 @tailwind utilities;
 /* Custom styles */
 
+html.dark {
+    @apply bg-gray-900;
+}

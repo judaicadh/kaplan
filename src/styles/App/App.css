@@ -387,3 +387,7 @@ mark {
   cursor: pointer;
   font-size: 16px;
 }
+
+.hidden {
+  display: none;
+}

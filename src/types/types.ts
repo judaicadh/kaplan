@@ -53,14 +53,14 @@ export interface Geoloc {
 }
 
 export interface MapHit {
-  objectID: string;
+  id: string;
   title: string;
   _geoloc: Geoloc | Geoloc[]; // Allow single or multiple geolocations
   // Add other relevant fields if necessary
 }
 
 interface GeoHit {
-  objectID: string;
+  id: string;
   name: string;
   description: string;
   _geoloc: { lat: number; lng: number }; // Update to GeoLoc type

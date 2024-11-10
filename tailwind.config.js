@@ -1,6 +1,6 @@
 const withMT = require("@material-tailwind/react/utils/withMT");
 const flowbite = require("flowbite-react/tailwind");
-
+const colors = require("tailwindcss/colors");
 module.exports = withMT({
   content: [
     "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}", // All file types that might use Tailwind classes

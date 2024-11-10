@@ -1,4 +1,11 @@
-export const convertTimestampToDate = (timestamp: number): string => {
-	const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
-	return date.toLocaleDateString(); // Formats the date based on user's locale
-};
+// utils/TimestampToDate.ts
+export function formatUnixTimestamp(unixTimestamp: number, locale: string = 'en-US'): string {
+	const timestampMs = unixTimestamp.toString().length === 10 ? unixTimestamp * 1000 : unixTimestamp;
+	const date = new Date(timestampMs);
+
+	return date.toLocaleDateString(locale, {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	});
+}

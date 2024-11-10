@@ -127,7 +127,9 @@
   .container-options {
     display: none;
   }
-
+  .hidden {
+    display: none;
+  }
   .header {
     background: linear-gradient(to bottom, #1d689d, #7db9e8);
 
