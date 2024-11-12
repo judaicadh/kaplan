@@ -41,6 +41,7 @@ module.exports = withMT({
       fontFamily: {
         sans: ["Graphik", "sans-serif"],
         serif: ["Merriweather", "serif"],
+        overpass: ['"Overpass Variable"', 'sans-serif'],
       },
     },
   },

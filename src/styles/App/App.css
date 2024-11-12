@@ -1,38 +1,3 @@
-* {
-  box-sizing: border-box;
-}
-
-body,
-h1,
-h2 {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family:
-    Open Sans,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol";
-  -webkit-font-smoothing: antialiased;
-}
-
-h2 {
-  color: #21243d;
-  font-family: Hind, sans-serif;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-/* Header */
 
 .header {
   align-items: center;
@@ -73,7 +38,7 @@ h2 {
 .container-filters {
   flex: 1;
   margin-right: 60px;
-  max-width: 260px;
+  max-width: 460px;
 }
 
 .container-header {
@@ -87,110 +52,22 @@ h2 {
   flex: 3;
 }
 
-.container-options {
-  border-bottom: 1px solid #ebecf3;
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 30px;
-  padding: 30px 0;
-}
 
-.container-options .container-option:not(:first-child) {
-  margin-left: 48px;
-}
 
-.container-options select {
-  min-width: 100px;
-}
-
-.container-footer {
-  margin: 4rem 0;
-}
 
 /* Styles the SFFV highlightings */
 
-em {
-  font-style: normal;
-}
-
-em,
-mark {
-  background: rgb(125, 185, 232);
-}
 
 /* Clear refinements container */
 
-.clear-filters {
-  align-items: center;
-  display: flex;
-}
-
-.clear-filters svg {
-  margin-right: 8px;
-}
-
 /* Panel */
 
-.container-body .ais-Panel {
-  border-top: 1px solid #ebecf3;
-  padding-bottom: 2rem;
-  padding-top: 2rem;
-}
 
-.ais-Panel-header {
-  font-family: Hind, sans-serif;
-}
 
 /* Search box */
 
-.header .ais-SearchBox {
-  height: 64px;
-  width: 740px;
-}
 
-.header .ais-SearchBox .ais-SearchBox-input {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 48px 0 rgba(0, 0, 0, 0.2);
-  font-family: Hind, sans-serif;
-  height: 64px;
-  /*
-    The "Hind" font family is vertically off-balance.
-    Adding 4px of padding top makes it more vertically aligned.
-  */
-  padding: 4px 48px 0 64px;
-}
 
-.header .ais-SearchBox-submit {
-  padding: 0 1rem 0 2rem;
-  width: 64px;
-}
-
-.header .ais-SearchBox .ais-SearchBox-input::placeholder {
-  color: rgba(33, 36, 61, 0.24);
-  opacity: 1; /* Firefox */
-}
-
-.ais-SearchBox-input:-ms-input-placeholder {
-  color: rgba(33, 36, 61, 0.24);
-}
-
-.ais-SearchBox-input::-ms-input-placeholder {
-  color: rgba(33, 36, 61, 0.24);
-}
-
-.ais-SearchBox-submit {
-  color: #1d689d;
-}
-
-.ais-RefinementList .ais-SearchBox-input {
-  font-family: Hind, sans-serif;
-  /*
-    The "Hind" font family is vertically off-balance.
-    Adding some padding top makes it more vertically aligned.
-  */
-  padding-top: 2px;
-}
 
 /* Hits */
 
@@ -287,104 +164,5 @@ mark {
   color: #21243d;
   min-height: 48px;
   padding: 16px 24px;
-}
-
-/* ToggleRefinement */
-
-.ais-ToggleRefinement-label {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: space-between;
-}
-
-.ais-ToggleRefinement-checkbox {
-  font: inherit;
-  margin-left: 1rem;
-  margin-right: 0;
-  position: relative;
-}
-
-.ais-ToggleRefinement-checkbox:checked::before {
-  color: #e2a400;
-}
-
-.ais-ToggleRefinement-checkbox::before {
-  align-items: center;
-  color: rgba(33, 36, 61, 0.32);
-  content: "No";
-  display: flex;
-  font-size: 0.8rem;
-  height: 16px;
-  position: absolute;
-  right: 38px;
-}
-
-.ais-ToggleRefinement-checkbox:checked::before {
-  content: "Yes";
-}
-
-.ais-ToggleRefinement-count {
-  display: none;
-}
-
-/* RatingMenu */
-
-.ais-RatingMenu-item:not(.ais-RatingMenu-item--selected) {
-  opacity: 0.5;
-}
-
-.ais-RatingMenu-starIcon {
-  margin-right: 0.5rem;
-}
-
-/* Hide all mobile-specific design on desktop */
-
-@media (min-width: 900px) {
-  [data-layout="mobile"] {
-    display: none;
-  }
-}
-
-.map-container {
-  width: 100%;
-  height: 600px; /* Adjust height as needed */
-}
-
-@media (max-width: 768px) {
-  .map-container {
-    height: 400px; /* Adjust height for smaller screens */
-  }
-}
-
-/* App.css */
-
-/* Default embedded map style */
-.markercluster-map {
-  width: 100%;
-  height: 500px;
-  transition: height 0.3s;
-}
-
-/* Full-screen map style for detached mode */
-.markercluster-map.detached {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1000;
-}
-
-/* Style for a close button in full-screen mode */
-.map-close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1001;
-  background: white;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  font-size: 16px;
 }
 

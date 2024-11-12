@@ -7,6 +7,7 @@ const { title, description, schemaData } = Astro.props;
 <head>
 	<title>{title}</title>
 		<meta name="description" content={description || "Default site description"} />
+	<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="/src/styles/global.css">
 		<script
@@ -21,6 +22,7 @@ const { title, description, schemaData } = Astro.props;
 			rel="stylesheet"
 			href="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/themes/default.css"
 		/>
+	<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
 		<!-- Render schema data if provided -->
 	{schemaData && <Schema item={schemaData} />}
