@@ -5,7 +5,8 @@ type HitProps = {
   hit: AlgoliaHit<{
     name: string;
     type: string[];
-    date: string;
+    subtype: string[];
+    dateC: string;
     description: string;
     title: string;
     geography: string[];
@@ -23,25 +24,26 @@ type HitProps = {
 export function HitTest({ hit }: HitProps) {
   return (
     <article className="hit">
-      <a href={`/item/${hit.slug}`}>
-        <div className="hit-image">
-          <img src={hit.thumbnail || 'path/to/default/image.png'} alt={hit.title} />
+      <header className="hit-image-container">
+        <img src={hit.thumbnail} alt={hit.title} className="hit-image" />
+      </header>
+<br/>
+      <div className="hit-info-container">
 
-        </div>
-      </a>
-      <div className="mt-6">
-        <a href={`/item/${hit.slug}`}>
-        <span
-          className="bg-gray-200 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">
-          {hit.type[0]}
-        </span>
-          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
-          <p className="text-gray-500 dark:text-gray-400">{hit.title}</p>
-        </a>
 
+          <h1>
+            {hit.title}
+          </h1>
+          <br />
+
+
+        <footer>
+          <p className="hit-category"> {hit.subtype[0]} - {hit.dateC}</p>
+
+        </footer>
       </div>
     </article>
-);
+  );
 }
 
 export default HitTest;

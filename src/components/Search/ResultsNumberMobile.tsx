@@ -1,5 +1,7 @@
-import React from "react";
-import { useInstantSearch } from "react-instantsearch";
+import React from 'react';
+import { useInstantSearch } from 'react-instantsearch';
+
+import { formatNumber } from '../../utils';
 
 export function ResultsNumberMobile() {
   const {
@@ -8,7 +10,7 @@ export function ResultsNumberMobile() {
 
   return (
     <div>
-      <strong>{nbHits}</strong> results
+      <strong>{formatNumber(nbHits)}</strong> results
     </div>
   );
 }
