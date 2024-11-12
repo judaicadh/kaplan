@@ -12,8 +12,8 @@ import {
   ToggleRefinement,
   HitsPerPage,
   CurrentRefinements,
-  Stats,
-} from "react-instantsearch";
+  Stats, RangeInput
+} from 'react-instantsearch'
  import { algoliasearch } from "algoliasearch";
 import { createBrowserHistory } from "history";
 import HitTest from "@components/Search/Hit";
@@ -25,8 +25,9 @@ import "../../styles/App/Pagination.css";
 
 import { Panel } from '@components/Search/Panel.tsx'
 
-import CustomRangeInput from '@components/Search/DateConnect.tsx'
-import CustomRangeSlider from '@components/Search/DateConnect.tsx' // Ensure this path is correct
+import CustomRangeSlider from '@components/Search/DateRange.tsx'
+import DateRangeSliderFilter from '@components/Search/DateRange.tsx'
+import DateRangeSlider from '@components/Search/DateRange.tsx'
 
 const searchClient = algoliasearch("ZLPYTBTZ4R", "be46d26dfdb299f9bee9146b63c99c77");
 
@@ -57,6 +58,8 @@ function getStateFromLocation(location) {
     q: searchParams.get("q") || "",
   };
 }
+const MIN_TIMESTAMP = -17987443200; // January 1, 1400 in UNIX timestamp
+const MAX_TIMESTAMP = -2208988800;  // January 1, 1900 in UNIX timestamp
 
 const routing = {
   router: {
@@ -75,21 +78,25 @@ const routing = {
       }
     },
     createURL,
-    dispose() {
-      // Clean up listeners
-    },
+    dispose() {},
   },
   stateMapping: {
     stateToRoute(uiState) {
       const indexUiState = uiState.Dev_Kaplan || {};
       return {
         q: indexUiState.query,
+        start: indexUiState.range?.start || '',
+        end: indexUiState.range?.end || '',
       };
     },
     routeToState(routeState) {
       return {
         Dev_Kaplan: {
           query: routeState.q,
+          range: {
+            start: routeState.start,
+            end: routeState.end,
+          },
         },
       };
     },
@@ -125,7 +132,7 @@ function App() {
           />
         </header>
 
-        <Configure attributesToSnippet={["description:10"]} snippetEllipsisText="…" removeWordsIfNoResults="allOptional" />
+
 
         <main className="container" ref={containerRef}>
           <div className="container-wrapper">
@@ -141,16 +148,32 @@ function App() {
                     <RefinementList attribute="type" searchable={true} showMore={true} searchablePlaceholder="Search for Object Types…" />
                   </Panel>
                 </DynamicWidgets>
-
-
-                <Panel header="Name">
+                 <Panel header="Name">
                   <RefinementList attribute="name" searchable={true} showMore={true} searchablePlaceholder="Search for People and Businesses" />
                 </Panel>
                 <Panel header="Thumbnails">
                   <ToggleRefinement attribute="hasRealThumbnail" label="Only Items with Images" />
                 </Panel>
                 <Panel header="Date">
-                  <CustomRangeSlider attribute="date.startDate" initialMin={-3155695200} />
+                  <DateRangeSlider
+                    dateFields={[
+                      "startDate1", "endDate1",
+                      "startDate2", "endDate2",
+                      "startDate3", "endDate3",
+                      "startDate4", "endDate4",
+                      "startDate5", "endDate5",
+                      "startDate6", "endDate6",
+                      "startDate7", "endDate7",
+                      "startDate8", "endDate8",
+                      "startDate9", "endDate9",
+                      "startDate10", "endDate10",
+                      "startDate11", "endDate11"
+                    ]}
+                    minTimestamp={-15135361438} // Example start date in your data range
+                    maxTimestamp={-2208988800} // Example end date in your data range
+                  />
+
+
                 </Panel>
               </div>
             </section>
@@ -161,6 +184,7 @@ function App() {
               <CurrentRefinements />
               <SortBy
                 items={[
+                  { value: 'Dev_Kaplan', label: 'Default' },
                   { label: "Sort by name", value: "title" },
                   { label: "Sort by type", value: "type" },
                 ]}

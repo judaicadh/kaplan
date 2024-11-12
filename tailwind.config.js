@@ -8,6 +8,7 @@ module.exports = withMT({
     "./node_modules/flowbite-react/dist/types/components/**/*.ts",
     "./node_modules//@material-tailwind/react/components/**/*.{js,ts,jsx,tsx}",
     "./node_modules//@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.{js,ts}",
 
 
   ],

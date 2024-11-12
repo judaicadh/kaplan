@@ -3,11 +3,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import App from '../components/Search/App'
 
+import NavAutocomplete from "../components/Search/NavAutocomplete";
 
-console.log("App Component Loaded"); // For debugging
 
 ---
 
-<BaseLayout>
+<BaseLayout title="Search" />
 	<App client:only="react" /> <!-- This will render the App component inside the layout’s slot -->
-</BaseLayout>

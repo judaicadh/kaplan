@@ -1,6 +1,6 @@
 import { useGeoSearch, type UseGeoSearchProps } from 'react-instantsearch';
 import type { LeafletEvent } from 'leaflet'
-import type { MapHit } from '../../types/types.ts'
+
 import {
 	MapContainer,
 	Marker,

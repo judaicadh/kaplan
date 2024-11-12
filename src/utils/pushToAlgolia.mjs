@@ -65,16 +65,17 @@ const processDateRanges = (dateArray) => {
 };
 
 
-  const formatRecord = (record) => {
-    const dateRangeResults = processDateRanges(record.date || []); //Correctly handle missing 'date' field
-    return {
-      ...record,
-      objectID: record.id,
-      url: `${siteBaseUrl}item/${record.slug}`,
-      hasRealThumbnail: record.thumbnail !== "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",
-      date_ranges: dateRangeResults,
-    };
+const formatRecord = (record) => {
+  const dateRangeResults = processDateRanges(record.date || []); //Correctly handle missing 'date' field
+  return {
+    ...record,
+    objectID: record.id,
+    url: `${siteBaseUrl}item/${record.slug}`,
+    hasRealThumbnail: record.thumbnail !== "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",
+    date_ranges: dateRangeResults,
+
   };
+};
 
 
 

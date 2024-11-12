@@ -17,31 +17,28 @@ const jsonFilePath = path.join(__dirname, '../src/data/items.json');
         }).fromFile(csvFilePath);
 
         const formattedData = jsonArray.map(item => {
-            const datePairs = [];
+            const datePairs = {};
             const startDates = item.start_date?.split('|').map(s => s.trim()).filter(Boolean) || [];
             const endDates = item.end_date?.split('|').map(s => s.trim()).filter(Boolean) || [];
             const maxLength = Math.min(startDates.length, endDates.length);
-
 
             for (let i = 0; i < maxLength; i++) {
                 const startString = startDates[i];
                 const endString = endDates[i];
 
-                //IMPORTANT: Ensure these are already numbers, no conversion needed
-                const startTimestamp = parseFloat(startString);
-                const endTimestamp = endString ? parseFloat(endString) : null;
+                // Use Date.parse() and convert milliseconds to seconds
+                const startTimestamp = Date.parse(startString) / 1000; // Convert to seconds
+                const endTimestamp = Date.parse(endString) / 1000; // Convert to seconds
 
-
+                // Check for valid timestamps and assign dynamically as startDate1, endDate1, etc.
                 if (!isNaN(startTimestamp) && !isNaN(endTimestamp)) {
-                    datePairs.push({ startDate: startTimestamp, endDate: endTimestamp });
+                    datePairs[`startDate${i + 1}`] = startTimestamp;
+                    datePairs[`endDate${i + 1}`] = endTimestamp;
                 } else {
-                    if (isNaN(startTimestamp)) console.warn(`Invalid start timestamp for item ${item.id}`);
-                    if (isNaN(endTimestamp)) console.warn(`Invalid end timestamp for item ${item.id}`);
+                    if (isNaN(startTimestamp)) console.warn(`Invalid start timestamp for item ${item.id}: ${startString}`);
+                    if (isNaN(endTimestamp)) console.warn(`Invalid end timestamp for item ${item.id}: ${endString}`);
                 }
             }
-
-            datePairs.sort((a, b) => a.startDate - b.startDate);
-
             return {
                 id: item.id?.toString() || "",
                 link: item.colendalink?.toString() || "",
@@ -66,7 +63,9 @@ const jsonFilePath = path.join(__dirname, '../src/data/items.json');
                 name: item.name ? item.name.split('|').map(sub => sub.trim()) : [],
                 object_type: item.OBJECTS_OBJTYPE ? item.OBJECTS_OBJTYPE.split('|').map(sub => sub.trim()) : [],
                 people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map(sub => sub.trim()) : [],
-                date: datePairs, // Include the negative Unix timestamps directly
+
+                // Dynamically generated startDate and endDate fields
+                ...datePairs,
 
                 // New _geoloc field
                 _geoloc: item._geoloc
@@ -79,7 +78,7 @@ const jsonFilePath = path.join(__dirname, '../src/data/items.json');
         });
 
         await fs.writeFile(jsonFilePath, JSON.stringify(formattedData, null, 2), 'utf-8');
-        console.log('CSV to JSON conversion completed.');
+        console.log('CSV to JSON conversion completed with separate date fields.');
     } catch (err) {
         console.error('Error converting CSV to JSON:', err);
     }

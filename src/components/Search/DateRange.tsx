@@ -1,159 +1,115 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useRange, type UseRangeProps } from 'react-instantsearch';
+import React, { useState, useEffect } from 'react';
+import { Configure } from 'react-instantsearch';
 import Slider from '@mui/material/Slider';
-import { debounce } from 'lodash';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
-
-/*const dateToTimestamp = (dateString: string): number => {
-	const timestamp = new Date(dateString).getTime();
-	return timestamp;
+type CombinedDateRangeSliderProps = {
+	minTimestamp: number;
+	maxTimestamp: number;
+	dateFields: string[];
 };
 
-const timestampToDate = (timestamp: number): string => {
-	const date = new Date(timestamp);
-	return date.toISOString().split('T')[0];
-};
-interface RangeSliderProps {
-	attribute: string;
-	handleRefinement: (range: { startDate: number; endDate: number }) => void;
-}*/
-function CustomRangeInput(props: UseRangeProps) {
-	const { start, range, canRefine, refine,  } = useRange(props);
-
-	// Helper Functions
-
-
-	// Set minimum date to "1400-01-01"
-	const MIN_DATE_STRING = '1400-01-01';
-	const MIN_TIMESTAMP = new Date(MIN_DATE_STRING).getTime();
-
-	// Provide default values for range.min and range.max
-	const safeMin = Math.max(range.min ?? MIN_TIMESTAMP, MIN_TIMESTAMP);
-	const safeMax = range.max ?? Date.now(); // Use current timestamp if range.max is undefined
-
-	// Scaling factor to reduce the magnitude of timestamps
-	const SCALE_FACTOR = 1000000;
-
-	// Initialize rangeState with valid default values
-	const [rangeState, setRangeState] = useState<RangeState>(() => {
-		const initialFrom =
-			start[0] != null && !isNaN(start[0]) && start[0] !== -Infinity
-				? start[0]
-				: safeMin;
-		const initialTo =
-			start[1] != null && !isNaN(start[1]) && start[1] !== Infinity
-				? start[1]
-				: safeMax;
-		return {
-			from: initialFrom,
-			to: initialTo,
-		};
-	});
+const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
+																																	 minTimestamp,
+																																	 maxTimestamp,
+																																	 dateFields,
+																																 }) => {
+	const [range, setRange] = useState<[number, number]>([minTimestamp, maxTimestamp]);
+	const [filterString, setFilterString] = useState<string>('');
 
 	useEffect(() => {
-		// Update rangeState when start changes
-		const newFrom =
-			start[0] != null && !isNaN(start[0]) && start[0] !== -Infinity
-				? start[0]
-				: safeMin;
-		const newTo =
-			start[1] != null && !isNaN(start[1]) && start[1] !== Infinity
-				? start[1]
-				: safeMax;
-		setRangeState({
-			from: newFrom,
-			to: newTo,
-		});
-	}, [start, safeMin, safeMax]);
+		const singleCondition = `(${dateFields[0]} <= ${range[1]} AND ${dateFields[1]} >= ${range[0]})`;
+		setFilterString(singleCondition);
 
-	// Debounced refine function
-	const debouncedRefine = useCallback(
-		debounce((newRange: RangeState) => {
-			refine([newRange.from, newRange.to]);
-		}, 300),
-		[refine]
-	);
+		// Set initial values for date inputs based on the range
+		const startDateInput = document.getElementById('datepicker-range-start') as HTMLInputElement;
+		const endDateInput = document.getElementById('datepicker-range-end') as HTMLInputElement;
+		if (startDateInput && endDateInput) {
+			startDateInput.value = new Date(range[0] * 1000).toISOString().split('T')[0];
+			endDateInput.value = new Date(range[1] * 1000).toISOString().split('T')[0];
+		}
+	}, [range, dateFields]);
 
-	const handleInputChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>, type: 'from' | 'to') => {
-			const dateValue = e.target.value;
-			const timestamp = dateToTimestamp(dateValue);
+	const handleSliderChange = (event: Event, newValue: number | number[]) => {
+		if (Array.isArray(newValue)) {
+			setRange([newValue[0], newValue[1]]);
+			(document.getElementById('datepicker-range-start') as HTMLInputElement).value = new Date(newValue[0] * 1000).toISOString().split('T')[0];
+			(document.getElementById('datepicker-range-end') as HTMLInputElement).value = new Date(newValue[1] * 1000).toISOString().split('T')[0];
+		}
+	};
 
-			if (!isNaN(timestamp)) {
-				const clampedValue = Math.max(safeMin, Math.min(safeMax, timestamp));
-				setRangeState((prevRange) => {
-					const newRange = { ...prevRange, [type]: clampedValue };
-					debouncedRefine(newRange);
-					return newRange;
-				});
-			} else {
-				setRangeState((prevRange) => {
-					const newRange = { ...prevRange, [type]: safeMin };
-					debouncedRefine(newRange);
-					return newRange;
-				});
-			}
-		},
-		[safeMin, safeMax, debouncedRefine]
-	);
+	const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+		const startDateInput = document.getElementById('datepicker-range-start') as HTMLInputElement;
+		const endDateInput = document.getElementById('datepicker-range-end') as HTMLInputElement;
+		const startDate = new Date(startDateInput.value).getTime() / 1000;
+		const endDate = new Date(endDateInput.value).getTime() / 1000;
 
-	const handleSliderChange = useCallback(
-		(event: Event, newValue: number | number[]) => {
-			if (Array.isArray(newValue)) {
-				const scaledFrom = newValue[0] * SCALE_FACTOR;
-				const scaledTo = newValue[1] * SCALE_FACTOR;
-				const newRange = { from: scaledFrom, to: scaledTo };
-				setRangeState(newRange);
-				debouncedRefine(newRange);
-			}
-		},
-		[debouncedRefine]
-	);
-
-	const { from, to } = rangeState;
+		if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
+			setRange([startDate, endDate]);
+		} else {
+			// If input is invalid or out of range, reset to current range values
+			startDateInput.value = new Date(range[0] * 1000).toISOString().split('T')[0];
+			endDateInput.value = new Date(range[1] * 1000).toISOString().split('T')[0];
+			alert('Please enter valid dates in the correct range.');
+		}
+	};
 
 	return (
-		<div>
-			<div className="flex items-center">
-				<label>
-					From:
-					<input
-						type="date"
-						min={timestampToDate(safeMin)}
-						max={timestampToDate(safeMax)}
-						value={from != null ? timestampToDate(from) : ''}
-						onChange={(e) => handleInputChange(e, 'from')}
-						disabled={!canRefine}
-						className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-300"
-					/>
-				</label>
-			</div>
-			<Slider
-				min={safeMin / SCALE_FACTOR}
-				max={safeMax / SCALE_FACTOR}
-				value={[from / SCALE_FACTOR, to / SCALE_FACTOR]}
-				onChange={handleSliderChange}
-				valueLabelDisplay="on"
-				valueLabelFormat={(value) => timestampToDate(value * SCALE_FACTOR)}
-				disabled={!canRefine}
-				step={86400000 / SCALE_FACTOR} // One day in milliseconds divided by scale factor
-			/>
-			<div className="flex items-center">
-				<label>
-					To:
-					<input
-						type="date"
-						min={timestampToDate(safeMin)}
-						max={timestampToDate(safeMax)}
-						value={to != null ? timestampToDate(to) : ''}
-						onChange={(e) => handleInputChange(e, 'to')}
-						disabled={!canRefine}
-						className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-300"
-					/>
-				</label>
-			</div>
-		</div>
-	);
-}
+		<Grid container spacing={2} direction="column" alignItems="center">
+			<Typography gutterBottom>Date Range</Typography>
 
-export default CustomRangeInput;
+			<Slider
+				value={range}
+				onChange={handleSliderChange}
+				min={minTimestamp}
+				max={maxTimestamp}
+				valueLabelDisplay="on"
+				valueLabelFormat={(value) => new Date(value * 1000).toISOString().split('T')[0]}
+			/>
+
+			<div id="date-range-picker" date-rangepicker="true" className="flex items-center mt-4">
+				<div className="relative">
+					<div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+
+						<svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+								 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+							<path
+								d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+						</svg>
+					</div>
+					<input
+						id="datepicker-range-start"
+						name="start"
+						type="text"
+						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+						placeholder="Select date start"
+					/>
+				</div>
+				<span className="mx-4 text-gray-500">to</span>
+				<div className="relative">
+					<div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+
+						<svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+								 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+							<path
+								d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+						</svg>
+					</div>
+					<input
+						id="datepicker-range-end"
+						name="end"
+						type="text"
+						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+						placeholder="Select date end"
+						onBlur={handleBlur}
+					/>
+				</div>
+			</div>
+
+			<Configure filters={filterString} />
+		</Grid>
+	);
+};
+
+export default DateRangeSlider;
