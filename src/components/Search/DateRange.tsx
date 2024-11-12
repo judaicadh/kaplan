@@ -3,11 +3,18 @@ import { Configure } from 'react-instantsearch';
 import Slider from '@mui/material/Slider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Datepicker from 'react-tailwindcss-datepicker';
+import { fromUnixTime } from 'date-fns'
 
 type CombinedDateRangeSliderProps = {
 	minTimestamp: number;
 	maxTimestamp: number;
 	dateFields: string[];
+};
+
+type DateRangeType = {
+	startDate: Date | null;
+	endDate: Date | null;
 };
 
 const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
@@ -17,47 +24,46 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 																																 }) => {
 	const [range, setRange] = useState<[number, number]>([minTimestamp, maxTimestamp]);
 	const [filterString, setFilterString] = useState<string>('');
+	const [dateRange, setDateRange] = useState<DateRangeType>({
+		startDate: new Date(minTimestamp * 1000),
+		endDate: new Date(maxTimestamp * 1000),
+	});
 
 	useEffect(() => {
 		const singleCondition = `(${dateFields[0]} <= ${range[1]} AND ${dateFields[1]} >= ${range[0]})`;
 		setFilterString(singleCondition);
-
-		// Set initial values for date inputs based on the range
-		const startDateInput = document.getElementById('datepicker-range-start') as HTMLInputElement;
-		const endDateInput = document.getElementById('datepicker-range-end') as HTMLInputElement;
-		if (startDateInput && endDateInput) {
-			startDateInput.value = new Date(range[0] * 1000).toISOString().split('T')[0];
-			endDateInput.value = new Date(range[1] * 1000).toISOString().split('T')[0];
-		}
 	}, [range, dateFields]);
 
 	const handleSliderChange = (event: Event, newValue: number | number[]) => {
 		if (Array.isArray(newValue)) {
 			setRange([newValue[0], newValue[1]]);
-			(document.getElementById('datepicker-range-start') as HTMLInputElement).value = new Date(newValue[0] * 1000).toISOString().split('T')[0];
-			(document.getElementById('datepicker-range-end') as HTMLInputElement).value = new Date(newValue[1] * 1000).toISOString().split('T')[0];
+			setDateRange({
+				startDate: new Date(newValue[0] * 1000),
+				endDate: new Date(newValue[1] * 1000),
+			});
 		}
 	};
 
-	const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-		const startDateInput = document.getElementById('datepicker-range-start') as HTMLInputElement;
-		const endDateInput = document.getElementById('datepicker-range-end') as HTMLInputElement;
-		const startDate = new Date(startDateInput.value).getTime() / 1000;
-		const endDate = new Date(endDateInput.value).getTime() / 1000;
+	const handleDateChange = (newValue: DateRangeType | null) => {
+		if (newValue && newValue.startDate && newValue.endDate) {
+			const start = typeof newValue.startDate === 'string' ? new Date(newValue.startDate) : newValue.startDate;
+			const end = typeof newValue.endDate === 'string' ? new Date(newValue.endDate) : newValue.endDate;
 
-		if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
-			setRange([startDate, endDate]);
-		} else {
-			// If input is invalid or out of range, reset to current range values
-			startDateInput.value = new Date(range[0] * 1000).toISOString().split('T')[0];
-			endDateInput.value = new Date(range[1] * 1000).toISOString().split('T')[0];
-			alert('Please enter valid dates in the correct range.');
+			setDateRange({ startDate: start, endDate: end });
+			const newRange: [number, number] = [
+				Math.floor(start.getTime() / 1000),
+				Math.floor(end.getTime() / 1000),
+			];
+			setRange(newRange);
 		}
 	};
+
+	// Define 19th-century shortcuts
+
 
 	return (
 		<Grid container spacing={2} direction="column" alignItems="center">
-			<Typography gutterBottom>Date Range</Typography>
+
 
 			<Slider
 				value={range}
@@ -66,45 +72,102 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 				max={maxTimestamp}
 				valueLabelDisplay="on"
 				valueLabelFormat={(value) => new Date(value * 1000).toISOString().split('T')[0]}
+				className="w-full max-w-xs sm:max-w-md"
 			/>
 
-			<div id="date-range-picker" date-rangepicker="true" className="flex items-center mt-4">
-				<div className="relative">
-					<div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+			<div className="mt-4 w-full max-w-xs sm:max-w-md relative z-50">
+				<Datepicker
+					primaryColor={"sky"}
+					separator="to"
+					startFrom={new Date(minTimestamp * 1000)}
+					value={{
+						startDate: dateRange.startDate,
+						endDate: dateRange.endDate,
+					}}
+					onChange={(newValue) => handleDateChange(newValue)}
 
-						<svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-								 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-						</svg>
-					</div>
-					<input
-						id="datepicker-range-start"
-						name="start"
-						type="text"
-						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-						placeholder="Select date start"
-					/>
-				</div>
-				<span className="mx-4 text-gray-500">to</span>
-				<div className="relative">
-					<div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
 
-						<svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-								 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-						</svg>
-					</div>
-					<input
-						id="datepicker-range-end"
-						name="end"
-						type="text"
-						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-						placeholder="Select date end"
-						onBlur={handleBlur}
-					/>
-				</div>
+
+
+					inputClassName="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-sky-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white w-full"
+
+					showShortcuts={true}
+					configs={{
+						shortcuts: [
+							{
+								text: '1800s',
+								period: {
+									start: (new Date("1800-01-01")),
+									end: (new Date( "1899-12-31"))
+								},
+							},
+							{
+								text: '1810s',
+								period: {
+									start: new Date("1810-01-01"),
+									end:new Date( "1819-12-31")
+								},
+							},
+							{
+								text: '1820s',
+								period: {
+									start: new Date("1820-01-01"),
+									end: new Date("1829-12-31")
+								},
+							},
+							{
+								text: '1830s',
+								period: {
+									start: new Date("1830-01-01"),
+									end: new Date("1839-12-31")
+								},
+							},
+							{
+								text: '1840s',
+								period: {
+									start: new Date("1840-01-01"),
+									end: new Date("1849-12-31")
+								},
+							},
+							{
+								text: '1850s',
+								period: {
+									start: new Date("1850-01-01"),
+									end: new Date("1859-12-31")
+								},
+							},
+							{
+								text: '1860s',
+								period: {
+									start: new Date("1860-01-01"),
+									end: new Date("1869-12-31")
+								},
+							},
+							{
+								text: '1870s',
+								period: {
+									start: new Date("1870-01-01"),
+									end: new Date("1879-12-31")
+								},
+							},
+							{
+								text: '1880s',
+								period: {
+									start: new Date("1880-01-01"),
+									end: new Date("1889-12-31")
+								},
+							},
+							{
+								text: '1890s',
+								period: {
+									start:new Date("1890-01-01"),
+									end: new Date("1899-12-31")
+								},
+							}
+						]
+
+					}}
+				/>
 			</div>
 
 			<Configure filters={filterString} />
