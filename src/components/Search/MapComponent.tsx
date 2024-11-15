@@ -1,13 +1,20 @@
+import { Configure, InstantSearch, useConfigure, useGeoSearch } from 'react-instantsearch'
 import React, { useState } from 'react'
-import { useGeoSearch } from 'react-instantsearch'
-import {
-	MapContainer,
-	TileLayer,
-	Marker,
-	Popup,
-	useMapEvents
-} from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
+import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet'
+import MarkerClusterGroup from 'react-leaflet-cluster'
+import { algoliasearch } from 'algoliasearch'
+
+const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
+
+const customIcon = new L.DivIcon({
+	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
+      <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+    </svg>`,
+	className: 'custom-icon', // Optional, for custom styling
+	iconSize: [40, 47], // Set the size of your icon
+	iconAnchor: [20, 47], // Align the bottom of the icon
+	popupAnchor: [0, -47] // Position the popup above the icon
+})
 
 function CustomGeoSearch() {
 	const { items, refine } = useGeoSearch()
@@ -20,16 +27,16 @@ function CustomGeoSearch() {
 		refine({
 			northEast: { lat: bounds.getNorthEast().lat, lng: bounds.getNorthEast().lng },
 			southWest: { lat: bounds.getSouthWest().lat, lng: bounds.getSouthWest().lng }
-		})
-	}
+		});
+	};
 
 	const MapEventsHandler = () => {
 		useMapEvents({
 			zoomend: onViewChange,
 			dragend: onViewChange
-		})
+		});
 		return null
-	}
+	};
 
 	const handleToggle = () => {
 		if (searchOnMove) {
@@ -37,13 +44,16 @@ function CustomGeoSearch() {
 			refine({
 				northEast: { lat: 90, lng: 180 },
 				southWest: { lat: -90, lng: -180 }
-			})
+			});
 		}
 		setSearchOnMove((prevState) => !prevState) // Safely toggle the state
-	}
+	};
 
 	return (
 		<div className="relative">
+			<InstantSearch searchClient={searchClient} indexName="Dev_Kaplan" routing={true} insights={true}>
+				<Configure hitsPerPage={1000} />
+
 			{/* Toggle for "Search when I move the map" */}
 			<div className="pb-3 flex items-center space-x-3">
 				<label className="relative inline-flex items-center cursor-pointer space-x-2">
@@ -72,39 +82,62 @@ function CustomGeoSearch() {
 
 			{/* Map */}
 			<MapContainer
+				style={{ height: '500px' }}
 				center={[44.32694774299841, -100.5312500000005]}
 				zoom={3}
-				maxZoom={10}
+				maxZoom={11}
 				scrollWheelZoom={true}
-				className="h-96 w-full rounded-lg shadow-md"
+				attributionControl={false}
+
 			>
+
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
 				<MapEventsHandler />
-				{items
-					.filter(
-						(item) =>
-							item._geoloc &&
-							typeof item._geoloc.lat === 'number' &&
-							typeof item._geoloc.lng === 'number'
-					)
-					.map((item) => (
-						<Marker
-							key={item.objectID}
-							position={[item._geoloc.lat, item._geoloc.lng]}
-						>
-							<Popup>
-								<strong>{item.title}</strong>
-								<br />
-								{item.description || 'No additional information'}
-							</Popup>
-						</Marker>
-					))}
+
+				<MarkerClusterGroup chunkedLoading>
+					{items.map((item) => {
+						// Skip items without _geoloc
+						if (!item._geoloc) return null
+
+						// Handle cases where _geoloc is an array or a single object
+						const locations = Array.isArray(item._geoloc) ? item._geoloc : [item._geoloc]
+
+						// Map over the locations
+						return locations.map((loc, index) => {
+							// Validate the lat/lng data
+							if (typeof loc.lat !== 'number' || typeof loc.lng !== 'number') return null
+
+							// Render the marker
+							return (
+								<Marker
+									key={`${item.objectID}-${index}`}
+									position={[loc.lat, loc.lng]}
+									title={loc.name || 'No Name'}
+									icon={customIcon}
+								>
+									<Popup>
+										{/* Conditional rendering based on the slug */}
+										{item.slug ? (
+											<a href={`item/${item.slug}`} target="_blank" rel="noopener noreferrer">
+												Visit Link
+											</a>
+										) : (
+											<span>No URL available</span>
+										)}
+									</Popup>
+								</Marker>
+							)
+						})
+					})}
+				</MarkerClusterGroup>
 			</MapContainer>
+			</InstantSearch>
 		</div>
-	)
+
+	);
 }
 
 export default CustomGeoSearch

@@ -18,7 +18,7 @@ import {
 	useGeoSearch,
 	type UseGeoSearchProps,
 	useHits,
-	type UseHitsProps,
+	type UseHitsProps, useInfiniteHits,
 	useInstantSearch,
 	usePagination,
 	useRefinementList,
@@ -28,6 +28,7 @@ import {
 } from 'react-instantsearch'
 
 import { createBrowserHistory } from 'history'
+import CustomGeoSearch from '@components/Search/MapComponent.tsx'
 import DateRangeSlider from '@components/Search/DateRangeSlider.tsx'
 import { Hit } from '@components/Search/Hit'
 import type { CustomHitType } from '../../types/CustomHitType.ts'
@@ -35,11 +36,11 @@ import '../../styles/App/App.css'
 
 import '../../styles/App/Theme.css'
 import '../../styles/App/App.mobile.css'
-
+import MarkerClusterGroup from 'react-leaflet-cluster'
+import 'leaflet/dist/leaflet.css'
 import { NoResultsBoundary } from '@components/Search/NoResultsBoundary.tsx'
 import { NoResults } from '@components/Search/NoResults.tsx'
-import { ChevronDoubleLeftIcon } from '@heroicons/react/16/solid'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 import {
 	faSearch,
 	faAngleDoubleLeft,
@@ -49,8 +50,18 @@ import {
 	faTimes, faFilter
 } from '@fortawesome/free-solid-svg-icons'
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet'
-import { LatLngBounds, type LeafletEvent } from 'leaflet'
-import CustomGeoSearch from '@components/Search/MapComponent.tsx'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+
+const customIcon = new L.DivIcon({
+	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
+      <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+    </svg>`,
+	className: 'custom-icon', // Optional, for custom styling
+	iconSize: [40, 47], // Set the size of your icon
+	iconAnchor: [20, 47], // Align the bottom of the icon
+	popupAnchor: [0, -47] // Position the popup above the icon
+})
 
 const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
 
@@ -65,6 +76,27 @@ function createURL(routeState) {
 
 	return `${window.location.pathname}?${queryString}`
 }
+
+const stateMapping = {
+	stateToRoute(uiState) {
+		return {
+			query: uiState.Dev_Kaplan?.query || '',
+			page: uiState.Dev_Kaplan?.page || 1
+			// Add other refinements as needed
+		}
+	},
+	routeToState(routeState) {
+		return {
+			Dev_Kaplan: {
+				query: routeState.query || '',
+				page: routeState.page || 1
+				// Add other refinements as needed
+			}
+		}
+	}
+}
+
+
 
 function CustomClearRefinements(props) {
 	const { refine, canRefine } = useClearRefinements(props)
@@ -306,10 +338,20 @@ function MobileFilters() {
 
 									/>
 								</div>
+
 								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
 
 
-								<CustomGeoSearch />
+								<MapContainer
+									style={{ height: '500px' }}
+									center={[48.85, 2.35]}
+									zoom={10}
+								>
+									<TileLayer
+										attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+										url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+									/>
+								</MapContainer>
 								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
 									<div className="pt-5  ">
 										<CustomToggleRefinement attribute="hasRealThumbnail" label="Only show items that have images" />
@@ -516,12 +558,7 @@ function CustomToggleRefinement({ attribute, label }) {
 	)
 }
 
-function getStateFromLocation(location) {
-	const searchParams = new URLSearchParams(location.search)
-	return {
-		q: searchParams.get('q') || ''
-	}
-}
+
 
 
 function App() {
@@ -530,10 +567,10 @@ function App() {
 	return (
 
 
-		<InstantSearch searchClient={searchClient} indexName="Dev_Kaplan" routing={true} insights>
+		<InstantSearch searchClient={searchClient} indexName="Dev_Kaplan" routing={true} insights={true}>
 			<div className="bg-white">
 				<div>
-
+					<Configure hitsPerPage={20} />
 
 					{/* Main content */}
 					<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -562,7 +599,9 @@ function App() {
 										<CustomRefinementList attribute="collection" label="Collection" />
 									</div>
 									<div className="border-b border-gray-200 py-6">
+
 										<CustomGeoSearch />
+
 									</div>
 									<div className="border-b border-gray-200 py-6">
 										<CustomToggleRefinement attribute="hasRealThumbnail" label="Only show items that have images" />
@@ -596,7 +635,10 @@ function App() {
 										<CustomSortBy />
 										<Stats />
 									</span>
-									<CustomHits />
+									<NoResultsBoundary fallback={<NoResults />}>
+										<CustomHits />
+									</NoResultsBoundary>
+
 
 									{/* Hits */}
 
