@@ -14,7 +14,7 @@ import {
 	SearchBox,
 	SortBy,
 	Stats,
-	ToggleRefinement,
+	ToggleRefinement, useClearRefinements,
 	useGeoSearch,
 	type UseGeoSearchProps,
 	useHits,
@@ -48,6 +48,9 @@ import {
 	faAngleRight,
 	faTimes, faFilter
 } from '@fortawesome/free-solid-svg-icons'
+import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet'
+import { LatLngBounds, type LeafletEvent } from 'leaflet'
+import CustomGeoSearch from '@components/Search/MapComponent.tsx'
 
 const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
 
@@ -61,6 +64,24 @@ function createURL(routeState) {
 	const queryString = new URLSearchParams(queryParameters).toString()
 
 	return `${window.location.pathname}?${queryString}`
+}
+
+function CustomClearRefinements(props) {
+	const { refine, canRefine } = useClearRefinements(props)
+
+	// Only render the button if there are refinements to clear
+	if (!canRefine) {
+		return null
+	}
+
+	return (
+		<button
+			onClick={() => refine()}
+			className="px-4 py-2 rounded-md font-medium bg-sky-600  text-white hover:bg-sky-700"
+		>
+			Clear All Filters
+		</button>
+	)
 }
 
 function CustomHits() {
@@ -298,7 +319,6 @@ function MobileFilters() {
 	)
 }
 
-
 function CustomRefinementList({ attribute, label }) {
 	const [isSearchVisible, setIsSearchVisible] = useState(false)
 
@@ -498,7 +518,6 @@ function getStateFromLocation(location) {
 }
 
 
-
 function App() {
 
 
@@ -526,12 +545,18 @@ function App() {
 							<h2 id="products-heading" className="sr-only">Filter</h2>
 
 							<div className=" grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
+
 								{/* Desktop Filters */}
 								<form
 									className="hidden lg:block sticky top-8"> {/* Adjust `top-8` if you want more or less offset from the top */}
+									<CustomClearRefinements />
+									<CurrentRefinements />
 									<CustomRefinementList attribute="type" label="Type" />
 									<div className="border-b border-gray-200 py-6">
 										<CustomRefinementList attribute="collection" label="Collection" />
+									</div>
+									<div className="border-b border-gray-200 py-6">
+										<CustomGeoSearch />
 									</div>
 									<div className="border-b border-gray-200 py-6">
 										<CustomToggleRefinement attribute="hasRealThumbnail" label="Only show items that have images" />
@@ -561,11 +586,10 @@ function App() {
 
 								{/* Product grid */}
 								<div className="lg:col-span-3">
-	<span className="flex items-center justify-between mb-3">
-		<CustomSortBy />
-			<Stats />
-
-			</span>
+									<span className="flex items-center justify-between mb-3">
+										<CustomSortBy />
+										<Stats />
+									</span>
 									<CustomHits />
 
 									{/* Hits */}
