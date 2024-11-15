@@ -281,7 +281,8 @@ function MobileFilters() {
 									<CustomRefinementList attribute="type" label="Type" key="type" />
 								</div>
 
-								<hr />
+								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+
 
 								<div className="p-5 m-5">
 
@@ -304,11 +305,16 @@ function MobileFilters() {
 										maxTimestamp={-631151999} // Example end date in your data range
 
 									/>
-									<hr />
+								</div>
+								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+
+
+								<CustomGeoSearch />
+								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
 									<div className="pt-5  ">
 										<CustomToggleRefinement attribute="hasRealThumbnail" label="Only show items that have images" />
+
 									</div>
-								</div>
 
 							</form>
 						</div>
