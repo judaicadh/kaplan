@@ -40,7 +40,7 @@ export function Hit({ hit, sendEvent }: HitProps) {
 
 	return (
 		<Card className="max-w-[180px] mx-auto shadow-md transition hover:shadow-lg">
-			<Link to={`/item/${hit.slug}`} onClick={handleClick} style={{ textDecoration: 'none' }}>
+			<a href={`/item/${hit.slug}`} onClick={handleClick} style={{ textDecoration: 'none' }}>
 			<CardActionArea onClick={handleClick}>
 				<CardMedia
 					component="img"
@@ -64,7 +64,7 @@ export function Hit({ hit, sendEvent }: HitProps) {
 
 				</CardContent>
 			</CardActionArea>
-			</Link>
+			</a>
 		</Card>
 	);
 }
