@@ -38,6 +38,14 @@ function CustomGeoSearch() {
 		return null
 	};
 
+	const createClusterCustomIcon = (cluster) => {
+		const count = cluster.getChildCount()
+		return L.divIcon({
+			html: `<span>${count}</span>`,
+			className: 'custom-marker-cluster',
+			iconSize: L.point(40, 40, true)
+		})
+	}
 	const handleToggle = () => {
 		if (searchOnMove) {
 			// Reset to default bounds that include all locations
@@ -97,40 +105,32 @@ function CustomGeoSearch() {
 				/>
 				<MapEventsHandler />
 
-				<MarkerClusterGroup chunkedLoading>
-					{items.map((item) => {
-						// Skip items without _geoloc
-						if (!item._geoloc) return null
+				<MarkerClusterGroup
+					chunkedLoading
+					iconCreateFunction={(cluster) => createClusterCustomIcon(cluster)}
+				>
+					{items.map((hit, index) => {
+						if (!hit._geoloc) return null
 
-						// Handle cases where _geoloc is an array or a single object
-						const locations = Array.isArray(item._geoloc) ? item._geoloc : [item._geoloc]
-
-						// Map over the locations
-						return locations.map((loc, index) => {
-							// Validate the lat/lng data
-							if (typeof loc.lat !== 'number' || typeof loc.lng !== 'number') return null
-
-							// Render the marker
-							return (
-								<Marker
-									key={`${item.objectID}-${index}`}
-									position={[loc.lat, loc.lng]}
-									title={loc.name || 'No Name'}
-									icon={customIcon}
-								>
-									<Popup>
-										{/* Conditional rendering based on the slug */}
-										{item.slug ? (
-											<a href={`item/${item.slug}`} target="_blank" rel="noopener noreferrer">
-												Visit Link
-											</a>
-										) : (
-											<span>No URL available</span>
-										)}
-									</Popup>
-								</Marker>
-							)
-						})
+						const locations = Array.isArray(hit._geoloc) ? hit._geoloc : [hit._geoloc]
+						return locations.map((loc, idx) => (
+							<Marker
+								key={`${hit.objectID}-${index}-${idx}`}
+								position={[loc.lat, loc.lng]}
+								title={loc.name || 'No Name'}
+								icon={customIcon}
+							>
+								<Popup>
+									{hit.slug ? (
+										<a href={`item/${hit.slug}`} target="_blank" rel="noopener noreferrer">
+											Visit Link
+										</a>
+									) : (
+										<span>No URL available</span>
+									)}
+								</Popup>
+							</Marker>
+						))
 					})}
 				</MarkerClusterGroup>
 			</MapContainer>

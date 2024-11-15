@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
-
+import { Link } from 'react-router-dom'
 type HitProps = {
 	hit: AlgoliaHit<{
 		objectID: string;
@@ -40,6 +40,7 @@ export function Hit({ hit, sendEvent }: HitProps) {
 
 	return (
 		<Card className="max-w-[180px] mx-auto shadow-md transition hover:shadow-lg">
+			<Link to={`/item/${hit.slug}`} onClick={handleClick} style={{ textDecoration: 'none' }}>
 			<CardActionArea onClick={handleClick}>
 				<CardMedia
 					component="img"
@@ -63,6 +64,7 @@ export function Hit({ hit, sendEvent }: HitProps) {
 
 				</CardContent>
 			</CardActionArea>
+			</Link>
 		</Card>
 	);
 }
