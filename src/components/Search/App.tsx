@@ -1,28 +1,18 @@
 import { algoliasearch } from 'algoliasearch'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
-	ClearRefinements,
+
 	Configure,
 	CurrentRefinements,
-	DynamicWidgets,
-	Hits,
-
-	HitsPerPage,
 	InstantSearch,
-	Pagination,
-	RefinementList,
-	SearchBox,
-	SortBy,
 	Stats,
-	ToggleRefinement, useClearRefinements,
-	useGeoSearch,
-	type UseGeoSearchProps,
+	useClearRefinements, useCurrentRefinements,
 	useHits,
-	type UseHitsProps, useInfiniteHits,
+	useHitsPerPage,
 	useInstantSearch,
 	usePagination,
 	useRefinementList,
-	useSearchBox, type UseSearchBoxProps,
+	useSearchBox,
 	useSortBy,
 	useToggleRefinement
 } from 'react-instantsearch'
@@ -33,10 +23,9 @@ import DateRangeSlider from '@components/Search/DateRangeSlider.tsx'
 import { Hit } from '@components/Search/Hit'
 import type { CustomHitType } from '../../types/CustomHitType.ts'
 import '../../styles/App/App.css'
-
 import '../../styles/App/Theme.css'
 import '../../styles/App/App.mobile.css'
-import MarkerClusterGroup from 'react-leaflet-cluster'
+
 import 'leaflet/dist/leaflet.css'
 import { NoResultsBoundary } from '@components/Search/NoResultsBoundary.tsx'
 import { NoResults } from '@components/Search/NoResults.tsx'
@@ -51,6 +40,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ClearFilters } from '@components/Search/ClearFilters.tsx'
 
 
 const customIcon = new L.DivIcon({
@@ -96,7 +86,64 @@ const stateMapping = {
 	}
 }
 
+function CustomCurrentRefinements(props) {
+	const { items, canRefine, refine } = useCurrentRefinements(props)
 
+	if (!canRefine) {
+		return null // Hide if no refinements are applied
+	}
+
+	return (
+		<div className="space-y-2">
+
+			<ul className="space-y-1">
+				{items.map((item) => (
+					<li key={item.label} className="flex items-center space-x-2">
+
+						{item.refinements.map((refinement) => (
+							<button
+								key={refinement.label}
+								onClick={() => refine(refinement)}
+								className="px-2 py-1 text-xs font-medium text-white bg-sky-600 rounded hover:bg-sky-500"
+							>
+								{refinement.label} ✕
+							</button>
+						))}
+					</li>
+				))}
+			</ul>
+		</div>
+	)
+}
+
+function CustomHitsPerPage(props) {
+	const { items, refine, canRefine } = useHitsPerPage(props)
+
+	return (
+		<div className="hits-per-page-container">
+			<label htmlFor="Hits Per Page"
+						 className="block text-start mb-0.5 text-sm font-bold text-gray-700 dark:text-white"> Hits
+				per page:
+			</label>
+			<select
+				id="Hits Per Page"
+				className="p-2 rounded border"
+				onChange={(event) => refine(event.target.value)}
+				disabled={!canRefine}
+			>
+				{items.map((item) => (
+					<option
+						key={item.value}
+						value={item.value}
+						selected={item.isRefined}
+					>
+						{item.label}
+					</option>
+				))}
+			</select>
+		</div>
+	)
+}
 
 function CustomClearRefinements(props) {
 	const { refine, canRefine } = useClearRefinements(props)
@@ -144,7 +191,7 @@ function CustomSortBy() {
 
 	return (
 		<div className="sort-by-container">
-			<label htmlFor="Sort By" className="block text-start mb-0.5 text-sm font-bold text-gray-900 dark:text-white">Sort
+			<label htmlFor="Sort By" className="block text-start mb-0.5 text-sm font-bold text-gray-700 dark:text-white">Sort
 				By</label>
 
 			<select
@@ -510,7 +557,7 @@ function CustomSearchBox(props) {
 							setQuery(event.currentTarget.value)
 						}}
 						autoFocus
-						className="w-full h-10 p-4 text-lg bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+						className="w-full h-10 p-4 text-lg bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-sky-500"
 					/>
 
 					<span hidden={!isSearchStalled}>Searching…</span>
@@ -570,7 +617,6 @@ function App() {
 		<InstantSearch searchClient={searchClient} indexName="Dev_Kaplan" routing={true} insights={true}>
 			<div className="bg-white">
 				<div>
-					<Configure hitsPerPage={20} />
 
 					{/* Main content */}
 					<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -586,6 +632,12 @@ function App() {
 
 						<section aria-labelledby="products-heading" className="pb-24 pt-6">
 							<h2 id="products-heading" className="sr-only">Filter</h2>
+							<span className="flex items-center justify-between mb-3">
+							<Stats />
+
+									<CustomCurrentRefinements />
+
+							</span>
 
 							<div className=" grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
 
@@ -593,7 +645,7 @@ function App() {
 								<form
 									className="hidden lg:block sticky top-8"> {/* Adjust `top-8` if you want more or less offset from the top */}
 									<CustomClearRefinements />
-									<CurrentRefinements />
+
 									<CustomRefinementList attribute="type" label="Type" />
 									<div className="border-b border-gray-200 py-6">
 										<CustomRefinementList attribute="collection" label="Collection" />
@@ -631,9 +683,15 @@ function App() {
 
 								{/* Product grid */}
 								<div className="lg:col-span-3">
-									<span className="flex items-center justify-between mb-3">
+									<span className="flex items-center justify-between mb-2">
+
 										<CustomSortBy />
-										<Stats />
+											<CustomHitsPerPage items={[
+												{ label: '20 hits per page', value: 20, default: true },
+												{ label: '40 hits per page', value: 40 },
+												{ label: '80 hits per page', value: 80 }
+											]} />
+
 									</span>
 									<NoResultsBoundary fallback={<NoResults />}>
 										<CustomHits />

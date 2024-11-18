@@ -1,47 +1,91 @@
 ---
-import KaplanLogo from '../../images/Asset3.svg';
-import { Icon } from 'astro-icon/components'// Import search icon from react-icons (install if necessary)
-import NavAutocomplete from '../Search/NavAutocomplete';
-import React from 'react'
+import NavAutocomplete from '../Search/NavAutocomplete'
 ---
+<nav class="bg-white dark:bg-gray-800 antialiased">
+	<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
+		<div class="flex items-center justify-between">
 
-<nav class="place-items-center bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 relative">
-  <!-- Alert -->
-  <div class="flex items-center p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
-    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M17.133 12.632v-1.8a5.406 5.406 0 0 0-4.154-5.262.955.955 0 0 0 .021-.106V3.1a1 1 0 0 0-2 0v2.364a.955.955 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C6.867 15.018 5 15.614 5 16.807 5 17.4 5 18 5.538 18h12.924C19 18 19 17.4 19 16.807c0-1.193-1.867-1.789-1.867-4.175ZM6 6a1 1 0 0 1-.707-.293l-1-1a1 1 0 0 1 1.414-1.414l1 1A1 1 0 0 1 6 6Zm-2 4H3a1 1 0 0 1 0-2h1a1 1 0 1 1 0 2Zm14-4a1 1 0 0 1-.707-1.707l1-1a1 1 0 1 1 1.414 1.414l-1 1A1 1 0 0 1 18 6Zm3 4h-1a1 1 0 1 1 0-2h1a1 1 0 1 1 0 2ZM8.823 19a3.453 3.453 0 0 0 6.354 0H8.823Z"/>
-    </svg>
+			<div class="flex items-center space-x-8">
+				<div class="shrink-0">
 
-    <span class="sr-only">Info</span>
-    <div>
-      <span class="font-extrabold">This site is in Beta</span>
-    </div>
-  </div>
-  <! --->
-  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-    <!-- Logo -->
+					<a href="/" title="" class="">
+						<img class="block w-auto h-20 dark:hidden" src="../src/images/Asset3.svg" alt="">
 
-    <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-      <img src={KaplanLogo.src} class="h-20" alt="Kaplan Logo" decoding="async" loading="lazy" />
-    </a>
+					</a>
 
-    <!-- Nav Links -->
-    <div class="hidden w-full md:flex md:w-auto items-center space-x-6" id="navbar-default">
-      <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-        <li><a href="/search" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">Search</a></li>
-        <li><a href="/aboutthecollection" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">About the Collection</a></li>
-        <li><a href="/faq" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">FAQ</a></li>
-        <li><a href="/collections" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">Curated Collections</a></li>
-        <li><a href=" /podcast" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100">Podcast</a></li>
+				</div>
 
-        <!-- Search Icon -->
-        <li >
-          <div class="aa-DetachedSearchButtonIcon" >
+				<ul class="hidden lg:flex items-center justify-start gap-6 md:gap-8 py-3 sm:justify-center">
+					<li>
+						<a href="/" title=""
+							 class="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+							Home
+						</a>
+					</li>
+					<li class="shrink-0">
+						<a href="/about" title=""
+							 class="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+							About
+						</a>
+					</li>
+					<li class="shrink-0">
+						<a href="/search" title=""
+							 class="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+							Browse
+						</a>
+					</li>
+					<li class="shrink-0">
+						<a href="/collections" title=""
+							 class="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+							Curated Collections
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="justify-self-end  lg:space-x-2 ">
+				<NavAutocomplete client:only="react" />
+			</div>
 
-            <NavAutocomplete client:only="react" />
-          </div>
-        </li>
-      </ul>
-    </div>
 
+			<button type="button" data-collapse-toggle="ecommerce-navbar-menu-1" aria-controls="ecommerce-navbar-menu-1"
+							aria-expanded="false"
+							class="inline-flex lg:hidden items-center justify-center hover:bg-gray-100 rounded-md dark:hover:bg-gray-700 p-2 text-gray-900 dark:text-white">
+          <span class="sr-only">
+            Open Menu
+          </span>
+				<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+						 viewBox="0 0 24 24">
+					<path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" />
+				</svg>
+			</button>
+		</div>
+	</div>
+
+	<div id="ecommerce-navbar-menu-1"
+			 class="bg-gray-50 dark:bg-gray-700 dark:border-gray-600 border border-gray-200 rounded-lg py-3 hidden px-4 mt-4">
+		<ul class="text-gray-900 dark:text-white text-sm font-medium dark:text-white space-y-3">
+			<li>
+				<a href="/" class="hover:text-primary-700 dark:hover:text-primary-500">Home</a>
+			</li>
+			<li>
+				<a href="/about" class="hover:text-primary-700 dark:hover:text-primary-500">About</a>
+			</li>
+			<li>
+				<a href="search" class="hover:text-primary-700 dark:hover:text-primary-500">Browse the Collection</a>
+			</li>
+			<li>
+				<a href="/collections" class="hover:text-primary-700 dark:hover:text-primary-500">Curated Collections</a>
+			</li>
+		</ul>
+
+	</div>
+
+	</div>
 </nav>
+
+
+
+
+
+
+
