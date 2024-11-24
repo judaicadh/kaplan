@@ -1,35 +1,25 @@
 ---
-import { Schema } from "astro-seo-schema";
+import { Schema } from 'astro-seo-schema'
 
-const { title, description, schemaData } = Astro.props;
+const { title, description, schemaData } = Astro.props
+
 ---
 
 <head>
-	<title>{title}</title>
-		<meta name="description" content={description || "Default site description"} />
-	<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="/src/styles/global.css">
-		<script
-			type="module"
-			src="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/duet.esm.js"
-			></script>
-		<script
-			nomodule
-			src="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/duet.js"
-			></script>
-		<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/themes/default.css"
+	<title>{title ? encodeURIComponent(title) : 'Default Title'}</title>
+		<meta
+			name="description"
+			content={description ? encodeURIComponent(description) : 'Default site description'}
 		/>
-	<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-	<link
-		rel="stylesheet"
-		href="https://unpkg.com/react-leaflet-markercluster/dist/styles.min.css"
-	/>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- Stylesheets -->
+		<link rel="stylesheet" href="../src/styles/global.css" />
 
-		<!-- Render schema data if provided -->
-	{schemaData && <Schema item={schemaData} />}
+		<link href="../node_modules/pagedone/src/css/pagedone.css" rel="stylesheet" />
+		<link href="../node_modules/leaflet/dist/leaflet.css" rel="stylesheet" />
+		<link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet" />
+
+
 </head>

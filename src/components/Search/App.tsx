@@ -1,12 +1,12 @@
 import { algoliasearch } from 'algoliasearch'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import {
+import React, { useRef, useState } from 'react'
 
-	Configure,
-	CurrentRefinements,
+import {
+	Breadcrumb,
 	InstantSearch,
-	Stats,
-	useClearRefinements, useCurrentRefinements,
+	Stats, useBreadcrumb,
+	useClearRefinements,
+	useCurrentRefinements,
 	useHits,
 	useHitsPerPage,
 	useInstantSearch,
@@ -18,7 +18,6 @@ import {
 } from 'react-instantsearch'
 
 import { createBrowserHistory } from 'history'
-import CustomGeoSearch from '@components/Search/MapComponent.tsx'
 import DateRangeSlider from '@components/Search/DateRangeSlider.tsx'
 import { Hit } from '@components/Search/Hit'
 import type { CustomHitType } from '../../types/CustomHitType.ts'
@@ -31,16 +30,16 @@ import { NoResultsBoundary } from '@components/Search/NoResultsBoundary.tsx'
 import { NoResults } from '@components/Search/NoResults.tsx'
 
 import {
-	faSearch,
 	faAngleDoubleLeft,
 	faAngleDoubleRight,
 	faAngleLeft,
 	faAngleRight,
-	faTimes, faFilter
+	faFilterCircleXmark,
+	faSearch
 } from '@fortawesome/free-solid-svg-icons'
-import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer } from 'react-leaflet'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ClearFilters } from '@components/Search/ClearFilters.tsx'
+import CustomHierarchicalMenu from '@components/Search/HierarchicalMenu.tsx'
 
 
 const customIcon = new L.DivIcon({
@@ -59,11 +58,12 @@ const history = createBrowserHistory()
 
 function createURL(routeState) {
 	const queryParameters: Record<string, string> = {}
-	if (routeState.q) {
-		queryParameters.q = routeState.q // Only add `q` if it has a value
-	}
-	const queryString = new URLSearchParams(queryParameters).toString()
+	if (routeState.q) queryParameters.q = routeState.q
+	if (routeState.page) queryParameters.page = String(routeState.page)
+	if (routeState.collection) queryParameters.collection = routeState.collection.join(',')
+	if (routeState.language) queryParameters.language = routeState.language.join(',')
 
+	const queryString = new URLSearchParams(queryParameters).toString()
 	return `${window.location.pathname}?${queryString}`
 }
 
@@ -94,21 +94,19 @@ function CustomCurrentRefinements(props) {
 	}
 
 	return (
-		<div className="space-y-2">
+		<div className="sm:hidden md:flex">
 
 			<ul className="space-y-1">
 				{items.map((item) => (
-					<li key={item.label} className="flex items-center space-x-2">
-
-						{item.refinements.map((refinement) => (
-							<button
-								key={refinement.label}
-								onClick={() => refine(refinement)}
-								className="px-2 py-1 text-xs font-medium text-white bg-sky-600 rounded hover:bg-sky-500"
-							>
-								{refinement.label} ✕
-							</button>
-						))}
+					<li key={item.label} className="flex items-center space-x-2">  {item.refinements.map((refinement) => (
+						<button
+							key={refinement.label}
+							onClick={() => refine(refinement)}
+							className="px-2 py-1 text-xs font-medium text-white bg-sky-600 rounded hover:bg-sky-500"
+						>
+							{refinement.label} ✕
+						</button>
+					))}
 					</li>
 				))}
 			</ul>
@@ -116,31 +114,117 @@ function CustomCurrentRefinements(props) {
 	)
 }
 
-function CustomHitsPerPage(props) {
-	const { items, refine, canRefine } = useHitsPerPage(props)
+function CustomBreadcrumb({ attributes }: { attributes: string[] }) {
+	const { items, canRefine, refine, createURL } = useBreadcrumb({ attributes })
+
+	if (!canRefine || items.length === 0) {
+		return null // Do not render breadcrumbs if there's nothing to refine
+	}
 
 	return (
-		<div className="hits-per-page-container">
-			<label htmlFor="Hits Per Page"
-						 className="block text-start mb-0.5 text-sm font-bold text-gray-700 dark:text-white"> Hits
-				per page:
-			</label>
-			<select
-				id="Hits Per Page"
-				className="p-2 rounded border"
-				onChange={(event) => refine(event.target.value)}
+		<nav
+			className="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+			aria-label="Breadcrumb">
+			<ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+				{items.map((item, index) => (
+					<li key={item.label} className="inline-flex items-center">
+						{/* Render the separator for all but the first breadcrumb */}
+						{index > 0 && (
+							<svg
+								className="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1"
+								aria-hidden="true"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 6 10"
+							>
+								<path
+									stroke="currentColor"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="2"
+									d="M1 9L5 5 1 1"
+								/>
+							</svg>
+						)}
+						<a
+							href={createURL(item.value)}
+							className={`${
+								item.isRefined
+									? 'text-blue-600 font-medium'
+									: 'text-sm font-medium text-gray-700 hover:text-blue-600'
+							}`}
+							onClick={(event) => {
+								event.preventDefault()
+								refine(item.value)
+							}}
+						>
+							{item.label}
+						</a>
+					</li>
+				))}
+			</ol>
+		</nav>
+	)
+}
+
+function CustomHitsPerPage(props) {
+	const { items, refine, canRefine } = useHitsPerPage(props)
+	const [isOpen, setIsOpen] = useState(false)
+
+	const toggleDropdown = () => {
+		setIsOpen((prev) => !prev)
+	}
+
+	return (
+		<div className="relative hits-per-page-container">
+			<button
+				id="hitsPerPageButton"
+				onClick={toggleDropdown}
+				type="button"
+				className="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
 				disabled={!canRefine}
 			>
-				{items.map((item) => (
-					<option
-						key={item.value}
-						value={item.value}
-						selected={item.isRefined}
-					>
-						{item.label}
-					</option>
-				))}
-			</select>
+				Hits per page
+				<svg
+					className="-me-0.5 ms-2 h-4 w-4"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					fill="none"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke="currentColor"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						d="m19 9-7 7-7-7"
+					/>
+				</svg>
+			</button>
+
+			{isOpen && (
+				<ul
+					className="absolute z-10 mt-2 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800"
+					onClick={() => setIsOpen(false)}
+				>
+					{items.map((item) => (
+						<li
+							key={item.value}
+							className={`block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-primary-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+								item.isRefined ? 'font-bold' : ''
+							}`}
+							onClick={() => {
+								refine(item.value)
+								setIsOpen(false)
+							}}
+						>
+							{item.label}
+						</li>
+					))}
+				</ul>
+			)}
 		</div>
 	)
 }
@@ -154,12 +238,14 @@ function CustomClearRefinements(props) {
 	}
 
 	return (
-		<button
-			onClick={() => refine()}
-			className="px-4 py-2 rounded-md font-medium bg-sky-600  text-white hover:bg-sky-700"
-		>
-			Clear All Filters
+
+		<button type="button"
+						onClick={() => refine()}
+						className=" float-right text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg text-xs px-2 py-2.5 text-center me-0  dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+			<FontAwesomeIcon icon={faFilterCircleXmark} className="pr-2" />
+			Clear Filters
 		</button>
+
 	)
 }
 
@@ -189,23 +275,75 @@ function CustomSortBy() {
 		// Set your default option here
 	})
 
-	return (
-		<div className="sort-by-container">
-			<label htmlFor="Sort By" className="block text-start mb-0.5 text-sm font-bold text-gray-700 dark:text-white">Sort
-				By</label>
+	const [isOpen, setIsOpen] = useState(false)
 
-			<select
-				id="Sort By"
-				onChange={(event) => refine(event.target.value)}
-				value={currentRefinement}
-				className="p-2 rounded border"
+	const toggleDropdown = () => {
+		setIsOpen((prev) => !prev)
+	}
+
+	return (
+		<div className="relative sort-by-container">
+			<button
+				id="sortDropdownButton1"
+				onClick={toggleDropdown}
+				type="button"
+				className="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
 			>
-				{options.map((option) => (
-					<option key={option.value} value={option.value}>
-						{option.label}
-					</option>
-				))}
-			</select>
+				<svg
+					className="-ms-0.5 me-2 h-4 w-4"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					fill="none"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke="currentColor"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						d="M7 4v16M7 4l3 3M7 4 4 7m9-3h6l-6 6h6m-6.5 10 3.5-7 3.5 7M14 18h4"
+					/>
+				</svg>
+				Sort
+				<svg
+					className="-me-0.5 ms-2 h-4 w-4"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					fill="none"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke="currentColor"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						d="m19 9-7 7-7-7"
+					/>
+				</svg>
+			</button>
+
+			{isOpen && (
+				<ul
+					className="absolute z-10 mt-2 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800"
+					onClick={() => setIsOpen(false)}
+				>
+					{options.map((option) => (
+						<li
+							key={option.value}
+							className={`block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100 hover:text-primary-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+								currentRefinement === option.value ? 'font-bold' : ''
+							}`}
+							onClick={() => refine(option.value)}
+						>
+							{option.label}
+						</li>
+					))}
+				</ul>
+			)}
 		</div>
 	)
 }
@@ -225,7 +363,7 @@ function CustomPagination(props) {
 
 	return (
 
-		<nav className="  flex justify-center mt-8 object-center" aria-label="Pagination">
+		<nav className="flex justify-center mt-8 object-center" aria-label="Pagination">
 			<ul className="inline-flex -space-x-px">
 				{/* First Page Button */}
 				<li>
@@ -298,43 +436,74 @@ function CustomPagination(props) {
 	)
 }
 
+/*
 function MobileFilters() {
-	// State to control the visibility of the filter menu
 	const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-	// Function to open and close the filter menu
 	const toggleFilterMenu = () => setIsFilterOpen(!isFilterOpen)
 
 	return (
 		<div>
-			{/* Button to open the filter menu */}
+			{/!* Styled filter button *!/}
 			<button
 				onClick={toggleFilterMenu}
-				className="md:hidden text-gray-700 bg-sky-700 p-2 rounded-full focus:outline-none hover:bg-blue-600"
-				aria-label="Open Filters"
+				type="button"
+				className=" md:hidden flex w-full items-center justify-end rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
 			>
-				<FontAwesomeIcon icon={faFilter} className="text-white text-xl" />
+				<svg
+					className="-ms-0.5 me-2 h-4 w-4"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					fill="none"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke="currentColor"
+						strokeLinecap="round"
+						strokeWidth="2"
+						d="M18.796 4H5.204a1 1 0 0 0-.753 1.659l5.302 6.058a1 1 0 0 1 .247.659v4.874a.5.5 0 0 0 .2.4l3 2.25a.5.5 0 0 0 .8-.4v-7.124a1 1 0 0 1 .247-.659l5.302-6.059c.566-.646.106-1.658-.753-1.658Z"
+					/>
+				</svg>
+				Filters
+				<svg
+					className="-me-0.5 ms-2 h-4 w-4"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					fill="none"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke="currentColor"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						d="m19 9-7 7-7-7"
+					/>
+				</svg>
 			</button>
 
-			{/* Filter menu, displayed only when isFilterOpen is true */}
+			{/!* Filter modal *!/}
 			{isFilterOpen && (
 				<div className="relative z-40 lg:hidden" role="dialog" aria-modal="true">
-					{/* Background overlay */}
+					{/!* Background overlay *!/}
 					<div
 						className="fixed inset-0 bg-black/25"
 						aria-hidden="true"
-						onClick={toggleFilterMenu} // Click outside to close
+						onClick={toggleFilterMenu}
 					></div>
-
+					{/!* Off-canvas filter menu *!/}
 					<div className="fixed inset-0 z-40 flex">
-						{/* Off-canvas menu */}
 						<div
-							className="relative ml-auto flex w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl">
+							className="relative ml-auto flex w-full max-w-xs flex-col sticky bg-white py-4 pb-12 shadow-xl">
 							<div className="flex items-center justify-between px-4">
 								<h2 className="text-lg font-medium text-gray-900">Filters</h2>
 								<button
 									type="button"
-									onClick={toggleFilterMenu} // Close the menu when clicked
+									onClick={toggleFilterMenu}
 									className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
 								>
 									<span className="sr-only">Close menu</span>
@@ -354,17 +523,13 @@ function MobileFilters() {
 									</svg>
 								</button>
 							</div>
+							{/!* Filter content *!/}
 							<form className="mt-4 border-t border-gray-200">
-
 								<div className="px-4 py-6">
 									<CustomRefinementList attribute="type" label="Type" key="type" />
 								</div>
-
 								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-
 								<div className="p-5 m-5">
-
 									<DateRangeSlider
 										title="Date"
 										dateFields={[
@@ -380,15 +545,11 @@ function MobileFilters() {
 											'startDate10', 'endDate10',
 											'startDate11', 'endDate11'
 										]}
-										minTimestamp={-15135361438} // Example start date in your data range
-										maxTimestamp={-631151999} // Example end date in your data range
-
+										minTimestamp={-15135361438}
+										maxTimestamp={-631151999}
 									/>
 								</div>
-
 								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-
 								<MapContainer
 									style={{ height: '500px' }}
 									center={[48.85, 2.35]}
@@ -400,11 +561,12 @@ function MobileFilters() {
 									/>
 								</MapContainer>
 								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-									<div className="pt-5  ">
-										<CustomToggleRefinement attribute="hasRealThumbnail" label="Only show items that have images" />
-
-									</div>
-
+								<div className="pt-5">
+									<CustomToggleRefinement
+										attribute="hasRealThumbnail"
+										label="Only show items that have images"
+									/>
+								</div>
 							</form>
 						</div>
 					</div>
@@ -413,6 +575,7 @@ function MobileFilters() {
 		</div>
 	)
 }
+*/
 
 function CustomRefinementList({ attribute, label }) {
 	const [isSearchVisible, setIsSearchVisible] = useState(false)
@@ -504,66 +667,64 @@ function CustomSearchBox(props) {
 		refine(newQuery)
 	}
 
-	function toggleSearchInput() {
-		setIsInputVisible(!isInputVisible)
-		if (!isInputVisible && inputRef.current) {
-			inputRef.current.focus()
-		}
-	}
+	/*	function toggleSearchInput() {
+			setIsInputVisible(!isInputVisible)
+			if (!isInputVisible && inputRef.current) {
+				inputRef.current.focus()
+			}
+		}*/
 
 	return (
-		<div className="flex items-center space-x-2 border border-gray-300 rounded-md p-2 bg-white dark:bg-gray-800">
-			{/* Search Icon as Toggle Button */}
-			<button
-				onClick={toggleSearchInput}
-				className="text-gray-400"
-				aria-label="Open search input"
-			>
-				<FontAwesomeIcon icon={faSearch} />
-			</button>
 
-			{/* Conditionally Render Search Form */}
-			{isInputVisible && (
-				<form
-					action=""
-					role="search"
-					noValidate
-					onSubmit={(event) => {
-						event.preventDefault()
-						event.stopPropagation()
-						if (inputRef.current) {
-							inputRef.current.blur()
-						}
+
+		<form
+			action=""
+			role="search"
+			noValidate
+			onSubmit={(event) => {
+				event.preventDefault()
+				event.stopPropagation()
+				if (inputRef.current) {
+					inputRef.current.blur()
+				}
+			}}
+			onReset={(event) => {
+				event.preventDefault()
+				event.stopPropagation()
+				setQuery('')
+				if (inputRef.current) {
+					inputRef.current.focus()
+				}
+			}}
+			className="col-span-2"
+		>
+			<label htmlFor="default-search"
+						 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+			<div className="relative">
+				<div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+					<button
+						// onClick={toggleSearchInput}
+						className="text-gray-400"
+						aria-label="Open search input"
+					>
+						<FontAwesomeIcon icon={faSearch} />
+					</button>
+				</div>
+				<input
+					ref={inputRef} placeholder="Search..."
+					spellCheck={false} type="search"
+					value={inputValue}
+					onChange={(event) => {
+						setQuery(event.currentTarget.value)
 					}}
-					onReset={(event) => {
-						event.preventDefault()
-						event.stopPropagation()
-						setQuery('')
-						if (inputRef.current) {
-							inputRef.current.focus()
-						}
-					}}
-					className="flex-3 flex items-center space-x-2"
-				>
-					<input
-						ref={inputRef}
+					autoFocus
+					className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+				/>
 
-						placeholder="Search for Rebecca Gratz, trade card, Portland, OR..."
-						spellCheck={false}
+			</div>
+		</form>
 
-						type="search"
-						value={inputValue}
-						onChange={(event) => {
-							setQuery(event.currentTarget.value)
-						}}
-						autoFocus
-						className="w-full h-10 p-4 text-lg bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-sky-500"
-					/>
 
-					<span hidden={!isSearchStalled}>Searching…</span>
-				</form>
-			)}
-		</div>
 	)
 }
 
@@ -605,118 +766,83 @@ function CustomToggleRefinement({ attribute, label }) {
 	)
 }
 
-
-
-
 function App() {
 
 
 	return (
-
-
 		<InstantSearch searchClient={searchClient} indexName="Dev_Kaplan" routing={true} insights={true}>
 			<div className="bg-white">
 				<div>
-
 					{/* Main content */}
 					<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-						<div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-
-							<h1 className="text-4xl font-bold tracking-tight text-gray-900">Search Results</h1>
-							<MobileFilters />
+						{/* Header Section */}
+						<div className="border-b border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4 py-4 items-center">
+							<h1 className="text-xl md:text-2xl font-bold text-gray-900">Explore</h1>
 							<CustomSearchBox />
 
-
 						</div>
-
+						<div className="flex flex-col sm:flex-row pt-1 sm:justify-between sm:items-center space-y-4 sm:space-y-0">
+							<CustomBreadcrumb
+								attributes={[
+									'categories.lvl0',
+									'categories.lvl1',
+									'categories.lvl2'
+								]}
+							/>
+						</div>
+						{/* Filters and Content Section */}
 						<section aria-labelledby="products-heading" className="pb-24 pt-6">
-							<h2 id="products-heading" className="sr-only">Filter</h2>
-							<span className="flex items-center justify-between mb-3">
-							<Stats />
-
-									<CustomCurrentRefinements />
-
-							</span>
-
-							<div className=" grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
-
+							<h2 id="products-heading" className="sr-only">Filters</h2>
+							<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 								{/* Desktop Filters */}
-								<form
-									className="hidden lg:block sticky top-8"> {/* Adjust `top-8` if you want more or less offset from the top */}
+								<aside
+									className=" lg:block sticky top-8 space-y-6 border-r pr-4 max-h-[calc(100vh-2rem)]  ">
 									<CustomClearRefinements />
 
-									<CustomRefinementList attribute="type" label="Type" />
-									<div className="border-b border-gray-200 py-6">
-										<CustomRefinementList attribute="collection" label="Collection" />
+									<CustomHierarchicalMenu
+										showMore={true}
+										attributes={['categories.lvl0', 'categories.lvl1', 'categories.lvl2']}
+									/>
+									<CustomRefinementList label="Collection" attribute="collection" />
+									<CustomRefinementList label="Language" attribute="language" />
+									<CustomToggleRefinement attribute="hasRealThumbnail" label="Only show items with images" />
+								</aside>
+
+
+								{/* Results and Sorting */}
+								<div className="lg:col-span-3 space-y-6">
+									{/* Stats, Sort, and Hits Per Page */}
+									<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
+										<Stats />
+										<div className="flex space-x-4">
+											<CustomSortBy />
+											<CustomHitsPerPage
+												items={[
+													{ label: '20 hits per page', value: 20, default: true },
+													{ label: '40 hits per page', value: 40 },
+													{ label: '80 hits per page', value: 80 }
+												]}
+											/>
+										</div>
 									</div>
-									<div className="border-b border-gray-200 py-6">
-
-										<CustomGeoSearch />
-
-									</div>
-									<div className="border-b border-gray-200 py-6">
-										<CustomToggleRefinement attribute="hasRealThumbnail" label="Only show items that have images" />
-									</div>
-
-									<div className="border-b border-gray-200 py-6">
-										<DateRangeSlider
-											title="Date"
-											dateFields={[
-												'startDate1', 'endDate1',
-												'startDate2', 'endDate2',
-												'startDate3', 'endDate3',
-												'startDate4', 'endDate4',
-												'startDate5', 'endDate5',
-												'startDate6', 'endDate6',
-												'startDate7', 'endDate7',
-												'startDate8', 'endDate8',
-												'startDate9', 'endDate9',
-												'startDate10', 'endDate10',
-												'startDate11', 'endDate11'
-											]}
-											minTimestamp={-15135361438} // Example start date in your data range
-											maxTimestamp={-631151999} // Example end date in your data range
-										/>
-									</div>
-								</form>
-
-								{/* Product grid */}
-								<div className="lg:col-span-3">
-									<span className="flex items-center justify-between mb-2">
-
-										<CustomSortBy />
-											<CustomHitsPerPage items={[
-												{ label: '20 hits per page', value: 20, default: true },
-												{ label: '40 hits per page', value: 40 },
-												{ label: '80 hits per page', value: 80 }
-											]} />
-
-									</span>
-									<NoResultsBoundary fallback={<NoResults />}>
-										<CustomHits />
-									</NoResultsBoundary>
-
 
 									{/* Hits */}
+									<NoResultsBoundary fallback={<NoResults />}>
+										<div className="">
+											<CustomHits />
+										</div>
+									</NoResultsBoundary>
 
-									<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-										{/* Render hits here or use a custom hit component */}
-									</div>
+									{/* Pagination */}
+									<CustomPagination />
 								</div>
 							</div>
-
-							<CustomPagination />
-
 						</section>
 					</main>
 				</div>
 			</div>
 		</InstantSearch>
-
-
 	)
 }
-
 
 export default App

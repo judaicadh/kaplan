@@ -1,14 +1,8 @@
 
 .header {
-  align-items: center;
-  background: linear-gradient(to bottom, #1d689d, #7db9e8);
-  background-size: cover;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 368px;
-  padding: 0.5rem 1rem;
+
+
+    padding: 1rem;
   text-align: center;
 }
 

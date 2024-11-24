@@ -14,29 +14,47 @@ module.exports = withMT({
   ],
   theme: {
     screens: {
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1536px",
+			'sm': '640px',
+			// => @media (min-width: 640px) { ... }
+
+			'md': '768px',
+			// => @media (min-width: 768px) { ... }
+
+			'lg': '1024px',
+			// => @media (min-width: 1024px) { ... }
+
+			'xl': '1280px',
+			// => @media (min-width: 1280px) { ... }
+
+			'2xl': '1536px'
+			// => @media (min-width: 1536px) { ... }
+
     },
     extend: {
       colors: {
-        primary: "#1DA1F2",
+				primary: '#15668a',
         secondary: "#14171A",
-        'white': '#ffffff',
-        'sky': {
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-        },
-
+				transparent: 'transparent',
+				current: 'currentColor',
+				black: colors.black,
+				white: colors.white,
+				gray: colors.gray,
+				emerald: colors.emerald,
+				indigo: colors.indigo,
+				yellow: colors.yellow,
+				'orient': {
+					50: '#f2fafd',
+					100: '#e4f2fa',
+					200: '#c2e6f5',
+					300: '#8cd3ed',
+					400: '#4fbbe1',
+					500: '#28a3cf',
+					600: '#1984b0',
+					700: '#15668a',
+					800: '#165976',
+					900: '#184a62',
+					950: '#102f41'
+				}
       },
       fontFamily: {
         sans: ["Graphik", "sans-serif"],
@@ -50,7 +68,7 @@ module.exports = withMT({
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
     require("@tailwindcss/aspect-ratio"),
-
+		require('@tailwindcss/container-queries')
 
     // You don't need to add 'flowbite/plugin' twice
   ],

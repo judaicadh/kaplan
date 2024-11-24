@@ -71,7 +71,7 @@ const formatRecord = (record) => {
     ...record,
     objectID: record.id,
     url: `${siteBaseUrl}item/${record.slug}`,
-    hasRealThumbnail: record.thumbnail !== "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",
+		hasRealThumbnail: (record.thumbnail && record.thumbnail.trim()) !== 'https://placehold.co/600x600.jpg?text=Image+Coming+Soon',
     date_ranges: dateRangeResults,
 
   };

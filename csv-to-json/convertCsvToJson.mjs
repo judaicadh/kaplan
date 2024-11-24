@@ -1,21 +1,142 @@
-import csv from 'csvtojson';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import csv from 'csvtojson'
+import fs from 'fs/promises'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvFilePath = path.join(__dirname, './Kaplan20240808 (35).csv')
-const jsonFilePath = path.join(__dirname, '../src/data/books.json');
+const csvFilePath = path.join(__dirname, './Kaplan20240808 (37).csv')
+const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 
+const typeToHierarchy = {
+	'Documents & Printed Matter': {
+		'Business & Finance': [
+			'Billhead',
+			'Receipt',
+			'Check',
+			'Stock/Bond Certificate',
+			'Ledger',
+			'Financial Record',
+			'Promissory Note',
+			'Bill of Exchange',
+			'Note Payable',
+			'Business Card',
+			'Lottery Ticket'
+		],
+		'Legal & Government': [
+			'Legal Document',
+			'Deed',
+			'Congressional Record',
+			'Government Record',
+			'License',
+			'Patent Application',
+			'Official Document',
+			'Passport',
+			'Petition',
+			'Contract',
+			'Will'
+		],
+		'Correspondence & Ephemera': [
+			'Letter',
+			'Envelope',
+			'Postcard',
+			'Greeting Card',
+			'Invitation',
+			'Calling Card',
+			'Trade Card',
+			'Blotter',
+			'Calendar',
+			'Program',
+			'Ticket',
+			'Playbill',
+			'Dance Card',
+			'Menu'
+		],
+		'Publications & Books': [
+			'Book',
+			'Periodical',
+			'Pamphlet',
+			'Catalogue',
+			'Almanac',
+			'Report',
+			'Bookplate',
+			'Printed Material'
+		],
+		'Certificates & Records': [
+			'Certificate',
+			'Baptismal Certificate',
+			'Marriage Document',
+			'Shipping Record',
+			'Military Record',
+			'Birth Certificate',
+			'Death Certificate'
+		]
+	},
+	'Visual & Artistic Works': {
+		'Photography': [
+			'Photograph',
+			'Cartes-de-visite',
+			'Cabinet photograph',
+			'Stereoscopic photograph',
+			'Albumen print',
+			'Salted paper print',
+			'Tintype',
+			'Daguerreotype'
+		],
+		'Prints & Artwork': [
+			'Print',
+			'Lithograph',
+			'Chromolithograph',
+			'Engraving',
+			'Etching',
+			'Drawing',
+			'Oil Painting',
+			'Watercolor',
+			'Map',
+			'Poster',
+			'Sheet Music'
+		],
+		'Other Visuals': ['Visual Works']
+	},
+	'Objects & Artifacts': {
+		'Money & Tokens': ['Currency', 'Token', 'Medal'],
+		'Household & Decorative': [
+			'Advertising Mirror',
+			'Bottle',
+			'Jug',
+			'Crock',
+			'Glassware',
+			'Lamp',
+			'Sign',
+			'Plaque',
+			'Textiles',
+			'Sampler'
+		],
+		'Personal & Ephemeral': [
+			'Playing Cards',
+			'Match Safe',
+			'Advertising Pin',
+			'Brush',
+			'Pouch',
+			'Timepiece'
+		],
+		'Three-Dimensional Objects': [
+			'Three-dimensional object',
+			'Sculpture',
+			'Object',
+			'Seal'
+		]
+	},
+	'Archival & Manuscript Materials': {
+		'Manuscripts & Collections': ['Manuscript', 'Diary', 'Scrapbook'],
+		'Archival Records': ['Archival Collection', 'Archival Materials']
+	}
+};
 
 (async () => {
     try {
-        const jsonArray = await csv({
-            separator: ',',
-        }).fromFile(csvFilePath);
-
+			const jsonArray = await csv({ separator: ',' }).fromFile(csvFilePath)
         const formattedData = jsonArray.map(item => {
             const datePairs = {};
             const startDates = item.start_date?.split('|').map(s => s.trim()).filter(Boolean) || [];
@@ -39,6 +160,30 @@ const jsonFilePath = path.join(__dirname, '../src/data/books.json');
                     if (isNaN(endTimestamp)) console.warn(`Invalid end timestamp for item ${item.id}: ${endString}`);
                 }
             }
+
+					const typeCategories = item.type ? item.type.split('|').map((sub) => sub.trim()) : []
+					const hierarchicalPaths = []
+
+					typeCategories.forEach((type) => {
+						for (const [lvl0, subcategories] of Object.entries(typeToHierarchy)) {
+							for (const [lvl1, types] of Object.entries(subcategories)) {
+								if (types.includes(type)) {
+									hierarchicalPaths.push({
+										lvl0,
+										lvl1: `${lvl0} > ${lvl1}`,
+										lvl2: `${lvl0} > ${lvl1} > ${type}`
+									})
+								}
+							}
+						}
+					})
+
+					const categories = {
+						'categories.lvl0': [...new Set(hierarchicalPaths.map((path) => path.lvl0))],
+						'categories.lvl1': [...new Set(hierarchicalPaths.map((path) => path.lvl1))],
+						'categories.lvl2': [...new Set(hierarchicalPaths.map((path) => path.lvl2))]
+					}
+
             return {
                 id: item.id?.toString() || "",
                 link: item.colendalink?.toString() || "",
@@ -46,13 +191,12 @@ const jsonFilePath = path.join(__dirname, '../src/data/books.json');
                 date1: item.date?.toString() || "",
                 collection: item.Collection?.toString() || "",
                 peopleURI: item.peopleuri?.toString() || "",
-                title: item['title from colenda']?.toString() || "Untitled",
-                type: item.type ? item.type.split('|').map(sub => sub.trim()) : [],
+							title: item.TitleAI?.toString().trim() || item['title from colenda']?.toString() || 'Untitled',
                 subtype: item.subtype ? item.subtype.split('|').map(sub => sub.trim()) : [],
                 PhysicalLocation: item['Updated Location']?.toString() || "",
-                description: item.description?.toString() || "",
+							description: item.AIDescription?.toString().trim() || item.description?.toString().trim() || '',
                 thumbnail: item.thumbnail?.toString() || "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",
-                manifestUrl: item.manifestUrl?.toString() || "",
+							manifestUrl: item.manifestUrl ? item.manifestUrl.split('|').map(sub => sub.trim()) : [],
                 franklinLink: item['Franklin Link']?.toString() || "",
                 cross: item.OBJECTS_CUSTOMFIELD_2?.toString() || "",
                 column_type: item.OBJECTS_COLTYPE?.toString() || "",
@@ -61,13 +205,11 @@ const jsonFilePath = path.join(__dirname, '../src/data/books.json');
                 subject: item.subject ? item.subject.split('|').map(sub => sub.trim()) : [],
                 language: item.language ? item.language.split('|').map(sub => sub.trim()) : [],
                 name: item.name ? item.name.split('|').map(sub => sub.trim()) : [],
-                object_type: item.OBJECTS_OBJTYPE ? item.OBJECTS_OBJTYPE.split('|').map(sub => sub.trim()) : [],
                 people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map(sub => sub.trim()) : [],
-
-                // Dynamically generated startDate and endDate fields
+							type: typeCategories,
+							...categories,
                 ...datePairs,
 
-                // New _geoloc field
                 _geoloc: item._geoloc
                   ? item._geoloc.split('|').map(pair => {
                       const [lng, lat] = pair.split(',').map(coord => parseFloat(coord.trim()));
@@ -77,9 +219,10 @@ const jsonFilePath = path.join(__dirname, '../src/data/books.json');
             };
         });
 
-        await fs.writeFile(jsonFilePath, JSON.stringify(formattedData, null, 2), 'utf-8');
-        console.log('CSV to JSON conversion completed with separate date fields.');
+
+			await fs.writeFile(jsonFilePath, JSON.stringify(formattedData, null, 2), 'utf-8')
+			console.log('CSV to JSON conversion completed with hierarchical categories.')
     } catch (err) {
-        console.error('Error converting CSV to JSON:', err);
+			console.error('Error converting CSV to JSON:', err)
     }
 })();

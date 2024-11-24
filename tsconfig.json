@@ -2,11 +2,18 @@
   "extends": "astro/tsconfigs/base",
   "compilerOptions": {
     "baseUrl": ".",
-    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
     "paths": {
-      "@components/*": ["src/components/*"]
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@samvera/clover-iiif/*": [
+        "node_modules/@samvera/clover-iiif/dist/*"
+      ]
     },
-
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "allowSyntheticDefaultImports": true,
@@ -17,13 +24,17 @@
     "strict": true,
     "noImplicitAny": false,
     "sourceMap": true,
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "rootDir": "src",
+    "allowJs": true,
+    "checkJs": false,
     "skipLibCheck": true
   },
   "include": [
     "src",
     "src/env.d.ts"
-    // if present
   ]
 }

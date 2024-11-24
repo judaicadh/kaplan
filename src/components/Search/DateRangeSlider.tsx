@@ -64,66 +64,69 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 	};
 
 	return (
-		<div className="flex flex-col justify-center">
-			<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">{title}</h3>
+		<div className="flex items-center mb-5 gap-1">
+			<div className="relative w-full">
 
-			<Slider
-				value={range}
-				sx={{
-					width: 300,
-					color: '#0284c7',
-					'& .MuiSlider-thumb': {
-						height: 24,
-						width: 24,
-						backgroundColor: '#fff',
-						border: '2px solid currentColor',
-						'&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
-							boxShadow: 'inherit',
-						},
-						'&::before': {
-							display: 'none',
-						},
-					},
-				}}
-				onChange={handleSliderChange}
-				min={minTimestamp}
-				max={maxTimestamp}
-				valueLabelDisplay="auto"
-				valueLabelFormat={(value) => dayjs(value * 1000).format('YYYY-MM-DD')}
-				marks={[
-					{ value: minTimestamp, label: dayjs(minTimestamp * 1000).format('YYYY') },
-					{ value: maxTimestamp, label: dayjs(maxTimestamp * 1000).format('YYYY') },
-				]}
-				className="w-full"
-			/>
+				<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">{title}</h3>
 
-			<div className="flex justify-between items-center mt-6 space-x-3">
-				<TextField
-					label="Start Date"
-					type="date"
-					size="small"
-					value={startDate.format('YYYY-MM-DD')}
-					onChange={handleStartDateChange}
-					className="flex-grow border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+				<Slider
+					value={range}
+					sx={{
+						width: 300,
+						color: '#0284c7',
+						'& .MuiSlider-thumb': {
+							height: 24,
+							width: 24,
+							backgroundColor: '#fff',
+							border: '2px solid currentColor',
+							'&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+								boxShadow: 'inherit'
+							},
+							'&::before': {
+								display: 'none'
+							}
+						}
+					}}
+					onChange={handleSliderChange}
+					min={minTimestamp}
+					max={maxTimestamp}
+					valueLabelDisplay="auto"
+					valueLabelFormat={(value) => dayjs(value * 1000).format('YYYY-MM-DD')}
+					marks={[
+						{ value: minTimestamp, label: dayjs(minTimestamp * 1000).format('YYYY') },
+						{ value: maxTimestamp, label: dayjs(maxTimestamp * 1000).format('YYYY') }
+					]}
+					className="w-full"
 				/>
 
-				<TextField
-					size="small"
-					label="End Date"
-					type="date"
-					value={endDate.format('YYYY-MM-DD')}
-					onChange={handleEndDateChange}
-					className="flex-grow border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+				<div className="flex justify-between items-center mt-6 space-x-3">
+					<TextField
+						label="Start Date"
+						type="date"
+						size="small"
+						value={startDate.format('YYYY-MM-DD')}
+						onChange={handleStartDateChange}
+						className="flex-grow border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+					/>
 
-				/>
+					<TextField
+						size="small"
+						label="End Date"
+						type="date"
+						value={endDate.format('YYYY-MM-DD')}
+						onChange={handleEndDateChange}
+						className="flex-grow border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+					/>
+				</div>
+
+				{/* Algolia Configure Component for filtering */
+				}
+				<Configure filters={filterString} />
 			</div>
-
-	{/* Algolia Configure Component for filtering */
-	}
-	<Configure filters={filterString} />
-</div>
-)
-	;
+		</div>
+	)
+		;
 };
 
-export default DateRangeSlider;
+export default DateRangeSlider
