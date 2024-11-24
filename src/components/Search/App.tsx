@@ -1,6 +1,6 @@
 import { algoliasearch } from 'algoliasearch'
 import React, { useRef, useState } from 'react'
-
+import L from 'leaflet'
 import {
 	Breadcrumb,
 	InstantSearch,
@@ -122,6 +122,7 @@ function CustomBreadcrumb({ attributes }: { attributes: string[] }) {
 	}
 
 	return (
+
 		<nav
 			className="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
 			aria-label="Breadcrumb">
@@ -149,7 +150,7 @@ function CustomBreadcrumb({ attributes }: { attributes: string[] }) {
 						<a
 							href={createURL(item.value)}
 							className={`${
-								item.isRefined
+								(item as any).isRefined
 									? 'text-blue-600 font-medium'
 									: 'text-sm font-medium text-gray-700 hover:text-blue-600'
 							}`}
@@ -436,7 +437,7 @@ function CustomPagination(props) {
 	)
 }
 
-/*
+
 function MobileFilters() {
 	const [isFilterOpen, setIsFilterOpen] = useState(false)
 
@@ -444,7 +445,7 @@ function MobileFilters() {
 
 	return (
 		<div>
-			{/!* Styled filter button *!/}
+
 			<button
 				onClick={toggleFilterMenu}
 				type="button"
@@ -486,16 +487,16 @@ function MobileFilters() {
 				</svg>
 			</button>
 
-			{/!* Filter modal *!/}
+
 			{isFilterOpen && (
 				<div className="relative z-40 lg:hidden" role="dialog" aria-modal="true">
-					{/!* Background overlay *!/}
+
 					<div
 						className="fixed inset-0 bg-black/25"
 						aria-hidden="true"
 						onClick={toggleFilterMenu}
 					></div>
-					{/!* Off-canvas filter menu *!/}
+
 					<div className="fixed inset-0 z-40 flex">
 						<div
 							className="relative ml-auto flex w-full max-w-xs flex-col sticky bg-white py-4 pb-12 shadow-xl">
@@ -523,7 +524,7 @@ function MobileFilters() {
 									</svg>
 								</button>
 							</div>
-							{/!* Filter content *!/}
+
 							<form className="mt-4 border-t border-gray-200">
 								<div className="px-4 py-6">
 									<CustomRefinementList attribute="type" label="Type" key="type" />
@@ -575,7 +576,7 @@ function MobileFilters() {
 		</div>
 	)
 }
-*/
+
 
 function CustomRefinementList({ attribute, label }) {
 	const [isSearchVisible, setIsSearchVisible] = useState(false)
