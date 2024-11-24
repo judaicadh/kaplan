@@ -13,6 +13,11 @@ const Clover: React.FC<CloverProps> = ({ manifestUrls }) => {
 		showTitle: false,
 		informationPanel: {
 			open: false // Example: Configure information panel visibility
+		},
+		openSeadragon: {
+			gestureSettingsMouse: {
+				scrollToZoom: true
+			}
 		}
 	}
 
