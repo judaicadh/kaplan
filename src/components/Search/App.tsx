@@ -99,7 +99,7 @@ const dateFields = [
 	'startDate9', 'endDate9',
 	'startDate10', 'endDate10',
 	'startDate11', 'endDate11'
-]
+];
 function CustomCurrentRefinements(props) {
 	const { items, canRefine, refine } = useCurrentRefinements(props)
 
@@ -780,7 +780,6 @@ function CustomToggleRefinement({ attribute, label }) {
 		</div>
 	)
 }
-
 const routing = {
 	router: history({
 		writeDelay: 400,

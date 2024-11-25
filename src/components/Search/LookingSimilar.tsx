@@ -14,7 +14,7 @@ function Item({ item }: { item: any }) {
 			<h3>{item.title}</h3>
 			<p>{item.description}</p>
 		</div>
-	)
+	);
 }
 
 const LookingSimilarComponent: React.FC<LookingSimilarComponentProps> = ({ objectID }) => {
@@ -32,7 +32,7 @@ const LookingSimilarComponent: React.FC<LookingSimilarComponentProps> = ({ objec
 		>
 			<LookingSimilar objectIDs={[objectID]} itemComponent={Item} />
 		</InstantSearch>
-	)
-}
+	);
+};
 
 export default LookingSimilarComponent

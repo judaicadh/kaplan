@@ -76,11 +76,11 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 			return ''
 		}
 		return year.toString()
-	}
+	};
 
 	const handleBlurStartDate = () => {
 		setStartDate((prev) => validateInput(prev, dayjs(minTimestamp * 1000).year(), dayjs(maxTimestamp * 1000).year()))
-	}
+	};
 
 	const handleBlurEndDate = () => {
 		setEndDate((prev) => validateInput(prev, dayjs(minTimestamp * 1000).year(), dayjs(maxTimestamp * 1000).year()))
@@ -108,7 +108,7 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 						width: 24,
 						backgroundColor: '#fff',
 						border: '2px solid currentColor'
-					}
+					},
 				}}
 			/>
 			<div className="pt-4">

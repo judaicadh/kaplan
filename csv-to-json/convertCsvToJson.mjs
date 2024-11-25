@@ -143,7 +143,7 @@ const isValidTimestamp = (timestamp) => {
 	try {
 		const jsonArray = await csv({
 			separator: ','
-		}).fromFile(csvFilePath)
+		}).fromFile(csvFilePath);
 
 		const formattedData = jsonArray.map(item => {
 			const datePairs = {}
