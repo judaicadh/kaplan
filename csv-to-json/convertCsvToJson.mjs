@@ -22,6 +22,9 @@ const typeToHierarchy = {
 			'Bill of Exchange',
 			'Note Payable',
 			'Business Card',
+			'Currency',
+			'Trade Card',
+			'Token',
 			'Lottery Ticket'
 		],
 		'Legal & Government': [
@@ -61,11 +64,18 @@ const typeToHierarchy = {
 			'Almanac',
 			'Report',
 			'Bookplate',
-			'Printed Material'
+			'Printed Material',
+			'Sheet Music',
+			'Manuscript',
+			'Diary',
+			'Scrapbook',
+			'Archival Materials'
 		],
 		'Certificates & Records': [
 			'Certificate',
 			'Baptismal Certificate',
+			'Government Record',
+			'Congressional Report',
 			'Marriage Document',
 			'Shipping Record',
 			'Military Record',
@@ -77,12 +87,12 @@ const typeToHierarchy = {
 		'Photography': [
 			'Photograph',
 			'Cartes-de-visite',
-			'Cabinet photograph',
-			'Stereoscopic photograph',
-			'Albumen print',
-			'Salted paper print',
-			'Tintype',
-			'Daguerreotype'
+			'Cabinet Photographs',
+			'Stereoscopic Photographs',
+			'Albumen Prints',
+			'Salted Paper Prints',
+			'Tintypes',
+			'Daguerreotypes'
 		],
 		'Prints & Artwork': [
 			'Print',
@@ -91,17 +101,19 @@ const typeToHierarchy = {
 			'Engraving',
 			'Etching',
 			'Drawing',
+			'Micrography',
 			'Oil Painting',
 			'Watercolor',
 			'Map',
 			'Poster',
-			'Sheet Music'
+			'Plaque',
+			'Woodcuts',
+			'Sculpture'
 		],
-		'Other Visuals': ['Visual Works']
+		'Other Visuals': ['Visual Works'],
+		'Textiles': ['Samplers']
 	},
-	'Objects & Artifacts': {
-		'Money & Tokens': ['Currency', 'Token', 'Medal'],
-		'Household & Decorative': [
+	'Objects & Artifacts': [
 			'Advertising Mirror',
 			'Bottle',
 			'Jug',
@@ -110,28 +122,19 @@ const typeToHierarchy = {
 			'Lamp',
 			'Sign',
 			'Plaque',
-			'Textiles',
-			'Sampler'
-		],
-		'Personal & Ephemeral': [
+		'Sampler',
+		'Seal',
 			'Playing Cards',
 			'Match Safe',
 			'Advertising Pin',
 			'Brush',
 			'Pouch',
-			'Timepiece'
-		],
-		'Three-Dimensional Objects': [
+		'Timepiece',
 			'Three-dimensional object',
-			'Sculpture',
-			'Object',
-			'Seal'
-		]
-	},
-	'Archival & Manuscript Materials': {
-		'Manuscripts & Collections': ['Manuscript', 'Diary', 'Scrapbook'],
-		'Archival Records': ['Archival Collection', 'Archival Materials']
-	}
+		'Advertising Object'
+
+	],
+
 };
 
 const isValidTimestamp = (timestamp) => {
@@ -205,6 +208,7 @@ const isValidTimestamp = (timestamp) => {
                 thumbnail: item.thumbnail?.toString() || "https://placehold.co/600x600.jpg?text=Image+Coming+Soon",
 							manifestUrl: item.manifestUrl ? item.manifestUrl.split('|').map(sub => sub.trim()) : [],
                 franklinLink: item['Franklin Link']?.toString() || "",
+							subcollection: item.collectionname?.toString() || '',
                 cross: item.OBJECTS_CUSTOMFIELD_2?.toString() || "",
                 column_type: item.OBJECTS_COLTYPE?.toString() || "",
                 dateC: item.OBJECTS_DATE?.toString() || "",
