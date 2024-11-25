@@ -22,8 +22,6 @@ const typeToHierarchy = {
 			'Bill of Exchange',
 			'Note Payable',
 			'Business Card',
-		],
-		'Financial Instruments': [
 			'Currency',
 			'Token',
 			'Lottery Ticket',
@@ -86,7 +84,9 @@ const typeToHierarchy = {
 			'Sheet Music',
 		],
 		'Periodicals': [
-			'Periodical'
+			'Periodical',
+			'Newspaper',
+			'Serial'
 		],
 		'Manuscripts & Archives': [
 			'Manuscript',
@@ -100,6 +100,7 @@ const typeToHierarchy = {
 		'Objects': [
 			'Mezuzah',
 			'Parochet',
+			'Ketubah',
 			'Menorah',
 			'Kiddush Cup'
 		],
@@ -127,6 +128,8 @@ const typeToHierarchy = {
 			'Oil Painting',
 			'Watercolor',
 			'Map',
+			'Sketches',
+			'Pastel',
 			'Poster',
 			'Plaque',
 			'Woodcuts',
@@ -136,7 +139,8 @@ const typeToHierarchy = {
 			'Visual Works',
 			'Textiles',
 			'Samplers',
-			'Silver'
+			'Silver',
+			'Lamp'
 		],
 	},
 	'Objects & Artifacts': {
@@ -154,6 +158,7 @@ const typeToHierarchy = {
 			'Playing Cards',
 			'Match Safe',
 			'Advertising Pin',
+			'Political Ribbon',
 			'Brush',
 			'Pouch',
 			'Timepiece',
@@ -162,6 +167,8 @@ const typeToHierarchy = {
 		],
 	},
 };
+
+
 const isValidTimestamp = (timestamp) => {
 	const minTimestamp = Math.floor(new Date('1300-01-01T00:00:00Z').getTime() / 1000) // January 1, 1300
 	const maxTimestamp = Math.floor(Date.now() / 1000) // Current date in seconds
