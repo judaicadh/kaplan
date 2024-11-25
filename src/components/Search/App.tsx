@@ -1,9 +1,11 @@
 import { algoliasearch } from 'algoliasearch'
 import React, { useRef, useState } from 'react'
+import { history } from 'instantsearch.js/es/lib/routers'
+
 import L from 'leaflet'
 import {
 	Breadcrumb,
-	InstantSearch,
+	InstantSearch, RefinementList,
 	Stats, useBreadcrumb,
 	useClearRefinements,
 	useCurrentRefinements,
@@ -40,6 +42,7 @@ import {
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import CustomHierarchicalMenu from '@components/Search/HierarchicalMenu.tsx'
+import instantsearch from 'instantsearch.js'
 
 
 const customIcon = new L.DivIcon({
@@ -54,7 +57,6 @@ const customIcon = new L.DivIcon({
 
 const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
 
-const history = createBrowserHistory()
 
 function createURL(routeState) {
 	const queryParameters: Record<string, string> = {}
@@ -85,7 +87,19 @@ const stateMapping = {
 		}
 	}
 }
-
+const dateFields = [
+	'startDate1', 'endDate1',
+	'startDate2', 'endDate2',
+	'startDate3', 'endDate3',
+	'startDate4', 'endDate4',
+	'startDate5', 'endDate5',
+	'startDate6', 'endDate6',
+	'startDate7', 'endDate7',
+	'startDate8', 'endDate8',
+	'startDate9', 'endDate9',
+	'startDate10', 'endDate10',
+	'startDate11', 'endDate11'
+]
 function CustomCurrentRefinements(props) {
 	const { items, canRefine, refine } = useCurrentRefinements(props)
 
@@ -593,19 +607,19 @@ function CustomRefinementList({ attribute, label }) {
 	const toggleSearch = () => setIsSearchVisible(!isSearchVisible)
 
 	return (
-		<div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+		<div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
 	<span className="flex items-center justify-between mb-3">
 	<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{label}</h3>
 
 		{/* Search Icon */}
-		<button
+		{/*	<button
 			type="button"
 			onClick={toggleSearch}
 			className="p-2 text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-300"
 			aria-label={`Search by ${label}`}
 		>
 		<FontAwesomeIcon icon={faSearch} />
-	</button>
+	</button>*/}
 </span>
 			{/* Conditionally render search input */}
 			{isSearchVisible && (
@@ -767,11 +781,32 @@ function CustomToggleRefinement({ attribute, label }) {
 	)
 }
 
+const routing = {
+	router: history({
+		writeDelay: 400,
+		cleanUrlOnDispose: true,
+		createURL({ qsModule, location, routeState }) {
+			const { origin, pathname, hash } = location
+			const indexState = routeState['instant_search'] || {}
+			const queryString = qsModule.stringify(routeState)
+
+			if (!indexState.query) {
+				return `${origin}${pathname}${hash}`
+			}
+
+			return `${origin}${pathname}?${queryString}${hash}`
+		},
+	}),
+};
 function App() {
 
 
 	return (
-		<InstantSearch searchClient={searchClient} indexName="Dev_Kaplan" routing={true} insights={true}>
+		<InstantSearch
+			searchClient={searchClient}
+			indexName="Dev_Kaplan"
+
+			insights={true}>
 			<div className="bg-white">
 				<div>
 					{/* Main content */}
@@ -797,7 +832,7 @@ function App() {
 							<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 								{/* Desktop Filters */}
 								<aside
-									className=" lg:block sticky top-8 space-y-6 border-r pr-4 max-h-[calc(100vh-2rem)]  ">
+									className=" lg:block   top-8 space-y-6 border-r pr-4 max-h-[calc(100vh-2rem)]  ">
 									<CustomClearRefinements />
 
 									<CustomHierarchicalMenu
@@ -806,7 +841,17 @@ function App() {
 									/>
 									<CustomRefinementList label="Collection" attribute="collection" />
 									<CustomRefinementList label="Language" attribute="language" />
+
+									<DateRangeSlider
+										title="Date"
+
+										dateFields={dateFields}
+										minTimestamp={-15135361438}
+										maxTimestamp={-631151999}
+
+									/>
 									<CustomToggleRefinement attribute="hasRealThumbnail" label="Only show items with images" />
+									<CustomRefinementList label="Name" attribute="name" />
 								</aside>
 
 

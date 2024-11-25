@@ -58,10 +58,10 @@ const HierarchicalList = React.memo(function HierarchicalList({
 						href={createURL(item.value)}
 						aria-current={item.isRefined ? 'page' : undefined}
 						aria-expanded={!!item.data}
-						className={`block py-2 px-3 rounded-lg font-medium transition-all ${
+						className={`block py-2  px-3 text-sm  rounded-lg font-medium transition-all ${
 							item.isRefined
-								? 'bg-sky-100 text-sky-700 font-semibold'
-								: 'text-gray-700 hover:bg-gray-100'
+								? 'bg-sky-100 text-sky-700 underline font-semibold'
+								: 'text-gray-700 text-sm hover:bg-gray-100'
 						}`}
 						onClick={(event) => {
 							if (isModifierClick(event)) {
@@ -74,7 +74,8 @@ const HierarchicalList = React.memo(function HierarchicalList({
 					>
 						<div className="flex items-center justify-between">
 							<span>{item.label}</span>
-							<span className="ml-2 text-xs text-gray-500">{item.count}</span>
+							<span
+								className="ml-2  bg-gray-100 text-gray-800 text-xs font-medium   px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{item.count}</span>
 							{item.data && item.data.length > 0 && (
 								<svg
 									className={`w-4 h-4 ml-2 ${

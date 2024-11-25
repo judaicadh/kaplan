@@ -134,32 +134,39 @@ const typeToHierarchy = {
 	}
 };
 
+const isValidTimestamp = (timestamp) => {
+	const minTimestamp = Math.floor(new Date('1300-01-01T00:00:00Z').getTime() / 1000) // January 1, 1300
+	const maxTimestamp = Math.floor(Date.now() / 1000) // Current date in seconds
+	return timestamp >= minTimestamp && timestamp <= maxTimestamp
+};
 (async () => {
-    try {
-			const jsonArray = await csv({ separator: ',' }).fromFile(csvFilePath)
-        const formattedData = jsonArray.map(item => {
-            const datePairs = {};
-            const startDates = item.start_date?.split('|').map(s => s.trim()).filter(Boolean) || [];
-            const endDates = item.end_date?.split('|').map(s => s.trim()).filter(Boolean) || [];
-            const maxLength = Math.min(startDates.length, endDates.length);
+	try {
+		const jsonArray = await csv({
+			separator: ','
+		}).fromFile(csvFilePath)
 
-            for (let i = 0; i < maxLength; i++) {
-                const startString = startDates[i];
-                const endString = endDates[i];
+		const formattedData = jsonArray.map(item => {
+			const datePairs = {}
+			const startDates = item.start_date?.split('|').map(s => s.trim()).filter(Boolean) || []
+			const endDates = item.end_date?.split('|').map(s => s.trim()).filter(Boolean) || []
+			const maxLength = Math.min(startDates.length, endDates.length)
 
-                // Use Date.parse() and convert milliseconds to seconds
-                const startTimestamp = Date.parse(startString) / 1000; // Convert to seconds
-                const endTimestamp = Date.parse(endString) / 1000; // Convert to seconds
+			for (let i = 0; i < maxLength; i++) {
+				const startTimestamp = parseInt(startDates[i], 10) // Convert string to integer
+				const endTimestamp = parseInt(endDates[i], 10)
 
-                // Check for valid timestamps and assign dynamically as startDate1, endDate1, etc.
-                if (!isNaN(startTimestamp) && !isNaN(endTimestamp)) {
-                    datePairs[`startDate${i + 1}`] = startTimestamp;
-                    datePairs[`endDate${i + 1}`] = endTimestamp;
-                } else {
-                    if (isNaN(startTimestamp)) console.warn(`Invalid start timestamp for item ${item.id}: ${startString}`);
-                    if (isNaN(endTimestamp)) console.warn(`Invalid end timestamp for item ${item.id}: ${endString}`);
-                }
-            }
+				if (isValidTimestamp(startTimestamp)) {
+					datePairs[`startDate${i + 1}`] = startTimestamp
+				} else {
+					console.warn(`Invalid start timestamp for item ${item.id}: ${startTimestamp}`)
+				}
+
+				if (isValidTimestamp(endTimestamp)) {
+					datePairs[`endDate${i + 1}`] = endTimestamp
+				} else {
+					console.warn(`Invalid end timestamp for item ${item.id}: ${endTimestamp}`)
+				}
+			}
 
 					const typeCategories = item.type ? item.type.split('|').map((sub) => sub.trim()) : []
 					const hierarchicalPaths = []
@@ -206,7 +213,6 @@ const typeToHierarchy = {
                 language: item.language ? item.language.split('|').map(sub => sub.trim()) : [],
                 name: item.name ? item.name.split('|').map(sub => sub.trim()) : [],
                 people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map(sub => sub.trim()) : [],
-							type: typeCategories,
 							...categories,
                 ...datePairs,
 
