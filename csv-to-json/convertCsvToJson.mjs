@@ -10,8 +10,8 @@ const csvFilePath = path.join(__dirname, './Kaplan20240808 (37).csv')
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 
 const typeToHierarchy = {
-	'Documents & Printed Matter': {
-		'Business & Finance': [
+	'Business & Financial': {
+		'Printed Material': [
 			'Billhead',
 			'Receipt',
 			'Check',
@@ -19,6 +19,7 @@ const typeToHierarchy = {
 			'Ledger',
 			'Financial Record',
 			'Promissory Note',
+			'Shipping Record',
 			'Bill of Exchange',
 			'Note Payable',
 			'Business Card',
@@ -27,38 +28,34 @@ const typeToHierarchy = {
 			'Token',
 			'Lottery Ticket'
 		],
-		'Legal & Government': [
+	},
+	'Legal & Governmental': {
+		'Legal Documents': [
 			'Legal Document',
 			'Deed',
-			'Congressional Record',
-			'Government Record',
-			'License',
-			'Patent Application',
-			'Official Document',
-			'Passport',
 			'Petition',
 			'Contract',
 			'Will'
 		],
-		'Correspondence & Ephemera': [
-			'Letter',
-			'Envelope',
-			'Postcard',
-			'Greeting Card',
-			'Invitation',
-			'Calling Card',
-			'Trade Card',
-			'Blotter',
-			'Calendar',
-			'Program',
-			'Ticket',
-			'Playbill',
-			'Dance Card',
-			'Menu'
+		'Government and Military Related': [
+			'Congressional Record',
+			'Government Record',
+			'License',
+			'Congressional Report',
+			'Military Record',
+			'Patent Application',
+			'Official Document',
+			'Passport',
+			'Certificate',
+			'Baptismal Certificate',
+			'Marriage Document',
+			'Birth Certificate',
+			'Death Certificate'
 		],
-		'Publications & Books': [
+	},
+	'Publications & Books': {
+		'Book': [
 			'Book',
-			'Periodical',
 			'Pamphlet',
 			'Catalogue',
 			'Almanac',
@@ -66,21 +63,29 @@ const typeToHierarchy = {
 			'Bookplate',
 			'Printed Material',
 			'Sheet Music',
+			'Religious Related Books',
+			'Military Related Books'
+		],
+		'Serial': [
+			'Periodical'
+		],
+		'Manuscript': [
 			'Manuscript',
 			'Diary',
 			'Scrapbook',
-			'Archival Materials'
+			'Archival Materials',
+			'Military Related Letters'
 		],
-		'Certificates & Records': [
-			'Certificate',
-			'Baptismal Certificate',
-			'Government Record',
-			'Congressional Report',
-			'Marriage Document',
-			'Shipping Record',
-			'Military Record',
-			'Birth Certificate',
-			'Death Certificate'
+	},
+	'Ritual Documents and Objects': {
+		'Documents': [
+			'Religious Related Books'
+		],
+		'Objects': [
+			'Mezuzah',
+			'Parochet',
+			'Menorah',
+			'Kiddush Cup'
 		],
 	},
 	'Visual & Artistic Works': {
@@ -94,13 +99,14 @@ const typeToHierarchy = {
 			'Tintypes',
 			'Daguerreotypes'
 		],
-		'Prints & Artwork': [
+		'Artwork': [
 			'Print',
 			'Lithograph',
 			'Chromolithograph',
 			'Engraving',
 			'Etching',
 			'Drawing',
+			'Pastel',
 			'Micrography',
 			'Oil Painting',
 			'Watercolor',
@@ -110,31 +116,51 @@ const typeToHierarchy = {
 			'Woodcuts',
 			'Sculpture'
 		],
-		'Other Visuals': ['Visual Works'],
-		'Textiles': ['Samplers']
+		'Other Visuals': [
+			'Visual Works',
+			'Textiles',
+			'Samplers',
+			'Silver'
+		]
 	},
-	'Objects & Artifacts': [
-		'Advertising Mirror',
-		'Bottle',
-		'Jug',
-		'Crock',
-		'Glassware',
-		'Lamp',
-		'Sign',
-		'Plaque',
-		'Sampler',
-		'Seal',
-		'Playing Cards',
-		'Match Safe',
-		'Advertising Pin',
-		'Brush',
-		'Pouch',
-		'Timepiece',
-		'Three-dimensional object',
-		'Advertising Object'
-	],
+	'Objects & Ephemera': {
+		'Advertising Objects': [
+			'Advertising Mirror',
+			'Bottle',
+			'Jug',
+			'Crock',
+			'Glassware',
+			'Lamp',
+			'Sign',
+			'Token',
+			'Plaque',
+			'Sampler',
+			'Seal',
+			'Playing Cards',
+			'Match Safe',
+			'Advertising Pin',
+			'Brush',
+			'Pouch',
+			'Timepiece',
+			'Three-dimensional object',
+			'Advertising Object'
+		],
+		'Documents': [
+			'Envelope',
+			'Postcard',
+			'Greeting Card',
+			'Invitation',
+			'Calling Card',
+			'Blotter',
+			'Calendar',
+			'Program',
+			'Ticket',
+			'Playbill',
+			'Dance Card',
+			'Menu'
+		]
+	}
 };
-
 const isValidTimestamp = (timestamp) => {
 	const minTimestamp = Math.floor(new Date('1300-01-01T00:00:00Z').getTime() / 1000) // January 1, 1300
 	const maxTimestamp = Math.floor(Date.now() / 1000) // Current date in seconds

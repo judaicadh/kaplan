@@ -840,7 +840,7 @@ function App() {
 									/>
 									<CustomRefinementList label="Collection" attribute="collection" />
 									<CustomRefinementList label="Language" attribute="language" />
-									<CustomRefinementList label="Archival Collection" attribute="collectionname" />
+									<CustomRefinementList label="Archival Collection" attribute="subcollection" />
 
 									<DateRangeSlider
 										title="Date"
