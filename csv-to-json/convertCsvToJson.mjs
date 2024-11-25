@@ -81,7 +81,7 @@ const typeToHierarchy = {
 			'Military Record',
 			'Birth Certificate',
 			'Death Certificate'
-		]
+		],
 	},
 	'Visual & Artistic Works': {
 		'Photography': [
@@ -114,27 +114,25 @@ const typeToHierarchy = {
 		'Textiles': ['Samplers']
 	},
 	'Objects & Artifacts': [
-			'Advertising Mirror',
-			'Bottle',
-			'Jug',
-			'Crock',
-			'Glassware',
-			'Lamp',
-			'Sign',
-			'Plaque',
+		'Advertising Mirror',
+		'Bottle',
+		'Jug',
+		'Crock',
+		'Glassware',
+		'Lamp',
+		'Sign',
+		'Plaque',
 		'Sampler',
 		'Seal',
-			'Playing Cards',
-			'Match Safe',
-			'Advertising Pin',
-			'Brush',
-			'Pouch',
+		'Playing Cards',
+		'Match Safe',
+		'Advertising Pin',
+		'Brush',
+		'Pouch',
 		'Timepiece',
-			'Three-dimensional object',
+		'Three-dimensional object',
 		'Advertising Object'
-
 	],
-
 };
 
 const isValidTimestamp = (timestamp) => {
