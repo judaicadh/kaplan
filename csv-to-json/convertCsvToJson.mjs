@@ -11,22 +11,24 @@ const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 
 const typeToHierarchy = {
 	'Business & Financial': {
-		'Printed Material': [
+		'Business Documents': [
 			'Billhead',
 			'Receipt',
 			'Check',
 			'Stock/Bond Certificate',
 			'Ledger',
-			'Financial Record',
 			'Promissory Note',
 			'Shipping Record',
 			'Bill of Exchange',
 			'Note Payable',
 			'Business Card',
+		],
+		'Financial Instruments': [
 			'Currency',
-			'Trade Card',
 			'Token',
-			'Lottery Ticket'
+			'Lottery Ticket',
+			'Trade Card',
+			'Financial Record'
 		],
 	},
 	'Legal & Governmental': {
@@ -37,7 +39,7 @@ const typeToHierarchy = {
 			'Contract',
 			'Will'
 		],
-		'Government and Military Related': [
+		'Governmental Records': [
 			'Congressional Record',
 			'Government Record',
 			'License',
@@ -53,8 +55,27 @@ const typeToHierarchy = {
 			'Death Certificate'
 		],
 	},
-	'Publications & Books': {
-		'Book': [
+	'Correspondence & Ephemera': {
+		'Personal & Social Documents': [
+			'Letter',
+			'Envelope',
+			'Postcard',
+			'Greeting Card',
+			'Invitation',
+			'Calling Card'
+		],
+		'Event Materials': [
+			'Blotter',
+			'Calendar',
+			'Program',
+			'Ticket',
+			'Playbill',
+			'Dance Card',
+			'Menu'
+		]
+	},
+	'Publications & Written Works': {
+		'Books & Pamphlets': [
 			'Book',
 			'Pamphlet',
 			'Catalogue',
@@ -63,24 +84,19 @@ const typeToHierarchy = {
 			'Bookplate',
 			'Printed Material',
 			'Sheet Music',
-			'Religious Related Books',
-			'Military Related Books'
 		],
-		'Serial': [
+		'Periodicals': [
 			'Periodical'
 		],
-		'Manuscript': [
+		'Manuscripts & Archives': [
 			'Manuscript',
 			'Diary',
 			'Scrapbook',
 			'Archival Materials',
-			'Military Related Letters'
 		],
 	},
-	'Ritual Documents and Objects': {
-		'Documents': [
-			'Religious Related Books'
-		],
+	'Ritual Documents & Objects': {
+		'Documents': [],
 		'Objects': [
 			'Mezuzah',
 			'Parochet',
@@ -121,9 +137,9 @@ const typeToHierarchy = {
 			'Textiles',
 			'Samplers',
 			'Silver'
-		]
+		],
 	},
-	'Objects & Ephemera': {
+	'Objects & Artifacts': {
 		'Advertising Objects': [
 			'Advertising Mirror',
 			'Bottle',
@@ -132,7 +148,6 @@ const typeToHierarchy = {
 			'Glassware',
 			'Lamp',
 			'Sign',
-			'Token',
 			'Plaque',
 			'Sampler',
 			'Seal',
@@ -145,21 +160,7 @@ const typeToHierarchy = {
 			'Three-dimensional object',
 			'Advertising Object'
 		],
-		'Documents': [
-			'Envelope',
-			'Postcard',
-			'Greeting Card',
-			'Invitation',
-			'Calling Card',
-			'Blotter',
-			'Calendar',
-			'Program',
-			'Ticket',
-			'Playbill',
-			'Dance Card',
-			'Menu'
-		]
-	}
+	},
 };
 const isValidTimestamp = (timestamp) => {
 	const minTimestamp = Math.floor(new Date('1300-01-01T00:00:00Z').getTime() / 1000) // January 1, 1300
