@@ -4,119 +4,143 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 ---
 <BaseLayout />
 <section class="py-24">
+	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+		<h2 class="font-manrope mb-8 text-4xl font-bold text-black max-lg:text-center">Highlights</h2>
+		<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+			<!-- Card 1 -->
+			<div
+				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				<div class="relative overflow-hidden rounded-md text-white">
+					<img class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-cover
+					 transition-transform duration-500 group-hover:scale-110" src="/Tobias.jpg" alt="Tobias Archive Image" />
+				</div>
+				<div class="flex flex-1 flex-col justify-between p-4">
+					<div>
+						<h6 class="text-xl font-semibold text-teal-800">Tobias Archive</h6>
+						<p class="mt-2 font-light leading-normal text-teal-600">The Tobias Archive contains over 750 pages of
+							business and personal correspondence, receipts, and legal documents from 1816 to 1865, with some extending
+							to 1886, capturing the rich history of the Tobias family.</p>
+					</div>
+					<div class="mt-4">
+						<button
+							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							type="button">See the Collection
+						</button>
+					</div>
+				</div>
+			</div>
 
-	<div class="mx-auto max-w-7xl px-4 pb-4 sm:px-6 lg:px-8">
-		<h2 class="font-manrope font-bold text-4xl text-black mb-8 max-xl:text-center">Featured Collections</h2>
-		<h4 class="mb-2">By Type</h4>
-		<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
+			<!-- Repeat for other cards -->
 
-			<a href="javascript:"
-				 class="relative bg-cover group rounded-3xl bg-center overflow-hidden mx-auto sm:mr-0 xl:mx-auto cursor-pointer">
-				<img class="rounded-2xl object-cover" src="https://pagedone.io/asset/uploads/1700731972.png" alt="Jacket image">
-				<div
-					class="absolute z-10 bottom-3 left-0 mx-3 p-3 bg-white w-[calc(100%-24px)] rounded-xl shadow-sm shadow-transparent transition-all duration-500 group-hover:shadow-indigo-200 group-hover:bg-indigo-50">
-					<div class="flex items-center justify-between mb-2">
-						<h6 class="font-semibold text-base leading-7 text-black ">Trendy Jacket</h6>
-						<h6 class="font-semibold text-base leading-7 text-indigo-600 text-right">$100</h6>
+			<div
+				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				<div class="relative overflow-hidden rounded-md text-white">
+					<img
+						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-cover transition-transform duration-500 group-hover:scale-110"
+						src="/BrazilianArchive.jpg" alt="Gouvea, Brandão, and Pantoja Archive" />
+				</div>
+				<div class="flex flex-1 flex-col justify-between p-4">
+					<div>
+						<h6 class="text-xl font-semibold text-teal-800">Gouvea, Brandão, and Pantoja Archive</h6>
+						<p class="mt-2 font-light leading-normal text-teal-600">A significant archive of Brazilian documents
+							detailing Jewish involvement in the sugar trade, including three handwritten letters ([1648?]-1650), seven
+							genealogical records of the Gouvea, Brandão, and Pantoja families, and a 50-page typescript
+							transcription.</p>
 					</div>
-					<p class="text-xs leading-5 text-gray-500">Women's Winter Wear</p>
-				</div>
-			</a>
-			<a href="javascript:"
-				 class="relative bg-cover group rounded-3xl bg-center overflow-hidden mx-auto sm:ml-0 xl:mx-auto cursor-pointer">
-				<img class="rounded-2xl object-cover" src="https://pagedone.io/asset/uploads/1700731993.png" alt="Blazer image">
-				<div
-					class="absolute z-10 bottom-3 left-0 mx-3 p-3 bg-white w-[calc(100%-24px)] rounded-xl shadow-sm shadow-transparent transition-all duration-500 group-hover:shadow-indigo-200 group-hover:bg-indigo-50">
-					<div class="flex items-center justify-between mb-2">
-						<h6 class="font-semibold text-base leading-7 text-black ">Black Blazer</h6>
-						<h6 class="font-semibold text-base leading-7 text-indigo-600 text-right">$100</h6>
+					<div class="mt-4">
+						<button
+							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							type="button">See the Collection
+						</button>
 					</div>
-					<p class="text-xs leading-5 text-gray-500">Men’s Suits</p>
 				</div>
-			</a>
-			<a href="javascript:"
-				 class="relative bg-cover group rounded-3xl bg-center overflow-hidden mx-auto sm:mr-0 xl:mx-auto cursor-pointer">
-				<img class="rounded-2xl object-cover" src="https://pagedone.io/asset/uploads/1700732011.png"
-						 alt="printed top image">
-				<div
-					class="absolute z-10 bottom-3 left-0 mx-3 p-3 bg-white w-[calc(100%-24px)] rounded-xl shadow-sm shadow-transparent transition-all duration-500 group-hover:shadow-indigo-200 group-hover:bg-indigo-50">
-					<div class="flex items-center justify-between mb-2">
-						<h6 class="font-semibold text-base leading-7 text-black ">Red Flowers</h6>
-						<h6 class="font-semibold text-base leading-7 text-indigo-600 text-right">$100</h6>
-                    </div>
-					<p class="text-xs leading-5 text-gray-500">Womenswear</p>
-				</div>
-			</a>
+			</div>
 
-			<a href="javascript:"
-				 class="relative bg-cover group rounded-3xl bg-center overflow-hidden mx-auto sm:ml-0 xl:mx-auto cursor-pointer">
-				<img class="rounded-2xl object-cover" src="https://pagedone.io/asset/uploads/1700732027.png"
-						 alt="Denim jacket image">
-				<div
-					class="absolute z-10 bottom-3 left-0 mx-3 p-3 bg-white w-[calc(100%-24px)] rounded-xl shadow-sm shadow-transparent transition-all duration-500 group-hover:shadow-indigo-200 group-hover:bg-indigo-50">
-					<div class="flex items-center justify-between mb-2">
-						<h6 class="font-semibold text-base leading-7 text-black ">Denim Jacket</h6>
-						<h6 class="font-semibold text-base leading-7 text-indigo-600 text-right">$100</h6>
-					</div>
-					<p class="text-xs leading-5 text-gray-500">Children Wear</p>
+			<div
+				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				<div class="relative overflow-hidden rounded-md text-white">
+					<img
+						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-contain transition-transform duration-500 group-hover:scale-110"
+						src="/Steinheimer.jpg" alt="Jacob Steinheimer Family Archive" />
 				</div>
-			</a>
-		</div>
-		<hr />
-		<h4>By Theme</h4>
-		<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
-
-			<a href="javascript:"
-				 class="relative bg-cover group rounded-3xl bg-center overflow-hidden mx-auto sm:mr-0 xl:mx-auto cursor-pointer">
-				<img class="rounded-2xl object-cover" src="https://pagedone.io/asset/uploads/1700731972.png" alt="Jacket image">
-				<div
-					class="absolute z-10 bottom-3 left-0 mx-3 p-3 bg-white w-[calc(100%-24px)] rounded-xl shadow-sm shadow-transparent transition-all duration-500 group-hover:shadow-indigo-200 group-hover:bg-indigo-50">
-					<div class="flex items-center justify-between mb-2">
-						<h6 class="font-semibold text-base leading-7 text-black ">Trendy Jacket</h6>
-						<h6 class="font-semibold text-base leading-7 text-indigo-600 text-right">$100</h6>
+				<div class="flex flex-1 flex-col justify-between p-4">
+					<div>
+						<h6 class="text-xl font-semibold text-teal-800">Jacob Steinheimer Family Archive</h6>
+						<p class="mt-2 font-light leading-normal text-teal-600">A collection of estate documents, photographs, and
+							personal effects from Jacob Steinheimer and his wife, Georgie Mayer-Steinheimer. This prominent Atlanta
+							Jewish family played a vital role in rebuilding the Jewish faith and community during Reconstruction.</p>
 					</div>
-					<p class="text-xs leading-5 text-gray-500">Women's Winter Wear</p>
-				</div>
-			</a>
-			<a href="javascript:"
-				 class="relative bg-cover group rounded-3xl bg-center overflow-hidden mx-auto sm:ml-0 xl:mx-auto cursor-pointer">
-				<img class="rounded-2xl object-cover" src="https://pagedone.io/asset/uploads/1700731993.png" alt="Blazer image">
-				<div
-					class="absolute z-10 bottom-3 left-0 mx-3 p-3 bg-white w-[calc(100%-24px)] rounded-xl shadow-sm shadow-transparent transition-all duration-500 group-hover:shadow-indigo-200 group-hover:bg-indigo-50">
-					<div class="flex items-center justify-between mb-2">
-						<h6 class="font-semibold text-base leading-7 text-black ">Black Blazer</h6>
-						<h6 class="font-semibold text-base leading-7 text-indigo-600 text-right">$100</h6>
+					<div class="mt-4">
+						<button
+							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							type="button">See the Collection
+						</button>
 					</div>
-					<p class="text-xs leading-5 text-gray-500">Men’s Suits</p>
 				</div>
-			</a>
-			<a href="javascript:"
-				 class="relative bg-cover group rounded-3xl bg-center overflow-hidden mx-auto sm:mr-0 xl:mx-auto cursor-pointer">
-				<img class="rounded-2xl object-cover" src="https://pagedone.io/asset/uploads/1700732011.png"
-						 alt="printed top image">
-				<div
-					class="absolute z-10 bottom-3 left-0 mx-3 p-3 bg-white w-[calc(100%-24px)] rounded-xl shadow-sm shadow-transparent transition-all duration-500 group-hover:shadow-indigo-200 group-hover:bg-indigo-50">
-					<div class="flex items-center justify-between mb-2">
-						<h6 class="font-semibold text-base leading-7 text-black ">Red Flowers</h6>
-						<h6 class="font-semibold text-base leading-7 text-indigo-600 text-right">$100</h6>
+			</div>
+			<div
+				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				<div class="relative overflow-hidden rounded-md text-white">
+					<img
+						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-cover transition-transform duration-500 group-hover:scale-110"
+						src="/AaronHart.jpg" alt="Aaron Hart Archive" />
+				</div>
+				<div class="flex flex-1 flex-col justify-between p-4">
+					<div>
+						<h6 class="text-xl font-semibold text-teal-800">Aaron Hart Estate Archive</h6>
+						<p class="mt-2 font-light leading-normal text-teal-600">An archive of 56 documents relating to the division
+							of the Aaron Hart estate, he died 28 Dec. 1800 at Trois-Rivières</p>
 					</div>
-					<p class="text-xs leading-5 text-gray-500">Womenswear</p>
-				</div>
-			</a>
-
-			<a href="javascript:"
-				 class="relative bg-cover group rounded-3xl bg-center overflow-hidden mx-auto sm:ml-0 xl:mx-auto cursor-pointer">
-				<img class="rounded-2xl object-cover" src="https://pagedone.io/asset/uploads/1700732027.png"
-						 alt="Denim jacket image">
-				<div
-					class="absolute z-10 bottom-3 left-0 mx-3 p-3 bg-white w-[calc(100%-24px)] rounded-xl shadow-sm shadow-transparent transition-all duration-500 group-hover:shadow-indigo-200 group-hover:bg-indigo-50">
-					<div class="flex items-center justify-between mb-2">
-						<h6 class="font-semibold text-base leading-7 text-black ">Denim Jacket</h6>
-						<h6 class="font-semibold text-base leading-7 text-indigo-600 text-right">$100</h6>
+					<div class="mt-4">
+						<button
+							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							type="button">See the Collection
+						</button>
 					</div>
-					<p class="text-xs leading-5 text-gray-500">Children Wear</p>
 				</div>
-			</a>
+			</div>
+			<div
+				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				<div class="relative overflow-hidden rounded-md text-white">
+					<img
+						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-cover transition-transform duration-500 group-hover:scale-110"
+						src="/Lindwer.jpg" alt="Willy Lindwer Collection Image" />
+				</div>
+				<div class="flex flex-1 flex-col justify-between p-4">
+					<div>
+						<h6 class="text-xl font-semibold text-teal-800">Willy Lindwer Suriname Collection</h6>
+						<p class="mt-2 font-light leading-normal text-teal-600">An archive relating to Jewish life in Suriname from
+							Dutch collector Willy Lindwer.</p>
+					</div>
+					<div class="mt-4">
+						<button
+							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							type="button">See the Collection
+						</button>
+					</div>
+				</div>
+			</div>
+			<div
+				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				<div class="relative overflow-hidden rounded-md text-white">
+					<img
+						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-contain transition-transform duration-500 group-hover:scale-110"
+						src="/Leeser.jpg" alt="Rev. Isaac Leeser Collection" />
+				</div>
+				<div class="flex flex-1 flex-col justify-between p-4">
+					<div>
+						<h6 class="text-xl font-semibold text-teal-800">Rev. Isaac Leeser Archive</h6>
+						<p class="mt-2 font-light leading-normal text-teal-600">A collection of correspondence, manuscripts, and
+							publications from Rev. Isaac Leeser, a prominent 19th-century religious leader.</p>
+					</div>
+					<div class="mt-4">
+						<button
+							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							type="button">See the Collection
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
