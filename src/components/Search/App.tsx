@@ -819,9 +819,9 @@ function App() {
 						<div className="flex flex-col sm:flex-row pt-1 sm:justify-between sm:items-center space-y-4 sm:space-y-0">
 							<CustomBreadcrumb
 								attributes={[
-									'categories.lvl0',
-									'categories.lvl1',
-									'categories.lvl2'
+									'hierarchicalCategories.lvl0',
+									'hierarchicalCategories.lvl1',
+									'hierarchicalCategories.lvl2'
 								]}
 							/>
 						</div>
@@ -836,7 +836,7 @@ function App() {
 
 									<CustomHierarchicalMenu
 										showMore={true}
-										attributes={['categories.lvl0', 'categories.lvl1', 'categories.lvl2']}
+										attributes={['hierarchicalCategories.lvl0', 'hierarchicalCategories.lvl1', 'hierarchicalCategories.lvl2']}
 									/>
 									<CustomRefinementList label="Collection" attribute="collection" />
 									<CustomRefinementList label="Language" attribute="language" />

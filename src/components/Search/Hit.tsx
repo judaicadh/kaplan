@@ -59,7 +59,7 @@ export function Hit({ hit, sendEvent }: HitProps) {
 						className="text-sm text-gray-600 mt-1"
 						color="textSecondary"
 					>
-						<strong>{hit.subtype[0]}</strong> - {hit.dateC}
+						<strong>{hit.type}</strong> - {hit.dateC}
 					</Typography>
 
 				</CardContent>
