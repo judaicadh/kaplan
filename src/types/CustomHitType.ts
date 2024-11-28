@@ -1,11 +1,13 @@
 // CustomHitType.ts
 import type { Hit as AlgoliaHit } from 'instantsearch.js/es/types';
 
-export type CustomHitType = AlgoliaHit<{
+import type { ProductRecord } from './types.ts'
+
+export type CustomRecord = AlgoliaHit<{
 	objectID: string;
 	name: string;
-	type: string[];
-	subtype: string[];
+
+
 	dateC: string;
 	description: string;
 	title: string;
@@ -13,12 +15,22 @@ export type CustomHitType = AlgoliaHit<{
 	thumbnail: string;
 	slug: string;
 	url?: string;
+	hierarchicalCategories: {
+		'lvl0': string; // Top-level category
+		'lvl1': string; // Second-level category
+		'lvl2': string; // Third-level category
+	};
 	hasRealThumbnail: boolean;
 	subject: string[];
-	minTimestamp: number[];
-	maxTimestamp: number[];
 	_geoloc: {
 		lat: number[] | number;
 		lng: number[] | number;
 	};
 }>;
+
+type WithAutocompleteAnalytics<THit> = THit & {
+	__autocomplete_indexName: string;
+	__autocomplete_queryID: string;
+};
+
+export type CustomHit = WithAutocompleteAnalytics<AlgoliaHit<CustomRecord>>;

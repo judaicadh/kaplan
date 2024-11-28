@@ -10,10 +10,14 @@ const csvFilePath = path.join(__dirname, './Kaplan20240808 (37).csv')
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 
 const typeToHierarchy = {
-	'Business & Finance': {
-		'Financial Documents': [
+	'Business Records and Ephemera': {
+		'Financial Records': [
 			'Billhead',
+			'Bond',
+			'Business Letter',
+			'Business Report',
 			'Receipt',
+			'Currency',
 			'Check',
 			'Ledger',
 			'Promissory Note',
@@ -25,9 +29,11 @@ const typeToHierarchy = {
 			'Stock Or Bond Certificate',
 			'Financial Record'
 		],
-		'Marketing & Advertising': [
-			'Business Card',
+		'Marketing & Advertising Materials': [
+			'Advertising Postcard',
 			'Business Cards',
+			'Business Envelope',
+			'Business Invitation',
 			'Trade Card',
 			'Advertising Mirror',
 			'Advertising Object',
@@ -36,17 +42,37 @@ const typeToHierarchy = {
 			'Lottery Ticket',
 			'Token'
 		],
+		'Promotional Giveaways': [
+			'Ash Tray',
+			'Bottle',
+			'Brush',
+			'Crock',
+			'Glassware',
+			'Jug',
+			'Match Safe',
+			'Pouch',
+			'Sign',
+			'Timepiece',
+			'Blotter',
+			'Calendar',
+			'Menu',
+			'Misc. Advertising Object',
+			'Wood Crate'
+		]
 	},
-	'Legal & Government': {
+	'Legal & Governmental Documents': {
 		'Legal Documents': [
+			'Brief',
 			'Contract',
 			'Deed',
+			'Estate Records',
 			'Petition',
 			'Will',
 			'Legal Document'
 		],
 		'Official Records': [
 			'Government Record',
+			'Government Invitation',
 			'Congressional Record',
 			'License',
 			'Military Record',
@@ -57,7 +83,7 @@ const typeToHierarchy = {
 			'Passport'
 		],
 	},
-	'Publications': {
+	'Printed Material & Manuscripts': {
 		'Books & Pamphlets': [
 			'Book',
 			'Pamphlet',
@@ -130,32 +156,16 @@ const typeToHierarchy = {
 			'Visual Works'
 		],
 	},
-	'Correspondence': {
+	'Personal and Leisure Documents and Ephemera': {
 		'Letters & Cards': [
-			'Letter',
-			'Envelope',
-			'Postcard',
-			'Greeting Card',
-			'Invitation',
-			'Calling Card'
-		],
-	},
-	'Objects & Ephemera': {
-		'Promotional Giveaways': [
-			'Bottle',
-			'Brush',
-			'Crock',
-			'Glassware',
-			'Jug',
-			'Match Safe',
-			'Pouch',
-			'Sign',
-			'Timepiece',
-			'Blotter',
-			'Calendar',
+			'Calling Cards',
 			'Dance Card',
-			'Menu',
+			'Envelope',
+			'Greeting Cards',
+			'Invitation',
+			'Letter',
 			'Playbill',
+			'Postcard',
 			'Program',
 			'Ticket'
 		],
