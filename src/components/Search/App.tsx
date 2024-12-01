@@ -251,8 +251,8 @@ function App() {
 									<CustomClearRefinements />
 
 									<CustomHierarchicalMenu
-										showMore={true}
-										title="Type"
+										showMore={false}
+										title="Form"
 										attributes={['hierarchicalCategories.lvl0', 'hierarchicalCategories.lvl1', 'hierarchicalCategories.lvl2']}
 									/>
 									<hr />
