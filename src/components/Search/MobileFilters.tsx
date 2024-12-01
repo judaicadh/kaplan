@@ -46,7 +46,7 @@ function MobileFilters() {
 
 
 			{isFilterOpen && (
-				<div className="relative z-40 lg:hidden" role="dialog" aria-modal="true">
+				<div className="relative z-40 lg:hidden " role="dialog" aria-modal="true">
 
 					<div
 						className="fixed inset-0 bg-black/25"
@@ -55,13 +55,13 @@ function MobileFilters() {
 					></div>
 
 					<div className="fixed inset-0 z-40 flex overflow-scroll">
-						<div className="relative ml-auto flex w-full max-w-xs flex-col   bg-white py-4 pb-12 shadow-xl">
+						<div className="relative   ml-auto flex w-full max-w-xs flex-col   bg-white py-4 pb-12 shadow-xl">
 							<div className="flex items-center justify-between px-4">
 								<h2 className="text-lg font-medium text-gray-900">Filters</h2>
 								<button
 									type="button"
 									onClick={toggleFilterMenu}
-									className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
+									className=" mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
 								>
 									<span className="sr-only">Close menu</span>
 									<svg
@@ -81,17 +81,19 @@ function MobileFilters() {
 								</button>
 							</div>
 
-							<form className="mt-4 border-t border-gray-200">
+							<form className="border-t bg-white border-gray-200">
 
 								<div className="px-4 py-6">
 
 									<CustomHierarchicalMenu
+
 										showMore={true}
+										title="Categories"
 										attributes={['hierarchicalCategories.lvl0', 'hierarchicalCategories.lvl1', 'hierarchicalCategories.lvl2']}
 									/>
 								</div>
-								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-								<div className="p-5 m-5">
+								<hr className="h-px  bg-gray-200 border-0 dark:bg-gray-700" />
+								<div className="my-2 ">
 									<DateRangeSlider
 										title="Date"
 										dateFields={[
@@ -111,10 +113,12 @@ function MobileFilters() {
 										maxTimestamp={-631151999}
 									/>
 								</div>
-								<hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+								<hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+								<CustomRefinementList limit={4} showMore={true} showSearch={true} label="Name" attribute="name" />
+
 								<CustomRefinementList label="Collection" attribute="collection" />
-								<CustomRefinementList label="Language" attribute="language" />
-								<CustomRefinementList label="Archival Collection" attribute="subcollection" />
+								<CustomRefinementList limit={4} showMore={true} label="Language" attribute="language" />
+								<CustomRefinementList limit={4} showMore={true} label="Archival Collection" attribute="subcollection" />
 							</form>
 
 						</div>

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Configure } from 'react-instantsearch';
 import Slider from '@mui/material/Slider';
-import { Input } from '@mui/material'
-import dayjs, { Dayjs } from 'dayjs';
+import { TextField } from '@mui/material'
+import dayjs from 'dayjs'
 
 type CombinedDateRangeSliderProps = {
 	minTimestamp: number;
@@ -23,18 +23,28 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 	const [endDate, setEndDate] = useState<string>(dayjs(maxTimestamp * 1000).format('YYYY'))
 
 	useEffect(() => {
+		// Update the Algolia filter string
 		const singleCondition = `(${dateFields[0]} <= ${range[1]} AND ${dateFields[1]} >= ${range[0]})`;
 		setFilterString(singleCondition);
 
+		// Update the URL only if the range has changed from the initial state
 		const updateURL = setTimeout(() => {
 			const url = new URL(window.location.href);
-			url.searchParams.set('start', startDate)
-			url.searchParams.set('end', endDate)
+			if (range[0] !== minTimestamp) {
+				url.searchParams.set('start', startDate)
+			} else {
+				url.searchParams.delete('start')
+			}
+			if (range[1] !== maxTimestamp) {
+				url.searchParams.set('end', endDate)
+			} else {
+				url.searchParams.delete('end')
+			}
 			window.history.replaceState(null, '', url.toString());
 		}, 500);
-
 		return () => clearTimeout(updateURL);
-	}, [range, startDate, endDate, dateFields]);
+	}, [range, startDate, endDate]);
+
 
 	const handleSliderChange = (event: Event, newValue: number | number[]) => {
 		if (Array.isArray(newValue)) {
@@ -70,60 +80,47 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 		}
 	};
 
-	const validateInput = (input: string, minYear: number, maxYear: number): string => {
-		const year = parseInt(input, 10)
-		if (isNaN(year) || year < minYear || year > maxYear) {
-			return ''
-		}
-		return year.toString()
-	};
-
-	const handleBlurStartDate = () => {
-		setStartDate((prev) => validateInput(prev, dayjs(minTimestamp * 1000).year(), dayjs(maxTimestamp * 1000).year()))
-	};
-
-	const handleBlurEndDate = () => {
-		setEndDate((prev) => validateInput(prev, dayjs(minTimestamp * 1000).year(), dayjs(maxTimestamp * 1000).year()))
-	};
-
 	return (
-		<div className="flex flex-col space-y-4 ">
+		<div className="bg-white p-4 pt-0 flex flex-col space-y-4 ">
 			<h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-			<Slider
-				value={range}
-				min={minTimestamp}
-				max={maxTimestamp}
-				onChange={handleSliderChange}
-				valueLabelDisplay="auto"
-				valueLabelFormat={(value) => dayjs(value * 1000).format('YYYY')}
-				marks={[
-					{ value: minTimestamp, label: dayjs(minTimestamp * 1000).format('YYYY') },
-					{ value: maxTimestamp, label: dayjs(maxTimestamp * 1000).format('YYYY') }
-				]}
-				sx={{
-					width: '100%',
-					color: '#0284c7',
-					'& .MuiSlider-thumb': {
-						height: 24,
-						width: 24,
-						backgroundColor: '#fff',
-						border: '2px solid currentColor'
-					},
-				}}
-			/>
-			<div className="pt-4">
+			<div className="px-4">
+				<Slider
+					value={range}
+					min={minTimestamp}
+					max={maxTimestamp}
+					onChange={handleSliderChange}
+					aria-label="Date Slider"
+					valueLabelDisplay="auto"
+					valueLabelFormat={(value) => dayjs(value * 1000).format('YYYY')}
+					marks={[
+						{ value: minTimestamp, label: dayjs(minTimestamp * 1000).format('YYYY') },
+						{ value: maxTimestamp, label: dayjs(maxTimestamp * 1000).format('YYYY') }
+					]}
+					sx={{
+						width: '100%',
+						color: '#0284c7',
+						'& .MuiSlider-thumb': {
+							height: 24,
+							width: 24,
+							backgroundColor: '#fff'
+						}
+					}}
+				/>
+			</div>
+			<div>
 				<div className="flex justify-between space-x-4">
-					<Input
+					<TextField
+						aria-label="Start date"
 						value={startDate}
 						onChange={handleStartDateChange}
-						onBlur={handleBlurStartDate}
-						placeholder="Start Year"
+						label="Start Year"
 					/>
-					<Input
+
+					<TextField
+						aria-label="End date"
 						value={endDate}
 						onChange={handleEndDateChange}
-						onBlur={handleBlurEndDate}
-						placeholder="End Year"
+						label="End Year"
 					/>
 				</div>
 				{filterString && <Configure filters={filterString} />}

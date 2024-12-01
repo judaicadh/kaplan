@@ -8,7 +8,7 @@ function CustomHits() {
 	return (
 		<div className="grid grid-cols-4 sm:grid-cols-2  lg:grid-cols-4 gap-6 p-4">
 			{hits.map((hit) => (
-				<Hit key={hit.objectID} hit={hit} sendEvent={sendEvent} />
+				<Hit key={hit.objectID} hit={hit} onClick={() => sendEvent('click', hit, 'Article Clicked')} />
 			))}
 		</div>
 	)

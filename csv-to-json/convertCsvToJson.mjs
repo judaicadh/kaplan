@@ -6,11 +6,11 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvFilePath = path.join(__dirname, './Kaplan20240808 (37).csv')
+const csvFilePath = path.join(__dirname, './Kaplan20240808 (38).csv')
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
-
-const typeToHierarchy = {
-	'Business Records and Ephemera': {
+/*
+const genreToHierarchy = {
+	'Commercial Activity': {
 		'Financial Records': [
 			'Billhead',
 			'Bond',
@@ -27,7 +27,8 @@ const typeToHierarchy = {
 			'Note Payable',
 			'Stock Certificate',
 			'Stock Or Bond Certificate',
-			'Financial Record'
+			'Financial Record',
+			'Playing Cards'
 		],
 		'Marketing & Advertising Materials': [
 			'Advertising Postcard',
@@ -40,9 +41,7 @@ const typeToHierarchy = {
 			'Advertising Pin',
 			'Poster',
 			'Lottery Ticket',
-			'Token'
-		],
-		'Promotional Giveaways': [
+			'Token',
 			'Ash Tray',
 			'Bottle',
 			'Brush',
@@ -60,8 +59,18 @@ const typeToHierarchy = {
 			'Wood Crate'
 		]
 	},
-	'Legal & Governmental Documents': {
-		'Legal Documents': [
+	'Government, Legal, & Military': {
+		'Government': [
+			'Government Record',
+			'Government Invitation',
+			'Congressional Record',
+			'License',
+			'Patent Application',
+			'Official Document',
+			'Certificate',
+			'Passport'
+		],
+		'Legal': [
 			'Brief',
 			'Contract',
 			'Deed',
@@ -70,18 +79,11 @@ const typeToHierarchy = {
 			'Will',
 			'Legal Document'
 		],
-		'Official Records': [
-			'Government Record',
-			'Government Invitation',
-			'Congressional Record',
-			'License',
+		'Military': [
 			'Military Record',
-			'Military Related Letter',
-			'Patent Application',
-			'Official Document',
-			'Certificate',
-			'Passport'
+			'Military Related Letter'
 		],
+
 	},
 	'Printed Material & Manuscripts': {
 		'Books & Pamphlets': [
@@ -107,7 +109,7 @@ const typeToHierarchy = {
 			'Archival Materials'
 		],
 	},
-	'Jewish Religious Materials': {
+	'Religious Materials': {
 		'Sacred Texts & Documents': [
 			'Ketubah',
 			'Religious Related Books',
@@ -169,39 +171,159 @@ const typeToHierarchy = {
 			'Program',
 			'Ticket'
 		],
-		'Games & Recreation': [
-			'Playing Cards'
+	},
+};*/
+
+const genreToHierarchy = {
+	'Manuscript/Mixed Material': {
+		'Manuscripts': [
+			'Manuscript',
+			'Diary',
+			'Scrapbook',
+			'Archival Materials',
+			'Estate Records',
+			'Petition',
+			'Legal Document',
+			'Will',
+			'Military Record',
+			'Military Related Letter',
+			'Brief',
+			'Contract',
+			'Deed'
+		],
+		'Letters & Cards': [
+			'Calling Cards',
+			'Dance Card',
+			'Envelope',
+			'Greeting Cards',
+			'Invitation',
+			'Letter',
+			'Postcard',
+			'Playbill',
+			'Program',
+			'Ticket'
+		],
+		'Financial Records': [
+			'Billhead',
+			'Bond',
+			'Business Letter',
+			'Business Report',
+			'Receipt',
+			'Currency',
+			'Check',
+			'Ledger',
+			'Promissory Note',
+			'Receipt Book',
+			'Shipping Record',
+			'Bill of Exchange',
+			'Note Payable',
+			'Stock Certificate',
+			'Stock Or Bond Certificate',
+			'Financial Record'
+		]
+	},
+	'Photo, Print, Drawing': {
+		'Photography': [
+			'Photographs',
+			'Albumen Prints',
+			'Cabinet Photographs',
+			'Cartes-de-visite',
+			'Daguerreotypes',
+			'Salted Paper Prints',
+			'Stereoscopic Photographs',
+			'Tintypes'
+		],
+		'Fine Art': [
+			'Drawing',
+			'Engraving',
+			'Etching',
+			'Lithograph',
+			'Micrography',
+			'Oil Painting',
+			'Pastel',
+			'Plaque',
+			'Print',
+			'Sculpture',
+			'Sketches',
+			'Watercolor',
+			'Woodcuts',
+			'Chromolithograph'
+		],
+		'Decorative Art': [
+			'Lamp',
+			'Medal',
+			'Sampler',
+			'Silver',
+			'Textiles',
+			'Visual Works'
+		]
+	},
+	'Book/Printed Material': {
+		'Books & Pamphlets': [
+			'Book',
+			'Pamphlet',
+			'Catalogue',
+			'Almanac',
+			'Report',
+			'Bookplate',
+			'Printed Material'
+		],
+		'Periodicals': [
+			'Periodical',
+			'Newspaper',
+			'Serial'
+		],
+		'Religious Texts': [
+			'Ketubah',
+			'Religious Related Books',
+			'Prayer Book',
+			'Torah Scroll'
+		]
+	},
+	'Notated Music': {
+		'Music': [
+			'Sheet Music'
+		]
+	},
+	'Map': {
+		'Cartographic': [
+			'Map'
+		]
+	},
+	'Newspaper': {
+		'Periodicals': [
+			'Newspaper'
 		],
 	},
 };
-const generateHierarchicalCategories = (typeField) => {
+const generateHierarchicalCategories = (genreField) => {
 	const hierarchicalCategories = { lvl0: [], lvl1: [], lvl2: [] }
 
-	if (!typeField) {
-		console.warn('Type field is missing or empty.')
+	if (!genreField) {
+		console.warn('genre field is missing or empty.')
 		return hierarchicalCategories
 	}
 
-	// Split the `typeField` into individual types
-	const types = typeField.split('|').map((t) => t.trim())
+	// Split the `genreField` into individual genres
+	const genres = genreField.split('|').map((t) => t.trim())
 
-	// Loop through the typeToHierarchy object to map the typeField values
-	types.forEach((type) => {
+	// Loop through the genreToHierarchy object to map the genreField values
+	genres.forEach((genre) => {
 		let foundMatch = false
 
-		for (const [lvl0, subcategories] of Object.entries(typeToHierarchy)) {
+		for (const [lvl0, subcategories] of Object.entries(genreToHierarchy)) {
 			for (const [lvl1, items] of Object.entries(subcategories)) {
-				if (items.includes(type)) {
+				if (items.includes(genre)) {
 					hierarchicalCategories.lvl0.push(lvl0)
 					hierarchicalCategories.lvl1.push(`${lvl0} > ${lvl1}`)
-					hierarchicalCategories.lvl2.push(`${lvl0} > ${lvl1} > ${type}`)
+					hierarchicalCategories.lvl2.push(`${lvl0} > ${lvl1} > ${genre}`)
 					foundMatch = true
 				}
 			}
 		}
 
 		if (!foundMatch) {
-			console.warn(`No match found in hierarchy for type: "${type}"`)
+			console.warn(`No match found in hierarchy for genre: "${genre}"`)
 		}
 	})
 
@@ -224,14 +346,14 @@ const isValidTimestamp = (timestamp) => {
 
 
 		const formattedData = jsonArray.map((item, index) => {
-			const hierarchicalCategories = generateHierarchicalCategories(item.type)
+			const hierarchicalCategories = generateHierarchicalCategories(item.genre)
 			const datePairs = {}
 			const startDates = item.start_date?.split('|').map((s) => s.trim()).filter(Boolean) || []
 			const endDates = item.end_date?.split('|').map((s) => s.trim()).filter(Boolean) || []
 			const maxLength = Math.min(startDates.length, endDates.length)
 
 			console.log(`Processing Item ID: ${item.id}`)
-			console.log(`Type Field: ${item.type}`)
+			console.log(`genre Field: ${item.genre}`)
 			console.log(`Generated Hierarchical Categories:`, JSON.stringify(hierarchicalCategories, null, 2))
 
 			for (let i = 0; i < maxLength; i++) {
@@ -251,7 +373,7 @@ const isValidTimestamp = (timestamp) => {
 				}
 			}
 
-			// Generate hierarchical categories using the correct `item.type`
+			// Generate hierarchical categories using the correct `item.genre`
 
 
 			return {
@@ -269,14 +391,14 @@ const isValidTimestamp = (timestamp) => {
 				franklinLink: item['Franklin Link']?.toString() || '',
 				subcollection: item.collectionname?.toString() || '',
 				cross: item.OBJECTS_CUSTOMFIELD_2?.toString() || '',
-				column_type: item.OBJECTS_COLTYPE?.toString() || '',
+				column_type: item.OBJECTS_COLgenr?.toString() || '',
 				dateC: item.OBJECTS_DATE?.toString() || '',
 				geography: item.geographic_subject ? item.geographic_subject.split('|').map((sub) => sub.trim()) : [],
 				subject: item.subject ? item.subject.split('|').map((sub) => sub.trim()) : [],
 				language: item.language ? item.language.split('|').map((sub) => sub.trim()) : [],
 				name: item.name ? item.name.split('|').map((sub) => sub.trim()) : [],
 				people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map((sub) => sub.trim()) : [],
-				type: item.type ? item.type.split('|').map((sub) => sub.trim()) : [],
+				topic: item.Topic ? item.Topic.split('|').map((sub) => sub.trim()) : [],
 				hierarchicalCategories,
 				...datePairs,
 				_geoloc: item._geoloc
