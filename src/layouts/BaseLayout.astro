@@ -2,6 +2,9 @@
 import Nav from '../components/Layout/Nav.astro';
 import Footer from '../components/Layout/Footer.astro';
 import Header from '../components/Layout/Header.astro'
+import Oswald from '@fontsource-variable/oswald'
+import Merriweather from '@fontsource-variable/merriweather'
+
 import Confetti from '../components/Misc/Confetti.tsx'
 const { title } = Astro.props // Ensure `title` is passed
 ---
@@ -26,7 +29,7 @@ const { title } = Astro.props // Ensure `title` is passed
 
 <Nav />
 
-<main>
+<main class="mb-[100px]">
 
 	<slot /> <!-- Page content will be injected here -->
 </main>

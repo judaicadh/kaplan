@@ -1,6 +1,6 @@
 import { algoliasearch } from 'algoliasearch'
 import L from 'leaflet'
-import { history } from 'instantsearch.js/es/lib/routers'
+
 import qs from 'qs' // Assuming you're using 'qs' for query string handling.
 
 import {
@@ -29,6 +29,8 @@ import CustomPagination from '@components/Search/CustomPagination.tsx'
 import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import type { UiState } from 'instantsearch.js'
+import { history } from 'instantsearch.js/es/lib/routers'
+import { simple } from 'instantsearch.js/es/lib/stateMappings'
 
 const customIcon = new L.DivIcon({
 	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
@@ -55,156 +57,10 @@ const dateFields = [
 	'startDate11', 'endDate11'
 ]
 
-
-function getCategorySlug(name: string): string {
-	return name
-		.split(' ')
-		.map(encodeURIComponent)
-		.join('+')
-}
-
-// Converts a slug back to a category name.
-function getCategoryName(slug: string): string {
-	return slug
-		.split('+')
-		.map(decodeURIComponent)
-		.join(' ')
-}
-
-interface RouteState {
-	query?: string;
-	page?: number;
-	language?: string[];
-	collection?: string[];
-	date?: string[];
-	hierarchicalCategories?: string;
-	topic?: string[];
-	genres?: string;
-	name?: string[];
-	start?: string;
-	end?: string;
-}
-
 const routing = {
-	router: history({
-		windowTitle({ hierarchicalCategories, query }: RouteState) {
-			const queryTitle = query ? `Results for "${query}"` : 'Search'
-
-			if (hierarchicalCategories) {
-				return `${hierarchicalCategories} – ${queryTitle}`
-			}
-
-			return queryTitle
-		},
-
-		createURL({ qsModule, routeState, location }) {
-			const baseUrl = `${location.origin}/search/`
-
-			const categoryPath = routeState.hierarchicalCategories
-				? `${getCategorySlug(routeState.hierarchicalCategories)}/`
-				: ''
-
-			const queryParameters: Record<string, any> = {}
-
-			if (routeState.query) queryParameters.query = routeState.query
-			if (routeState.page && routeState.page !== 1) queryParameters.page = routeState.page
-			if (routeState.topic) queryParameters.topic = routeState.topic.map(encodeURIComponent)
-			if (routeState.collection) queryParameters.collection = routeState.collection.map(encodeURIComponent)
-			if (routeState.genres) queryParameters.genres = encodeURIComponent(routeState.genres)
-			if (routeState.language) queryParameters.language = routeState.language.map(encodeURIComponent)
-			if (routeState.name) queryParameters.name = routeState.name.map(encodeURIComponent)
-			if (routeState.dateFields) queryParameters.start = routeState.dateFields
-
-
-			const queryString = qsModule.stringify(queryParameters, {
-				addQueryPrefix: true,
-				arrayFormat: 'repeat'
-			})
-
-			return `${baseUrl}${categoryPath}${queryString}`
-		},
-		parseURL({ qsModule, location }) {
-			const pathnameMatches = location.pathname.match(/search\/(.*?)\/?$/)
-			const hierarchicalCategories = pathnameMatches?.[1]
-				? getCategoryName(pathnameMatches[1])
-				: undefined
-
-			const {
-				query = '',
-				page = '1',
-				topic = [],
-				genres = '',
-				name = [],
-				language = '',
-				start = '',
-				end = ''
-			} = qsModule.parse(location.search.slice(1))
-
-			const coerceToString = (value: any): string | undefined =>
-				Array.isArray(value)
-					? value[0]
-					: typeof value === 'string'
-						? value
-						: undefined
-
-			const allTopics = Array.isArray(topic)
-				? topic.filter((t): t is string => typeof t === 'string')
-				: [topic].filter((t): t is string => typeof t === 'string')
-
-			return {
-				query,
-				page: Number(page),
-				hierarchicalCategories,
-				topic: allTopics,
-				genres,
-				language,
-				start: coerceToString(start),
-				end: coerceToString(end)
-			}
-		}
-	}),
-	stateMapping: {
-		stateToRoute(uiState) {
-			const indexUiState = uiState['Dev_Kaplan'] || {}
-
-			return {
-				query: indexUiState.query || '',
-				page: indexUiState.page || 1,
-				hierarchicalCategories: indexUiState.menu?.hierarchicalCategories || '',
-				topic: indexUiState.refinementList?.topic || [],
-				genres: indexUiState.hierarchicalMenu?.genres || '',
-				language: indexUiState.refinementList?.language || '',
-				start: indexUiState.range?.start || '',
-				end: indexUiState.range?.end || ''
-			}
-		},
-
-		routeToState(routeState) {
-			return {
-				Dev_Kaplan: {
-					query: routeState.query,
-					page: routeState.page,
-					menu: {
-						hierarchicalCategories: routeState.hierarchicalCategories
-					},
-					refinementList: {
-						topic: routeState.topic,
-						language: routeState.language
-					},
-					hierarchicalMenu: {
-						genres: routeState.genres
-					},
-					range: {
-						start: routeState.start,
-						end: routeState.end
-					}
-
-				}
-			}
-
-		}
-	}
-}
+	router: history(),
+	stateMapping: simple()
+};
 function App() {
 
 
@@ -217,20 +73,23 @@ function App() {
 			future={{
 				preserveSharedStateOnUnmount: true
 			}}>
-			<div className="bg-white">
+			<div className="bg-white mb-[100px]">
 				<div>
 					{/* Main content */}
 					<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 						{/* Header Section */}
-						<div className="bg-white border-gray-200 grid grid-cols-4 md:grid-cols-4   py-4 items-center">
-							<div className="col-span-1 items-center  ">
-								<h1 className="text-xl md:text-2xl font-bold text-gray-900">Explore</h1>
+						<div className="bg-white border-gray-200 grid   grid-cols-3 md:grid-cols-4   py-4 items-center">
+							<div className="    ">
+								<h1 className="text-xl font-serif md:text-2xl font-bold text-gray-900">Discover</h1>
 							</div>
-							<div className="md:col-span-3 xs:col-span-2 items-center  ">
+							<div className="md:w-full md:col-span-3">
 								<CustomSearchBox />
 							</div>
-							<MobileFilters />
+							<div className="flex justify-end ">
+								<MobileFilters />
+							</div>
 						</div>
+
 						<div className="flex flex-col sm:flex-row pt-1 sm:justify-between sm:items-center space-y-4 sm:space-y-0">
 							<CustomBreadcrumb
 								attributes={[
@@ -255,10 +114,11 @@ function App() {
 										title="Form"
 										attributes={['hierarchicalCategories.lvl0', 'hierarchicalCategories.lvl1', 'hierarchicalCategories.lvl2']}
 									/>
-									<hr />
-									<CustomRefinementList showMore={false} showSearch={false} limit={5} label="Topic" attribute="topic" />
 
-									<hr />
+									<CustomRefinementList accordionOpen={true} showMore={false} showSearch={false} limit={5} label="Topic"
+																				attribute="topic" />
+
+
 									<DateRangeSlider
 										title="Date"
 
@@ -268,13 +128,14 @@ function App() {
 
 									/>
 
-									<hr />
-									<CustomRefinementList showMore={true} showSearch={true} limit={5} label="Name" attribute="name" />
-									<hr />
+
+									<CustomRefinementList accordionOpen={false} showMore={true} showSearch={true} limit={5} label="Name"
+																				attribute="name" />
+
 									<CustomRefinementList label="Collection" attribute="collection" />
-									<hr />
+
 									<CustomRefinementList label="Language" limit={4} showMore={true} attribute="language" />
-									<hr />
+
 									<CustomRefinementList label="Archival Collection" attribute="subcollection" />
 
 
@@ -304,11 +165,13 @@ function App() {
 									<NoResultsBoundary fallback={<NoResults />}>
 										<div className="">
 											<CustomHits />
+											<CustomPagination />
 										</div>
+
 									</NoResultsBoundary>
 
 									{/* Pagination */}
-									<CustomPagination />
+
 								</div>
 							</div>
 						</section>

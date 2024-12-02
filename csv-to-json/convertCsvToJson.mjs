@@ -175,6 +175,37 @@ const genreToHierarchy = {
 };*/
 
 const genreToHierarchy = {
+	'3D Object': {
+		'Decorative Art': [
+			'Lamp',
+			'Medal',
+			'Sampler',
+			'Silver',
+			'Textiles',
+			'Visual Works',
+			'Plaque',
+			'Sculpture'
+		],
+
+		'Ritual Objects': [
+			'Mezuzah',
+			'Menorah',
+			'Kiddush Cup'
+		],
+		'Advertising Objects': [
+			'Advertising Mirror',
+			'Advertising Pin',
+			'Brush',
+			'Wood Crate',
+			'Pouch',
+			'Bottle',
+			'Crock',
+			'Match Safe',
+			'Jug',
+			'Glassware'
+		]
+
+	},
 	'Manuscript/Mixed Material': {
 		'Manuscripts': [
 			'Manuscript',
@@ -201,25 +232,27 @@ const genreToHierarchy = {
 			'Postcard',
 			'Playbill',
 			'Program',
+			'Trade Card',
 			'Ticket'
 		],
+
 		'Financial Records': [
 			'Billhead',
 			'Bond',
 			'Business Letter',
 			'Business Report',
 			'Receipt',
-			'Currency',
-			'Check',
 			'Ledger',
 			'Promissory Note',
 			'Receipt Book',
 			'Shipping Record',
 			'Bill of Exchange',
 			'Note Payable',
+			'Financial Record',
 			'Stock Certificate',
 			'Stock Or Bond Certificate',
-			'Financial Record'
+			'Currency',
+			'Check'
 		]
 	},
 	'Photo, Print, Drawing': {
@@ -241,21 +274,11 @@ const genreToHierarchy = {
 			'Micrography',
 			'Oil Painting',
 			'Pastel',
-			'Plaque',
 			'Print',
-			'Sculpture',
 			'Sketches',
 			'Watercolor',
 			'Woodcuts',
 			'Chromolithograph'
-		],
-		'Decorative Art': [
-			'Lamp',
-			'Medal',
-			'Sampler',
-			'Silver',
-			'Textiles',
-			'Visual Works'
 		]
 	},
 	'Book/Printed Material': {
@@ -268,11 +291,7 @@ const genreToHierarchy = {
 			'Bookplate',
 			'Printed Material'
 		],
-		'Periodicals': [
-			'Periodical',
-			'Newspaper',
-			'Serial'
-		],
+
 		'Religious Texts': [
 			'Ketubah',
 			'Religious Related Books',
@@ -292,9 +311,12 @@ const genreToHierarchy = {
 	},
 	'Newspaper': {
 		'Periodicals': [
-			'Newspaper'
-		],
-	},
+			'Newspaper',
+			'Periodical',
+			'Newspaper',
+			'Serial'
+		]
+	}
 };
 const generateHierarchicalCategories = (genreField) => {
 	const hierarchicalCategories = { lvl0: [], lvl1: [], lvl2: [] }

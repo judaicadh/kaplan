@@ -3,6 +3,8 @@ import { Configure } from 'react-instantsearch';
 import Slider from '@mui/material/Slider';
 import { TextField } from '@mui/material'
 import dayjs from 'dayjs'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid'
 
 type CombinedDateRangeSliderProps = {
 	minTimestamp: number;
@@ -27,7 +29,7 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 		const singleCondition = `(${dateFields[0]} <= ${range[1]} AND ${dateFields[1]} >= ${range[0]})`;
 		setFilterString(singleCondition);
 
-		// Update the URL only if the range has changed from the initial state
+		// Update the URL parameters
 		const updateURL = setTimeout(() => {
 			const url = new URL(window.location.href);
 			if (range[0] !== minTimestamp) {
@@ -43,10 +45,9 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 			window.history.replaceState(null, '', url.toString());
 		}, 500);
 		return () => clearTimeout(updateURL);
-	}, [range, startDate, endDate]);
+	}, [range, startDate, endDate, minTimestamp, maxTimestamp, dateFields]);
 
-
-	const handleSliderChange = (event: Event, newValue: number | number[]) => {
+	const handleSliderChange = (_: Event, newValue: number | number[]) => {
 		if (Array.isArray(newValue)) {
 			setRange([newValue[0], newValue[1]]);
 			setStartDate(dayjs(newValue[0] * 1000).format('YYYY'))
@@ -81,50 +82,66 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 	};
 
 	return (
-		<div className="bg-white p-4 pt-0 flex flex-col space-y-4 ">
-			<h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-			<div className="px-4">
-				<Slider
-					value={range}
-					min={minTimestamp}
-					max={maxTimestamp}
-					onChange={handleSliderChange}
-					aria-label="Date Slider"
-					valueLabelDisplay="auto"
-					valueLabelFormat={(value) => dayjs(value * 1000).format('YYYY')}
-					marks={[
-						{ value: minTimestamp, label: dayjs(minTimestamp * 1000).format('YYYY') },
-						{ value: maxTimestamp, label: dayjs(maxTimestamp * 1000).format('YYYY') }
-					]}
-					sx={{
-						width: '100%',
-						color: '#0284c7',
-						'& .MuiSlider-thumb': {
-							height: 24,
-							width: 24,
-							backgroundColor: '#fff'
-						}
-					}}
-				/>
-			</div>
-			<div>
-				<div className="flex justify-between space-x-4">
-					<TextField
-						aria-label="Start date"
-						value={startDate}
-						onChange={handleStartDateChange}
-						label="Start Year"
-					/>
+		<div className="bg-white px-4    dark:bg-gray-900">
+			<Disclosure defaultOpen={true}>
+				{({ open }) => (
+					<>
+						<DisclosureButton
+							className="flex w-full justify-between items-center py-3 text-left text-gray-900 dark:text-gray-100 font-medium border-b border-gray-200 dark:border-gray-700">
+							<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
+							{open ? (
+								<ChevronUpIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+							) : (
+								<ChevronDownIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+							)}
+						</DisclosureButton>
 
-					<TextField
-						aria-label="End date"
-						value={endDate}
-						onChange={handleEndDateChange}
-						label="End Year"
-					/>
-				</div>
-				{filterString && <Configure filters={filterString} />}
-			</div>
+						<DisclosurePanel className="pt-3 px-4">
+
+							<Slider
+								value={range}
+								min={minTimestamp}
+								max={maxTimestamp}
+								onChange={handleSliderChange}
+								aria-label="Date Slider"
+								valueLabelDisplay="auto"
+								valueLabelFormat={(value) => dayjs(value * 1000).format('YYYY')}
+								marks={[
+									{ value: minTimestamp, label: dayjs(minTimestamp * 1000).format('YYYY') },
+									{ value: maxTimestamp, label: dayjs(maxTimestamp * 1000).format('YYYY') }
+								]}
+								sx={{
+									width: '100%',
+									color: '#0284c7',
+									'& .MuiSlider-thumb': {
+										height: 24,
+										width: 24,
+										backgroundColor: '#fff'
+									}
+								}}
+							/>
+
+							<div className="flex justify-between space-x-4 mt-4">
+								<TextField
+									aria-label="Start date"
+									value={startDate}
+									onChange={handleStartDateChange}
+									label="Start Year"
+									variant="outlined"
+								/>
+								<TextField
+									aria-label="End date"
+									value={endDate}
+									onChange={handleEndDateChange}
+									label="End Year"
+									variant="outlined"
+								/>
+							</div>
+							{filterString && <Configure filters={filterString} />}
+						</DisclosurePanel>
+					</>
+				)}
+			</Disclosure>
 		</div>
 	);
 };

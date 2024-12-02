@@ -10,13 +10,13 @@ function MobileFilters() {
 	const toggleFilterMenu = () => setIsFilterOpen(!isFilterOpen)
 
 	return (
-		<div>
+		<>
 
 			<button
 				onClick={toggleFilterMenu}
 				type="button"
 				aria-label="Toggle Filter"
-				className=" md:hidden flex  justify-end  items-center  rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
+				className="  md:hidden     flex justify-end    rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
 						 className="size-6">
@@ -83,17 +83,20 @@ function MobileFilters() {
 
 							<form className="border-t bg-white border-gray-200">
 
-								<div className="px-4 py-6">
+								<div className="px-4 ">
 
 									<CustomHierarchicalMenu
 
 										showMore={true}
-										title="Categories"
+										title="Form"
 										attributes={['hierarchicalCategories.lvl0', 'hierarchicalCategories.lvl1', 'hierarchicalCategories.lvl2']}
 									/>
 								</div>
-								<hr className="h-px  bg-gray-200 border-0 dark:bg-gray-700" />
-								<div className="my-2 ">
+								<CustomRefinementList accordionOpen={true} showMore={false} showSearch={false} limit={5} label="Topic"
+																			attribute="topic" />
+
+
+
 									<DateRangeSlider
 										title="Date"
 										dateFields={[
@@ -112,8 +115,7 @@ function MobileFilters() {
 										minTimestamp={-15135361438}
 										maxTimestamp={-631151999}
 									/>
-								</div>
-								<hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+
 								<CustomRefinementList limit={4} showMore={true} showSearch={true} label="Name" attribute="name" />
 
 								<CustomRefinementList label="Collection" attribute="collection" />
@@ -125,7 +127,7 @@ function MobileFilters() {
 					</div>
 				</div>
 			)}
-		</div>
+		</>
 	)
 }
 

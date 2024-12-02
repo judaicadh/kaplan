@@ -42,6 +42,8 @@
     "@duetds/date-picker": "^1.4.0",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
+    "@fontsource-variable/oswald": "^5.1.0",
+    "@fontsource/merriweather": "^5.1.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",

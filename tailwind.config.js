@@ -64,11 +64,12 @@ module.exports = withMT({
 					950: '#102f41'
 				}
       },
-      fontFamily: {
-        sans: ["Graphik", "sans-serif"],
-        serif: ["Merriweather", "serif"],
-        overpass: ['"Overpass Variable"', 'sans-serif'],
-      },
+			fontFamily: {
+				serif: ['Merriweather', 'Georgia', 'serif'], // Primary font for body text
+				sans: ['Source Sans Pro', 'Arial', 'sans-serif'], // Secondary font for headings/navigation
+				slab: ['Roboto Slab', 'serif'], // Complementary font for emphasis/quotes
+				mono: ['Fira Code', 'Courier New', 'monospace'] // Monospace for code blocks
+			}
     },
   },
   plugins: [

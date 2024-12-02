@@ -25,7 +25,7 @@ function CustomSearchBox(props) {
 		}*/
 
 	return (
-
+		<>
 		<form
 			action=""
 			role="search"
@@ -45,11 +45,12 @@ function CustomSearchBox(props) {
 					inputRef.current.focus()
 				}
 			}}
-			className=" col-span-3   "
+			className="sm:col-span-1 md:col-span-3   "
 		>
+
 			<label htmlFor="default-search"
 						 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-			<div className="relative col-span-3 sm:col-span-1 ">
+			<div className="relative  ">
 				<div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
 					<button
 						// onClick={toggleSearchInput}
@@ -67,12 +68,12 @@ function CustomSearchBox(props) {
 						setQuery(event.currentTarget.value)
 					}}
 					autoFocus
-					className=" w-full   p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					className="  md:w-full   p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 				/>
 
 			</div>
 		</form>
-
+		</>
 
 	)
 }
