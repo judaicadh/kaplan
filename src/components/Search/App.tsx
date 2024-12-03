@@ -31,6 +31,7 @@ import MobileFilters from '@components/Search/MobileFilters.tsx'
 import type { UiState } from 'instantsearch.js'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { simple } from 'instantsearch.js/es/lib/stateMappings'
+import Favorites from '@components/Search/Favorites.tsx'
 
 const customIcon = new L.DivIcon({
 	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
@@ -65,6 +66,7 @@ function App() {
 
 
 	return (
+
 		<InstantSearch
 			searchClient={searchClient}
 			indexName="Dev_Kaplan"
@@ -89,7 +91,12 @@ function App() {
 								<MobileFilters />
 							</div>
 						</div>
+						<section aria-labelledby="favorites-heading" className="bg-white pt-6">
+							<h2 id="favorites-heading" className="text-xl font-bold">
+								My Favorites
+							</h2>
 
+						</section>
 						<div className="flex flex-col sm:flex-row pt-1 sm:justify-between sm:items-center space-y-4 sm:space-y-0">
 							<CustomBreadcrumb
 								attributes={[
