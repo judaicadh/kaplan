@@ -19,14 +19,18 @@ function CustomHierarchicalMenu(props: CustomHierarchicalMenuProps) {
 	} = useHierarchicalMenu(props);
 
 	const typeDescriptions = {
-		'3D Object': 'Three dimensional objects',
-		'Book/Printed Material': 'Printed materials including books, pamphlets, and reports.',
-		'Manuscript/Mixed Material': 'Handwritten or typed documents.',
-		'Letters & Cards': 'Correspondence including personal and business communications.',
-		Photographs: 'Visual materials capturing moments in history.',
+		/*
+				'3D Object': 'Three dimensional objects',
+				'Book/Printed Material': 'Printed materials including books, pamphlets, and reports.',
+				'Manuscript/Mixed Material': 'Handwritten or typed documents.',
+				'Letters & Cards': 'Correspondence including personal and business communications.',
+				Photographs: 'Visual materials capturing moments in history.',
 
 
-		'Trade Cards': 'Promotional items used in trade during the 19th century.'
+
+				'Trade Cards': 'Promotional items used in trade during the 19th century.'
+				*/
+
 	};
 
 	return (
