@@ -1,3 +1,10 @@
+---
+title: "Processing the Collection"
+slug: "processingthecollection"
+tags: ["Kaplan Collection", "Early American Judaica", "Modern American Judaica", "Non-Judaica Americana", "Penn Libraries"]
+description: "An overview of the Kaplan Collections, including Early and Modern American Judaica, Non-Judaica Americana, and the extraordinary contributions of Arnold and Deanne Kaplan to the Penn Libraries."
+categories: ["Collections", "Judaica", "Library Studies"]
+---
 The overall Kaplan gift of items to the University of Pennsylvania Libraries can be divided into three separate
 collections:
 

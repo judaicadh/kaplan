@@ -1,3 +1,9 @@
+---
+title: "The Kaplans' Philanthropic Vision and Legacy"
+slug: "traditionofphilanthropy"
+tags: ["Kaplan Collection", "Judaica", "Philanthropy", "Penn Libraries", "Digital Humanities"]
+description: "Exploring the Kaplans' extraordinary contributions to the Penn Libraries and their pioneering role in Judaica digital humanities."
+---
 The Kaplans are exceptional not only in their genius for collecting but also for their philanthropic vision and support
 for the needs of the collection.
 

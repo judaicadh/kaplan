@@ -1,4 +1,9 @@
-The Early American Judaica Collection
+---
+title: "The Early American Judaica Collection"
+description: "Details about the Kaplan Collection and its significance in Jewish history."
+slug: "theearlyamericanjudaicacollection"
+---
+
 
 The Arnold and Deanne Kaplan Collection of Early American Judaica, donated to the University of Pennsylvania Libraries
 in 2012 by the Kaplans, and growing each year, teaches us about the everyday lives, families, businesses, communal
