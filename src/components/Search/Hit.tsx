@@ -12,6 +12,7 @@ type HitProps = {
 		type: string[];
 		categories: string[];
 		subtype: string[];
+		topic: string[];
 		dateC: string;
 		description: string;
 		title: string;
@@ -33,7 +34,32 @@ type HitProps = {
 	}>;
 	sendEvent: (eventType: string, eventName: string, eventData?: object) => void;
 };
+const topicColors = {
+	Mercantile: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+	Religious: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+	Personal: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+	'Arts & Professions': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+	Military: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+}
 
+function getTopicClass(topic) {
+	return topicColors[topic] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300' // Default color
+}
+
+function TopicBadges({ hit }: { hit: HitProps['hit'] }) {
+	return (
+		<div className="flex flex-wrap gap-2 mt-2">
+			{hit.topic.map((t, index) => (
+				<span
+					key={index}
+					className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${getTopicClass(t)}`}
+				>
+					{t}
+				</span>
+			))}
+		</div>
+	)
+}
 export function Hit({ hit, sendEvent }: HitProps) {
 	const [isFavorite, setIsFavorite] = useState(false)
 
@@ -90,6 +116,7 @@ export function Hit({ hit, sendEvent }: HitProps) {
 							color="textSecondary"
 						>
 							<strong>{hit.type}</strong> - {hit.dateC}
+							<TopicBadges hit={hit} />
 						</Typography>
 					</CardContent>
 					<CardActions disableSpacing>
