@@ -3,27 +3,28 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 
 ---
 <BaseLayout />
-<section class="py-24">
+<section class="pb-24">
+
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<h2 class="font-manrope mb-8 text-4xl font-bold text-black max-lg:text-center">Highlights</h2>
-		<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+		<h2 class="font-serif mb-8 text-4xl font-bold text-black max-lg:text-center">Featured Subcollections</h2>
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			<!-- Card 1 -->
 			<div
-				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				class="group relative flex h-full flex-col rounded-lg border border-indigo-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
 				<div class="relative overflow-hidden rounded-md text-white">
 					<img class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-cover
 					 transition-transform duration-500 group-hover:scale-110" src="/Tobias.jpg" alt="Tobias Archive Image" />
 				</div>
 				<div class="flex flex-1 flex-col justify-between p-4">
 					<div>
-						<h6 class="text-xl font-semibold text-teal-800">Tobias Archive</h6>
-						<p class="mt-2 font-light leading-normal text-teal-600">The Tobias Archive contains over 750 pages of
+						<h6 class="text-xl font-semibold text-gray-800">Tobias Archive</h6>
+						<p class="mt-2 font-light leading-normal text-gray-600">The Tobias Archive contains over 750 pages of
 							business and personal correspondence, receipts, and legal documents from 1816 to 1865, with some extending
 							to 1886, capturing the rich history of the Tobias family.</p>
 					</div>
 					<div class="mt-4">
 						<button
-							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							class="rounded-md border border-transparent bg-indigo-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-none active:bg-indigo-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 							type="button">See the Collection
 						</button>
 					</div>
@@ -33,7 +34,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 			<!-- Repeat for other cards -->
 
 			<div
-				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				class="group relative flex h-full flex-col rounded-lg border border-indigo-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
 				<div class="relative overflow-hidden rounded-md text-white">
 					<img
 						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-cover transition-transform duration-500 group-hover:scale-110"
@@ -41,15 +42,15 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 				</div>
 				<div class="flex flex-1 flex-col justify-between p-4">
 					<div>
-						<h6 class="text-xl font-semibold text-teal-800">Gouvea, Brandão, and Pantoja Archive</h6>
-						<p class="mt-2 font-light leading-normal text-teal-600">A significant archive of Brazilian documents
+						<h6 class="text-xl font-semibold text-gray-800">Gouvea, Brandão, and Pantoja Archive</h6>
+						<p class="mt-2 font-light leading-normal text-gray-600">A significant archive of Brazilian documents
 							detailing Jewish involvement in the sugar trade, including three handwritten letters ([1648?]-1650), seven
 							genealogical records of the Gouvea, Brandão, and Pantoja families, and a 50-page typescript
 							transcription.</p>
 					</div>
 					<div class="mt-4">
 						<button
-							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							class="rounded-md border border-transparent bg-indigo-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-none active:bg-indigo-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 							type="button">See the Collection
 						</button>
 					</div>
@@ -57,7 +58,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 			</div>
 
 			<div
-				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				class="group relative flex h-full flex-col rounded-lg border border-indigo-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
 				<div class="relative overflow-hidden rounded-md text-white">
 					<img
 						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-contain transition-transform duration-500 group-hover:scale-110"
@@ -65,21 +66,21 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 				</div>
 				<div class="flex flex-1 flex-col justify-between p-4">
 					<div>
-						<h6 class="text-xl font-semibold text-teal-800">Jacob Steinheimer Family Archive</h6>
-						<p class="mt-2 font-light leading-normal text-teal-600">A collection of estate documents, photographs, and
+						<h6 class="text-xl font-semibold text-gray-800">Jacob Steinheimer Family Archive</h6>
+						<p class="mt-2 font-light leading-normal text-gray-600">A collection of estate documents, photographs, and
 							personal effects from Jacob Steinheimer and his wife, Georgie Mayer-Steinheimer. This prominent Atlanta
 							Jewish family played a vital role in rebuilding the Jewish faith and community during Reconstruction.</p>
 					</div>
 					<div class="mt-4">
 						<button
-							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							class="rounded-md border border-transparent bg-indigo-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-none active:bg-indigo-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 							type="button">See the Collection
 						</button>
 					</div>
 				</div>
 			</div>
 			<div
-				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				class="group relative flex h-full flex-col rounded-lg border border-indigo-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
 				<div class="relative overflow-hidden rounded-md text-white">
 					<img
 						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-cover transition-transform duration-500 group-hover:scale-110"
@@ -87,20 +88,20 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 				</div>
 				<div class="flex flex-1 flex-col justify-between p-4">
 					<div>
-						<h6 class="text-xl font-semibold text-teal-800">Aaron Hart Estate Archive</h6>
-						<p class="mt-2 font-light leading-normal text-teal-600">An archive of 56 documents relating to the division
+						<h6 class="text-xl font-semibold text-gray-800">Aaron Hart Estate Archive</h6>
+						<p class="mt-2 font-light leading-normal text-gray-600">An archive of 56 documents relating to the division
 							of the Aaron Hart estate, he died 28 Dec. 1800 at Trois-Rivières</p>
 					</div>
 					<div class="mt-4">
 						<button
-							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							class="rounded-md border border-transparent bg-indigo-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-none active:bg-indigo-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 							type="button">See the Collection
 						</button>
 					</div>
 				</div>
 			</div>
 			<div
-				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				class="group relative flex h-full flex-col rounded-lg border border-indigo-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
 				<div class="relative overflow-hidden rounded-md text-white">
 					<img
 						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-cover transition-transform duration-500 group-hover:scale-110"
@@ -108,20 +109,20 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 				</div>
 				<div class="flex flex-1 flex-col justify-between p-4">
 					<div>
-						<h6 class="text-xl font-semibold text-teal-800">Willy Lindwer Suriname Collection</h6>
-						<p class="mt-2 font-light leading-normal text-teal-600">An archive relating to Jewish life in Suriname from
+						<h6 class="text-xl font-semibold text-gray-800">Willy Lindwer Suriname Collection</h6>
+						<p class="mt-2 font-light leading-normal text-gray-600">An archive relating to Jewish life in Suriname from
 							Dutch collector Willy Lindwer.</p>
 					</div>
 					<div class="mt-4">
 						<button
-							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							class="rounded-md border border-transparent bg-indigo-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-none active:bg-indigo-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 							type="button">See the Collection
 						</button>
 					</div>
 				</div>
 			</div>
 			<div
-				class="group relative flex h-full flex-col rounded-lg border border-teal-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
+				class="group relative flex h-full flex-col rounded-lg border border-indigo-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg">
 				<div class="relative overflow-hidden rounded-md text-white">
 					<img
 						class="ease-[cubic-bezier(0.25, 1, 0.5, 1)] h-56 w-full transform object-contain transition-transform duration-500 group-hover:scale-110"
@@ -129,13 +130,13 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 				</div>
 				<div class="flex flex-1 flex-col justify-between p-4">
 					<div>
-						<h6 class="text-xl font-semibold text-teal-800">Rev. Isaac Leeser Archive</h6>
-						<p class="mt-2 font-light leading-normal text-teal-600">A collection of correspondence, manuscripts, and
+						<h6 class="text-xl font-semibold text-gray-800">Rev. Isaac Leeser Archive</h6>
+						<p class="mt-2 font-light leading-normal text-gray-600">A collection of correspondence, manuscripts, and
 							publications from Rev. Isaac Leeser, a prominent 19th-century religious leader.</p>
 					</div>
 					<div class="mt-4">
 						<button
-							class="rounded-md border border-transparent bg-teal-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-none active:bg-teal-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+							class="rounded-md border border-transparent bg-indigo-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-none active:bg-indigo-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 							type="button">See the Collection
 						</button>
 					</div>
@@ -143,4 +144,5 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 			</div>
 		</div>
 	</div>
+
 </section>

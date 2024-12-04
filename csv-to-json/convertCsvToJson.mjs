@@ -264,7 +264,8 @@ const genreToHierarchy = {
 			'Daguerreotypes',
 			'Salted Paper Prints',
 			'Stereoscopic Photographs',
-			'Tintypes'
+			'Tintypes',
+			'Photograph Albums'
 		],
 		'Fine Art': [
 			'Drawing',
