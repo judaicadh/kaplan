@@ -91,12 +91,7 @@ function App() {
 								<MobileFilters />
 							</div>
 						</div>
-						<section aria-labelledby="favorites-heading" className="bg-white pt-6">
-							<h2 id="favorites-heading" className="text-xl font-bold">
-								My Favorites
-							</h2>
 
-						</section>
 						<div className="flex flex-col sm:flex-row pt-1 sm:justify-between sm:items-center space-y-4 sm:space-y-0">
 							<CustomBreadcrumb
 								attributes={[
