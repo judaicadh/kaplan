@@ -357,6 +357,14 @@ const generateHierarchicalCategories = (genreField) => {
 		lvl2: [...new Set(hierarchicalCategories.lvl2)]
 	}
 };
+// Function to create a slug
+const createSlug = (value, fallback = 'untitled') => {
+	if (!value) return fallback // Default to "untitled" if the value is missing
+	return value
+		.toLowerCase()
+		.replace(/\s+/g, '-') // Replace spaces with hyphens
+		.replace(/[^a-z0-9-]/g, '') // Remove non-alphanumeric characters
+}
 const isValidTimestamp = (timestamp) => {
 	const minTimestamp = Math.floor(new Date('1300-01-01T00:00:00Z').getTime() / 1000)
 	const maxTimestamp = Math.floor(Date.now() / 1000)
@@ -397,16 +405,17 @@ const isValidTimestamp = (timestamp) => {
 			}
 
 			// Generate hierarchical categories using the correct `item.genre`
+			const title = item.TitleAI?.toString().trim() || item['title from colenda']?.toString() || 'Untitled'
 
 
 			return {
 				id: item.id?.toString() || '',
 				link: item.colendalink?.toString() || '',
-				slug: item.slug?.toString() || '',
 				date1: item.date?.toString() || '',
 				collection: item.Collection?.toString() || '',
 				peopleURI: item.peopleuri?.toString() || '',
-				title: item.TitleAI?.toString().trim() || item['title from colenda']?.toString() || 'Untitled',
+				slug: createSlug(title),
+				title,
 				PhysicalLocation: item['Updated Location']?.toString() || '',
 				description: item.AIDescription?.toString().trim() || item.description?.toString().trim() || '',
 				thumbnail: item.thumbnail?.toString() || 'https://placehold.co/600x600.jpg?text=Image+Coming+Soon',
