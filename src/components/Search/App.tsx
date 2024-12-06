@@ -1,11 +1,6 @@
 import { algoliasearch } from 'algoliasearch'
 import L from 'leaflet'
-
-import qs from 'qs' // Assuming you're using 'qs' for query string handling.
-
 import {
-	DynamicWidgets,
-
 	InstantSearch,
 	Stats
 } from 'react-instantsearch'
@@ -28,10 +23,15 @@ import CustomHits from '@components/Search/CustomHits.tsx'
 import CustomPagination from '@components/Search/CustomPagination.tsx'
 import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
-import type { UiState } from 'instantsearch.js'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { simple } from 'instantsearch.js/es/lib/stateMappings'
 import Favorites from '@components/Search/Favorites.tsx'
+import type { UiState, UiState as InstantSearchUiState } from 'instantsearch.js'
+import qs from 'qs' // Ensure you are using the 'qs' library correctly
+
+// Define the RouteState type explicitly
+
+// Extend the UiState from instantsearch.js
 
 const customIcon = new L.DivIcon({
 	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
@@ -59,9 +59,88 @@ const dateFields = [
 ]
 
 const routing = {
-	router: history(),
-	stateMapping: simple()
+	router: history({
+		parseURL({ qsModule, location }: { qsModule: typeof qs; location: Location }) {
+			const pathnameMatches = location.pathname.match(/search\/(.*?)\/?$/)
+			const hierarchicalCategories = pathnameMatches?.[1]?.replace('/', '>')
+
+			const queryParameters = qsModule.parse(location.search.slice(1))
+
+			// Cast the returned object to `UiState`
+			return {
+				query: typeof queryParameters.query === 'string' ? queryParameters.query : '',
+				page: Number(queryParameters.page || 1),
+				hierarchicalCategories,
+				topic: Array.isArray(queryParameters.topic)
+					? queryParameters.topic
+					: queryParameters.topic
+						? [queryParameters.topic]
+						: [],
+				genres: queryParameters.genres || '',
+				language: Array.isArray(queryParameters.language)
+					? queryParameters.language
+					: queryParameters.language
+						? [queryParameters.language]
+						: []
+			} as UiState // Explicit cast
+		},
+		createURL({ qsModule, routeState, location }) {
+			const baseUrl = `${location.origin}/search`
+			const categoryPath = routeState.hierarchicalCategories
+				? `${routeState.hierarchicalCategories}`
+				: ''
+			const queryString = qsModule.stringify(
+				{
+					query: routeState.query,
+					page: routeState.page,
+					topic: routeState.topic,
+					genres: routeState.genres,
+					language: routeState.language
+				},
+				{
+					addQueryPrefix: true,
+					arrayFormat: 'repeat'
+				}
+			)
+			return `${baseUrl}/${categoryPath}${queryString}`
+		}
+
+
+	}),
+	stateMapping: {
+		stateToRoute(uiState) {
+			const indexUiState = uiState['Dev_Kaplan'] || {}
+			const hierarchicalCategories = indexUiState.menu?.hierarchicalCategories || ''
+			return {
+				query: indexUiState.query || '',
+				page: indexUiState.page || 1,
+				hierarchicalCategories: hierarchicalCategories.split('/').join('>'),
+				topic: indexUiState.refinementList?.topic || [],
+				genres: indexUiState.hierarchicalMenu?.genres || '',
+				language: indexUiState.refinementList?.language || ''
+			}
+		},
+		routeToState(routeState) {
+			return {
+				Dev_Kaplan: {
+					query: routeState.query,
+					page: routeState.page,
+					menu: {
+						hierarchicalCategories: routeState.hierarchicalCategories?.split('>').join('/')
+					},
+					refinementList: {
+						topic: routeState.topic,
+						language: routeState.language
+					},
+					hierarchicalMenu: {
+						genres: routeState.genres
+					}
+				}
+			}
+		}
+	}
 };
+
 function App() {
 
 

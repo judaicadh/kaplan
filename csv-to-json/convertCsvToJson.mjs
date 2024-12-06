@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvFilePath = path.join(__dirname, './Kaplan20240808 (38).csv')
+const csvFilePath = path.join(__dirname, './Kaplan20240808 (40).csv')
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 /*
 const genreToHierarchy = {
@@ -190,7 +190,8 @@ const genreToHierarchy = {
 		'Ritual Objects': [
 			'Mezuzah',
 			'Menorah',
-			'Kiddush Cup'
+			'Kiddush Cup',
+			'Tzedakah Box'
 		],
 		'Advertising Objects': [
 			'Advertising Mirror',
@@ -293,9 +294,9 @@ const genreToHierarchy = {
 			'Printed Material'
 		],
 
-		'Religious Texts': [
+		'Religious Materials': [
 			'Ketubah',
-			'Religious Related Books',
+			'Donation Recorder',
 			'Prayer Book',
 			'Torah Scroll'
 		]
@@ -358,7 +359,16 @@ const generateHierarchicalCategories = (genreField) => {
 	}
 };
 // Function to create a slug
-
+const parseTestField = (test) => {
+	if (!test) return []
+	const entries = test.split('|').map((entry) => entry.trim())
+	return entries.map((entry) => {
+		const [namePart, uriPart] = entry.split(', uri:').map((part) => part.trim())
+		const name = namePart.replace('name:', '').trim()
+		const uri = uriPart?.trim()
+		return { name, uri }
+	}).filter((item) => item.name && item.uri)
+}
 const isValidTimestamp = (timestamp) => {
 	const minTimestamp = Math.floor(new Date('1300-01-01T00:00:00Z').getTime() / 1000)
 	const maxTimestamp = Math.floor(Date.now() / 1000)
@@ -376,6 +386,7 @@ const isValidTimestamp = (timestamp) => {
 			const startDates = item.start_date?.split('|').map((s) => s.trim()).filter(Boolean) || []
 			const endDates = item.end_date?.split('|').map((s) => s.trim()).filter(Boolean) || []
 			const maxLength = Math.min(startDates.length, endDates.length)
+			const parsedSubjects = parseTestField(item.test)
 
 			console.log(`Processing Item ID: ${item.id}`)
 			console.log(`genre Field: ${item.genre}`)
@@ -424,6 +435,8 @@ const isValidTimestamp = (timestamp) => {
 				name: item.name ? item.name.split('|').map((sub) => sub.trim()) : [],
 				people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map((sub) => sub.trim()) : [],
 				topic: item.Topic ? item.Topic.split('|').map((sub) => sub.trim()) : [],
+				type: item.genre ? item.genre.split('|').map((sub) => sub.trim()) : [],
+				subjectAI: parsedSubjects,
 				hierarchicalCategories,
 				...datePairs,
 				_geoloc: item._geoloc

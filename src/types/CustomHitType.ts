@@ -6,8 +6,7 @@ import type { ProductRecord } from './types.ts'
 export type CustomRecord = AlgoliaHit<{
 	objectID: string;
 	name: string;
-
-
+	language: string[];
 	dateC: string;
 	description: string;
 	title: string;
@@ -15,11 +14,7 @@ export type CustomRecord = AlgoliaHit<{
 	thumbnail: string;
 	slug: string;
 	url?: string;
-	hierarchicalCategories: {
-		'lvl0': string; // Top-level category
-		'lvl1': string; // Second-level category
-		'lvl2': string; // Third-level category
-	};
+	hierarchicalCategories: string[];
 	hasRealThumbnail: boolean;
 	subject: string[];
 	_geoloc: {

@@ -6,7 +6,6 @@ import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
 
-
 export default defineConfig({
   site: "https://kaplancollection.org",
 
