@@ -4,15 +4,14 @@ import Footer from '../components/Layout/Footer.astro';
 import Header from '../components/Layout/Header.astro'
 import Oswald from '@fontsource-variable/oswald'
 import Merriweather from '@fontsource-variable/merriweather'
-
+const { title, description } = Astro.props
 import Confetti from '../components/Misc/Confetti.tsx'
-const { title } = Astro.props // Ensure `title` is passed
+
 ---
 <html lang="en">
 
 <head>
-	<Header />
-	<title>{title}</title>
+	<Header title={title} description={description} />
 
 </head>
 <body>

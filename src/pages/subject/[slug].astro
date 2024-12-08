@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import items from '../../data/items.json' // Import your items data
+import items from '../../data/items.json'
 import { slugify } from '../../utils/slugify.js'
+import SubjectInfo from '../../utils/loc.jsx'
 
 // Generate dynamic paths using slugs
 export async function getStaticPaths() {
 	const subjectUris = items.flatMap((item) =>
 		item.subjectAI.map((subject) => slugify(subject.name))
-	)
+	);
 
 	const uniqueSlugs = Array.from(new Set(subjectUris))
 
@@ -20,38 +21,77 @@ const { slug } = Astro.params
 // Find all items with the matching subject
 const subjectItems = items.filter((item) =>
 	item.subjectAI.some((subject) => slugify(subject.name) === slug)
-)
+);
 
 if (!subjectItems.length) {
 	throw new Error(`No items found for subject ${slug}`)
 }
 
-// Get the subject name from the first matching item
+// Extract subject details
 const subjectName = subjectItems[0].subjectAI.find(
 	(subject) => slugify(subject.name) === slug
-)?.name || 'Unknown Subject'
+)?.name || 'Unknown Subject';
+const subjectUri = subjectItems[0].subjectAI.find(
+	(subject) => slugify(subject.name) === slug
+)?.uri || null
+
+if (!subjectUri) {
+	console.warn(`No URI found for subject: ${subjectName}`)
+}
+
+console.log('Subject URI:', subjectUri)
+
+const pageTitle = `Browse items with Subject: ${subjectName}`
+const metaDescription = `Explore items related to the subject ${subjectName}. Learn more about this topic via the Library of Congress.`
 ---
 
-<BaseLayout title={`Subject: ${subjectName}`}>
+<BaseLayout title={`Browse items with Subject: ${subjectName}`} }>
+	<head>
+		<meta name="description" content={metaDescription} />
+		{subjectUri &&
+			<link rel="canonical" href={subjectUri} />}
+		{subjectUri &&
+			<link rel="alternate" type="application/json" href={`${subjectUri}.json`} />}
+	</head>
 	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
 		<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
 			<h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
 				Subject: {subjectName}
 			</h1>
+			{subjectUri ? (
+				<SubjectInfo client:load="react" subjectUri={`${subjectUri}.json`} />
+			) : (
+				<p class="text-gray-600 dark:text-gray-300">
+					No additional information available for {subjectName}.
+				</p>
+			)}
 			<hr class="my-6 border-gray-200 dark:border-gray-800" />
-			<p>Explore items related to <strong>{subjectName}</strong>:</p>
-			<ul class="list-disc ml-5">
+
+			<div class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 gap-6 mt-6">
 				{subjectItems.map((item) => (
-					<li key={item.id}>
-						<a
-							href={`/item/${item.slug}`}
-							class="text-blue-600 hover:underline"
-						>
+					<div key={item.id} class="p-4 border border-gray-200 rounded-lg shadow hover:shadow-lg transition">
+						<a href={`/item/${item.slug}`} class="block">
+							{item.thumbnail ? (
+								<img
+									src={item.thumbnail}
+									alt={item.title}
+									class="w-full h-48 object-contain rounded-lg mb-4"
+								/>
+							) : (
+								<div
+									class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500">
+									No Image
+								</div>
+							)}
+						</a>
+						<a href={`/item/${item.slug}`} class="block text-blue-600 hover:underline text-lg font-semibold">
 							{item.title}
 						</a>
-					</li>
+						<p
+							class=" truncate text-gray-600 mt-2 dark:text-gray-400">{item.description || 'No description available.'}</p>
+					</div>
 				))}
-			</ul>
+			</div>
 		</div>
 	</section>
 </BaseLayout>
