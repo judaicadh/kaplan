@@ -10,7 +10,7 @@ function CustomRefinementList({
 																showSearch = false,
 																showMore = false,
 																showMoreLimit = 20,
-																accordionOpen = false // New prop to control the initial state
+																accordionOpen = false // Control the initial state of the accordion
 															}) {
 	const [isSearchVisible, setIsSearchVisible] = useState(showSearch)
 
@@ -21,6 +21,7 @@ function CustomRefinementList({
 		toggleShowMore,
 		searchForItems,
 		refine,
+		createURL, // To generate URLs for specific refinements
 		sendEvent
 	} = useRefinementList({
 		attribute,
@@ -30,11 +31,21 @@ function CustomRefinementList({
 		sortBy: ['count:desc', 'name:asc']
 	});
 
+	const normalizeValue = (value) =>
+		value
+			.toLowerCase()
+			.replace(/ > /g, '_')
+			.replace(/\//g, '_')
+			.replace(/,/g, '_')
+			.replace(/&/g, 'and')
+			.replace(/ /g, '_')
+			.replace(/[()]/g, '')
+			.replace(/[^a-z0-9_,|]/g, '')
+
 	const toggleSearch = () => setIsSearchVisible(!isSearchVisible)
 
 	return (
 		<div className="w-full px-4">
-
 			{/* Accordion Header */}
 			<Disclosure defaultOpen={accordionOpen}>
 				{({ open }) => (
@@ -73,16 +84,16 @@ function CustomRefinementList({
 											type="checkbox"
 											checked={item.isRefined}
 											onChange={() => {
-												refine(item.value)
-												sendEvent('click', item, 'Refinement Selected')
+												refine(item.value) // Pass `item.value` to refine
+												sendEvent('click', item.label, 'Refinement Selected') // Pass `item.label` or `item.value`
 											}}
 											className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
 										/>
 										<label
 											onClick={(event) => {
 												event.preventDefault()
-												refine(item.value)
-												sendEvent('click', item, 'Refinement Selected')
+												refine(item.value) // Pass `item.value` to refine
+												sendEvent('click', item.label, 'Refinement Selected') // Pass `item.label` or `item.value`
 											}}
 											className="ml-2 cursor-pointer text-gray-700 dark:text-gray-300 text-sm"
 										>

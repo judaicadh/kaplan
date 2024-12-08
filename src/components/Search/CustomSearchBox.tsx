@@ -32,10 +32,7 @@ function CustomSearchBox(props) {
 			noValidate
 			onSubmit={(event) => {
 				event.preventDefault()
-				event.stopPropagation()
-				if (inputRef.current) {
-					inputRef.current.blur()
-				}
+				window.location.href = `/search?query=${encodeURIComponent(inputValue)}`
 			}}
 			onReset={(event) => {
 				event.preventDefault()

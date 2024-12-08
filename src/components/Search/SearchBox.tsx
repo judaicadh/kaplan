@@ -1,61 +1,75 @@
-import { useHits, useSearchBox } from 'react-instantsearch'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { algoliasearch } from 'algoliasearch'
+import React from 'react'
 
-const searchClient = algoliasearch(
-	'ZLPYTBTZ4R',
-	'be46d26dfdb299f9bee9146b63c99c77'
-)
-const AutocompleteSearch = () => {
-	const [isOpen, setIsOpen] = useState(false)
-	const { query, refine } = useSearchBox()
-	const { hits } = useHits()
-	const navigate = useNavigate()
-
-	const handleSelect = (hit) => {
-		if (hit.category) {
-			// Navigate to a category-specific page
-			navigate(`/category/${hit.category}`)
-		} else {
-			// Navigate to a search results page
-			navigate(`/search?query=${query}`)
-		}
-		setIsOpen(false)
-	}
-
+footer({ state })
+{
+	const { query } = state
 	return (
-		<div className="relative w-full max-w-md">
-			<input
-				type="text"
-				value={query}
-				onChange={(e) => {
-					refine(e.target.value)
-					setIsOpen(true)
-				}}
-				placeholder="Search..."
-				className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-			/>
-			{isOpen && hits.length > 0 && (
-				<div className="absolute z-10 w-full bg-white border border-gray-200 rounded shadow-lg mt-2">
-					<ul>
-						{hits.map((hit) => (
-							<li
-								key={hit.objectID}
-								onClick={() => handleSelect(hit)}
-								className="p-2 cursor-pointer hover:bg-gray-100"
-							>
-								<span className="font-bold">{hit.title}</span>
-								{hit.category && (
-									<span className="text-sm text-gray-500 ml-2">in {hit.category}</span>
-								)}
-							</li>
-						))}
-					</ul>
-				</div>
-			)}
-		</div>
-	)
-};
+		<div>
+			{/* Dummy content for scrollability */}
 
-export default AutocompleteSearch
+
+			<div
+				id="informational-banner"
+				className="aa-PanelFooter z-1055 w-full bg-white border-t border-gray-200 sticky bottom-0 left-0 z-20"
+
+			>
+
+				<div className="mb-4 md:mb-0 md:me-4">
+					<a
+						href={`/search/?q=${encodeURIComponent(query)}`}
+						className="inline-flex items-center justify-center px-3 py-2 me-2 text-xs font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+					>
+						See More Results
+						<svg
+							className="w-3 h-3 ms-2 rtl:rotate-180"
+							aria-hidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 14 10"
+						>
+							<path
+								stroke="currentColor"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M1 5h12m0 0L9 1m4 4L9 9"
+							/>
+						</svg>
+					</a>
+				</div>
+				<div className="flex items-center flex-shrink-0">
+					<a
+						href="#"
+						className="inline-flex items-center justify-center px-3 py-2 me-3 text-xs font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+					>
+						<svg
+							className="w-3 h-3 me-2"
+							aria-hidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="currentColor"
+							viewBox="0 0 20 18"
+						>
+							<path
+								d="M9 1.334C7.06.594 1.646-.84.293.653a1.158 1.158 0 0 0-.293.77v13.973c0 .193.046.383.134.55.088.167.214.306.366.403a.932.932 0 0 0 .5.147c.176 0 .348-.05.5-.147 1.059-.32 6.265.851 7.5 1.65V1.334ZM19.707.653C18.353-.84 12.94.593 11 1.333V18c1.234-.799 6.436-1.968 7.5-1.65a.931.931 0 0 0 .5.147.931.931 0 0 0 .5-.148c.152-.096.279-.235.366-.403.088-.167.134-.357.134-.55V1.423a1.158 1.158 0 0 0-.293-.77Z" />
+						</svg>
+						Help
+					</a>
+				</div>
+			</div>
+		</div>
+
+	)
+
+}
+,
+},
+onSelect({
+	item, state, event
+})
+{
+	const { query } = state
+	// Redirect to item detail page or search page with query
+	window.location.href = `/search/?q=${encodeURIComponent(query)}`
+}
+,
+}

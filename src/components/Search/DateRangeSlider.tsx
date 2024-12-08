@@ -99,11 +99,11 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 						<DisclosurePanel className="pt-3 px-4">
 
 							<Slider
+								getAriaLabel={(index) => `Date range slider thumb ${index + 1}`}
 								value={range}
 								min={minTimestamp}
 								max={maxTimestamp}
 								onChange={handleSliderChange}
-								aria-label="Date Slider"
 								valueLabelDisplay="auto"
 								valueLabelFormat={(value) => dayjs(value * 1000).format('YYYY')}
 								marks={[
