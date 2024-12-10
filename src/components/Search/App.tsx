@@ -93,7 +93,7 @@ const routing = {
 				hierarchicalCategories: formatHierarchicalCategories(indexUiState.hierarchicalMenu),
 				geography: formatList(indexUiState.refinementList?.geography),
 				language: formatList(indexUiState.refinementList?.language),
-				name: formatList(indexUiState.refinementList?.name),
+				name: (indexUiState.refinementList?.name),
 				topic: formatList(indexUiState.refinementList?.topic)
 			});
 		},
