@@ -25,13 +25,7 @@ import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { simple } from 'instantsearch.js/es/lib/stateMappings'
-import Favorites from '@components/Search/Favorites.tsx'
-import type { UiState, UiState as InstantSearchUiState } from 'instantsearch.js'
-import qs from 'qs' // Ensure you are using the 'qs' library correctly
 
-// Define the RouteState type explicitly
-
-// Extend the UiState from instantsearch.js
 
 const customIcon = new L.DivIcon({
 	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
@@ -59,85 +53,85 @@ const dateFields = [
 ]
 
 const routing = {
-	router: history({
-		parseURL({ qsModule, location }: { qsModule: typeof qs; location: Location }) {
-			const pathnameMatches = location.pathname.match(/search\/(.*?)\/?$/)
-			const hierarchicalCategories = pathnameMatches?.[1]?.replace('/', '>')
-
-			const queryParameters = qsModule.parse(location.search.slice(1))
-
-			// Cast the returned object to `UiState`
-			return {
-				query: typeof queryParameters.query === 'string' ? queryParameters.query : '',
-				page: Number(queryParameters.page || 1),
-				hierarchicalCategories,
-				topic: Array.isArray(queryParameters.topic)
-					? queryParameters.topic
-					: queryParameters.topic
-						? [queryParameters.topic]
-						: [],
-				genres: queryParameters.genres || '',
-				language: Array.isArray(queryParameters.language)
-					? queryParameters.language
-					: queryParameters.language
-						? [queryParameters.language]
-						: []
-			} as UiState // Explicit cast
-		},
-		createURL({ qsModule, routeState, location }) {
-			const baseUrl = `${location.origin}/search`
-			const categoryPath = routeState.hierarchicalCategories
-				? `${routeState.hierarchicalCategories}`
-				: ''
-			const queryString = qsModule.stringify(
-				{
-					query: routeState.query,
-					page: routeState.page,
-					topic: routeState.topic,
-					genres: routeState.genres,
-					language: routeState.language
-				},
-				{
-					addQueryPrefix: true,
-					arrayFormat: 'repeat'
-				}
-			)
-			return `${baseUrl}/${categoryPath}${queryString}`
-		}
-
-
-	}),
+	router: history(),
 	stateMapping: {
 		stateToRoute(uiState) {
 			const indexUiState = uiState['Dev_Kaplan'] || {}
-			const hierarchicalCategories = indexUiState.menu?.hierarchicalCategories || ''
-			return {
+
+			const normalizeValue = (value) =>
+				value
+					.toLowerCase()
+					.replace(/ > /g, '_')
+					.replace(/\//g, '_')
+					.replace(/,/g, '_')
+					.replace(/&/g, 'and')
+					.replace(/ /g, '_')
+					.replace(/[()]/g, '')
+					.replace(/[^a-z0-9_,|]/g, '')
+
+			const formatList = (list) =>
+				list ? list.map(normalizeValue).join(',') : ''
+
+			const formatHierarchicalCategories = (hierarchicalMenu) =>
+				Object.values(hierarchicalMenu || {})
+					.flatMap((value) =>
+						Array.isArray(value) ? value.map(normalizeValue) : [normalizeValue(value)]
+					)
+					.join(normalizeValue('/'))
+
+			// Remove empty states
+			const removeEmpty = (state) =>
+				Object.fromEntries(
+					Object.entries(state).filter(([_, value]) => value && value !== '')
+				)
+
+			return removeEmpty({
 				query: indexUiState.query || '',
-				page: indexUiState.page || 1,
-				hierarchicalCategories: hierarchicalCategories.split('/').join('>'),
-				topic: indexUiState.refinementList?.topic || [],
-				genres: indexUiState.hierarchicalMenu?.genres || '',
-				language: indexUiState.refinementList?.language || ''
-			}
+				page: indexUiState.page || '',
+				hierarchicalCategories: formatHierarchicalCategories(indexUiState.hierarchicalMenu),
+				geography: formatList(indexUiState.refinementList?.geography),
+				language: formatList(indexUiState.refinementList?.language),
+				topic: formatList(indexUiState.refinementList?.topic)
+			});
 		},
 		routeToState(routeState) {
+			const parseList = (list) =>
+				list ? list.split(',').map((item) => item.replace(/_/g, ' ')) : []
+
 			return {
 				Dev_Kaplan: {
-					query: routeState.query,
-					page: routeState.page,
-					menu: {
-						hierarchicalCategories: routeState.hierarchicalCategories?.split('>').join('/')
-					},
+					query: routeState.query || '',
+					page: parseInt(routeState.page, 10) || 1,
 					refinementList: {
-						topic: routeState.topic,
-						language: routeState.language
+						topic: parseList(routeState.topic),
+						geography: parseList(routeState.geography),
+						language: parseList(routeState.language)
 					},
-					hierarchicalMenu: {
-						genres: routeState.genres
-					}
-				}
-			}
-		}
+					hierarchicalMenu: routeState.hierarchicalCategories
+						? {
+							'hierarchicalCategories.lvl0': parseList(routeState.hierarchicalCategories)
+						}
+						: {}
+				},
+			};
+		},
+	},
+	createURL({ qsModule, routeState, location }) {
+		const baseUrl = location.href.split('?')[0]
+
+		// Filter out empty parameters
+		const filteredRouteState = Object.fromEntries(
+			Object.entries(routeState).filter(([_, value]) => value && value !== '')
+		)
+
+		// Create the query string
+		const queryString = qsModule.stringify(filteredRouteState, {
+			addQueryPrefix: true,
+			arrayFormat: 'comma'
+		})
+
+		// Return clean base URL if query string is empty
+		return queryString ? `${baseUrl}${queryString}` : `${baseUrl}/search`
 	}
 };
 
@@ -151,9 +145,7 @@ function App() {
 			indexName="Dev_Kaplan"
 			routing={routing}
 			insights={true}
-			future={{
-				preserveSharedStateOnUnmount: true
-			}}>
+		>
 			<div className="bg-white mb-[100px]">
 				<div>
 					{/* Main content */}
@@ -212,7 +204,8 @@ function App() {
 
 									<CustomRefinementList accordionOpen={false} showMore={true} showSearch={true} limit={5} label="Name"
 																				attribute="name" />
-
+									<CustomRefinementList showSearch={true} showMore={true} limit={5} label="Geography"
+																				attribute="geography" />
 									<CustomRefinementList label="Collection" attribute="collection" />
 
 									<CustomRefinementList label="Language" limit={4} showMore={true} attribute="language" />
