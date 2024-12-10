@@ -1,6 +1,7 @@
 import { algoliasearch } from 'algoliasearch'
 import L from 'leaflet'
 import {
+	Configure,
 	InstantSearch,
 	Stats
 } from 'react-instantsearch'
@@ -25,6 +26,7 @@ import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { simple } from 'instantsearch.js/es/lib/stateMappings'
+import { useSearchParams } from 'react-router-dom'
 
 
 const customIcon = new L.DivIcon({
@@ -64,10 +66,10 @@ const routing = {
 					.replace(/ > /g, '_')
 					.replace(/\//g, '_')
 					.replace(/,/g, '_')
-					.replace(/&/g, 'and')
-					.replace(/ /g, '_')
+					.replace(/&/g, 'and') // Replace `&` with "and"
+					.replace(/ /g, '_') // Replace spaces with underscores
 					.replace(/[()]/g, '')
-					.replace(/[^a-z0-9_,|]/g, '')
+					.replace(/[^a-z0-9_,|]/g, ''); // Remove unwanted characters
 
 			const formatList = (list) =>
 				list ? list.map(normalizeValue).join(',') : ''
@@ -91,6 +93,7 @@ const routing = {
 				hierarchicalCategories: formatHierarchicalCategories(indexUiState.hierarchicalMenu),
 				geography: formatList(indexUiState.refinementList?.geography),
 				language: formatList(indexUiState.refinementList?.language),
+				name: formatList(indexUiState.refinementList?.name),
 				topic: formatList(indexUiState.refinementList?.topic)
 			});
 		},
@@ -105,7 +108,8 @@ const routing = {
 					refinementList: {
 						topic: parseList(routeState.topic),
 						geography: parseList(routeState.geography),
-						language: parseList(routeState.language)
+						language: parseList(routeState.language),
+						name: parseList(routeState.name)
 					},
 					hierarchicalMenu: routeState.hierarchicalCategories
 						? {
@@ -137,7 +141,6 @@ const routing = {
 
 function App() {
 
-
 	return (
 
 		<InstantSearch
@@ -145,8 +148,13 @@ function App() {
 			indexName="Dev_Kaplan"
 			routing={routing}
 			insights={true}
+			future={{
+				preserveSharedStateOnUnmount: true
+			}}
 		>
-			<div className="bg-white mb-[100px]">
+
+
+		<div className="bg-white mb-[100px]">
 				<div>
 					{/* Main content */}
 					<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

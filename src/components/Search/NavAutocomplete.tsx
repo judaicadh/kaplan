@@ -22,22 +22,26 @@ const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
 	key: 'navbar'
 })
 
+
+const redirectUrlPlugin = createRedirectUrlPlugin()
+
 function NavAutocomplete() {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const panelRootRef = useRef<Root | null>(null)
 	const rootRef = useRef<HTMLElement | null>(null)
 
 	// Normalization function
-	const normalizeValue = (value: string) =>
+	const normalizeValue = (value) =>
 		value
 			.toLowerCase()
-			.replace(/ > /g, '_')
+			.replace(/>/g, '_')
 			.replace(/\//g, '_')
 			.replace(/,/g, '_')
 			.replace(/&/g, 'and')
 			.replace(/ /g, '_')
 			.replace(/[()]/g, '')
 			.replace(/[^a-z0-9_,|]/g, '')
+
 
 	useEffect(() => {
 		if (!containerRef.current) {
@@ -85,13 +89,14 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?name=${(item.label)}`}
-										className="text-blue-500 underline"
+										href={`/search/?name=${item.label}`}
+										className="text-gray-700 hover:underline"
 									>
 										{item.label}
 									</a>
 								);
 							},
+
 						},
 					},
 					{
@@ -123,8 +128,8 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?geography=${normalizeValue(item.label)}`}
-										className="text-blue-500 underline"
+										href={`/search/?geography=${(item.label)}`}
+										className="text-gray-700 hover:underline "
 									>
 										{item.label}
 									</a>
@@ -161,10 +166,8 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?hierarchicalCategories=${normalizeValue(
-											item.label
-										)}`}
-										className="text-blue-500 underline"
+										href={`/search/?hierarchicalCategories=${(item.label)}`}
+										className="text-gray-700 hover:underline "
 									>
 										{item.label}
 									</a>
@@ -217,7 +220,7 @@ function NavAutocomplete() {
 			onSubmit({ state }) {
 				const query = state.query
 				if (query.trim()) {
-					window.location.href = `/search/?query=${encodeURIComponent(query)}`
+					window.location.href = `/search/?query=${(query)}`
 				}
 			},
 			renderer: {
