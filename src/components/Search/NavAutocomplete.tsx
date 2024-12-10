@@ -205,7 +205,7 @@ function NavAutocomplete() {
 									<ProductItem
 										hit={item}
 										components={components}
-										normalizeValue={normalizeValue}
+
 									/>
 								)
 							},
@@ -252,21 +252,21 @@ function NavAutocomplete() {
 function ProductItem({
 											 hit,
 											 components,
-											 normalizeValue
+
 										 }: {
 	hit: ProductHit;
 	components: AutocompleteComponents;
-	normalizeValue: (value: string) => string;
+
 }) {
 	return (
 		<article className="aa-ItemWrapper">
 			<div className="aa-ItemContent">
 				<div className="aa-ItemIcon--picture">
-					<a href={`/item/${normalizeValue(hit.slug)}`}>
+					<a href={`/item/${hit.slug}`}>
 						<img src={hit.thumbnail} alt={hit.title} />
 					</a>
 				</div>
-				<a href={`/item/${normalizeValue(hit.slug)}`}>
+				<a href={`/item/${hit.slug}`}>
 					<div className="mt-6 aa-ItemContentTitle">
 						<components.Highlight hit={hit} attribute="title" />
 					</div>
@@ -281,4 +281,3 @@ function ProductItem({
 }
 
 export default NavAutocomplete;
-
