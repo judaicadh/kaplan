@@ -45,18 +45,18 @@ function SubjectInfo({ subjectUri }) {
 
 	// Map URIs to sources and logos
 	const getSourceLogo = (uri) => {
-		if (uri.includes('worldcat.org')) return { name: 'OCLC', logo: '../../src/images/logos/oclc-logo.png' }
-		if (uri.includes('aat.getty.edu')) return { name: 'AAT', logo: '../../src/images/logos/aat-logo.png' }
-		if (uri.includes('bnf.fr')) return { name: 'BNF', logo: '../../src/images/logos/bnf-logo.png' }
-		if (uri.includes('wikidata.org')) return { name: 'Wikidata', logo: '../../src/images/logos/wikidata-logo.png' }
-		if (uri.includes('loc.gov')) return { name: 'LOC', logo: '../../src/images/logos/loc-logo.png' }
-		if (uri.includes('ndl.go.jp')) return { name: 'NDL', logo: '../../src/images/logos/ndl-logo.png' }
-		if (uri.includes('d-nb.info')) return { name: 'DNB', logo: '../../src/images/logos/dnb-logo.png' }
-		if (uri.includes('purl.org/bncf')) return { name: 'BNCF', logo: '../../src/images/logos/bncf-logo.png' }
-		if (uri.includes('yso.fi')) return { name: 'Finto', logo: '../../src/images/logos/finto-logo.png' }
-		if (uri.includes('bne.es')) return { name: 'BNE', logo: '../../src/images/logos/bne-logo.png' }
+		if (uri.includes('worldcat.org')) return { name: 'OCLC', logo: '/logos/oclc-logo.png' }
+		if (uri.includes('aat.getty.edu')) return { name: 'AAT', logo: '/logos/aat-logo.png' }
+		if (uri.includes('bnf.fr')) return { name: 'BNF', logo: '/logos/bnf-logo.png' }
+		if (uri.includes('wikidata.org')) return { name: 'Wikidata', logo: '/logos/wikidata-logo.png' }
+		if (uri.includes('loc.gov')) return { name: 'LOC', logo: '/logos/loc-logo.png' }
+		if (uri.includes('ndl.go.jp')) return { name: 'NDL', logo: '/logos/ndl-logo.png' }
+		if (uri.includes('d-nb.info')) return { name: 'DNB', logo: '/logos/dnb-logo.png' }
+		if (uri.includes('purl.org/bncf')) return { name: 'BNCF', logo: '/logos/bncf-logo.png' }
+		if (uri.includes('yso.fi')) return { name: 'Finto', logo: '/logos/finto-logo.png' }
+		if (uri.includes('bne.es')) return { name: 'BNE', logo: '/logos/bne-logo.png' }
 
-		return { name: 'Unknown', logo: '../images/logos/loc-logo.png' }
+		return { name: 'Unknown', logo: '/logos/loc-logo.png' }
 	}
 
 	return (
@@ -64,11 +64,11 @@ function SubjectInfo({ subjectUri }) {
 			{/* Main Content */}
 			<div className="flex-1 mb-6">
 				{/* Notes Section */}
-				{locData.some((item) => item['http://www.loc.gov/mads/rdf/v1#note']) && (
+				{locData.some((item) => item['https://www.loc.gov/mads/rdf/v1#note']) && (
 					<div>
 						<h2 className="text-lg font-semibold">Notes</h2>
 						<ul className="list-disc ml-4">
-							{locData.flatMap((item) => item['http://www.loc.gov/mads/rdf/v1#note'] || [])
+							{locData.flatMap((item) => item['https://www.loc.gov/mads/rdf/v1#note'] || [])
 								.map((note, index) => (
 									<li key={index}>{note['@value']}</li>
 								))}
