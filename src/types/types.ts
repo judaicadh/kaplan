@@ -27,5 +27,4 @@ type WithAutocompleteAnalytics<Hit> = Hit & {
 	__autocomplete_queryID: string;  // Query ID for analytics
 };
 
-// Define the ProductHit type
 export type ProductHit = WithAutocompleteAnalytics<Hit<ProductRecord>>;

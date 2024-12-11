@@ -25,10 +25,6 @@ import CustomPagination from '@components/Search/CustomPagination.tsx'
 import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
-import { simple } from 'instantsearch.js/es/lib/stateMappings'
-import { useSearchParams } from 'react-router-dom'
-import type { CreateURL, UiState } from 'instantsearch.js'
-
 
 const customIcon = new L.DivIcon({
 	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
@@ -55,7 +51,7 @@ const dateFields = [
 	'startDate11', 'endDate11'
 ]
 
-/*
+
 const routing = {
 	router: history(),
 	stateMapping: {
@@ -139,7 +135,7 @@ const routing = {
 		// Return clean base URL if query string is empty
 		return queryString ? `${baseUrl}${queryString}` : `${baseUrl}/search`
 	}
-};*/
+};
 
 
 function App() {
@@ -149,12 +145,14 @@ function App() {
 		<InstantSearch
 			searchClient={searchClient}
 			indexName="Dev_Kaplan"
-			routing={true}
+			routing={routing}
 			insights={true}
 			future={{
 				preserveSharedStateOnUnmount: true
 			}}
 		>
+			<Configure
+				analytics={true} />
 
 
 		<div className="bg-white mb-[100px]">

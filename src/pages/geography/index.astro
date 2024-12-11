@@ -1,0 +1,42 @@
+---
+import { fetchWikidata } from '../../utils/sparql.js'
+import Layout from '../../layouts/GeoLayout.astro'
+
+// SPARQL query to fetch geographic entities
+const sparqlQuery = `
+SELECT ?place ?placeLabel WHERE {
+  ?place wdt:P31 wd:Q515; # Example: cities (instance of 'city')
+        rdfs:label ?placeLabel FILTER (lang(?placeLabel) = "en").
+}
+LIMIT 100
+`
+
+let geographies = []
+
+try {
+	const wikidataResponse = await fetchWikidata(sparqlQuery)
+	const results = wikidataResponse.results.bindings
+
+	geographies = results.map(result => ({
+		id: result.geography.value.split('/').pop(),
+		name: result.geography.value
+	}))
+} catch (error) {
+	console.error('Error fetching geographies from Wikidata:', error)
+}
+---
+
+<Layout title="Geographies">
+	<h1>Geographies</h1>
+	{geographies.length > 0 ? (
+		<ul>
+			{geographies.map(geography => (
+				<li key={geography.id}>
+					<a href={`/place/${geography.id}/`}>{geography.name}</a>
+				</li>
+			))}
+		</ul>
+	) : (
+		<p>No geographies found.</p>
+	)}
+</Layout>

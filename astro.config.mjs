@@ -39,7 +39,7 @@ export default defineConfig({
   }), tailwind(), icon({
     include: {
       // Include only three `mdi` icons in the bundle
-      mdi: ['magnify', 'account-plus', 'account-minus']
+			mdi: ['magnify', 'account-plus', 'account-minus']
       // Include all `uis` icons
     }
   }), sitemap(), robotsTxt()]

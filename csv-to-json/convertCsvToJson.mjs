@@ -358,6 +358,18 @@ const generateHierarchicalCategories = (genreField) => {
 		lvl2: [...new Set(hierarchicalCategories.lvl2)]
 	}
 };
+const parseGeographyField = (geography) => {
+	if (!geography) return []
+	const entries = geography.split('|').map((entry) => entry.trim())
+	return entries.map((entry) => {
+		const [namePart, uriPart] = entry.split(', uri:').map((part) => part.trim())
+		const name = namePart.replace('name:', '').trim()
+		const uri = uriPart?.trim()
+		return { name, uri }
+	}).filter((item) => item.name && item.uri)
+}
+
+
 // Function to create a slug
 const parseTestField = (test) => {
 	if (!test) return []
@@ -368,7 +380,7 @@ const parseTestField = (test) => {
 		const uri = uriPart?.trim()
 		return { name, uri }
 	}).filter((item) => item.name && item.uri)
-}
+};
 const isValidTimestamp = (timestamp) => {
 	const minTimestamp = Math.floor(new Date('1300-01-01T00:00:00Z').getTime() / 1000)
 	const maxTimestamp = Math.floor(Date.now() / 1000)
@@ -387,6 +399,7 @@ const isValidTimestamp = (timestamp) => {
 			const endDates = item.end_date?.split('|').map((s) => s.trim()).filter(Boolean) || []
 			const maxLength = Math.min(startDates.length, endDates.length)
 			const parsedSubjects = parseTestField(item.test)
+			const parsedGeographyField = parseGeographyField(item.geographyField)
 
 			console.log(`Processing Item ID: ${item.id}`)
 			console.log(`genre Field: ${item.genre}`)
@@ -427,9 +440,7 @@ const isValidTimestamp = (timestamp) => {
 				franklinLink: item['Franklin Link']?.toString() || '',
 				subcollection: item.collectionname?.toString() || '',
 				cross: item.OBJECTS_CUSTOMFIELD_2?.toString() || '',
-				column_type: item.OBJECTS_COLgenr?.toString() || '',
 				dateC: item.OBJECTS_DATE?.toString() || '',
-				geography: item.geographic_subject ? item.geographic_subject.split('|').map((sub) => sub.trim()) : [],
 				subject: item.subject ? item.subject.split('|').map((sub) => sub.trim()) : [],
 				language: item.language ? item.language.split('|').map((sub) => sub.trim()) : [],
 				name: item.name ? item.name.split('|').map((sub) => sub.trim()) : [],
@@ -437,6 +448,7 @@ const isValidTimestamp = (timestamp) => {
 				topic: item.Topic ? item.Topic.split('|').map((sub) => sub.trim()) : [],
 				type: item.genre ? item.genre.split('|').map((sub) => sub.trim()) : [],
 				subjectAI: parsedSubjects,
+				geography: parsedGeographyField,
 				hierarchicalCategories,
 				...datePairs,
 				_geoloc: item._geoloc

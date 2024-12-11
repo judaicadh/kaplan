@@ -2,7 +2,6 @@
 import { Schema } from 'astro-seo-schema'
 
 const { title, description, schemaData } = Astro.props
-
 ---
 <head>
 	<title>{title ? title : 'Default Title'}</title>
@@ -10,8 +9,6 @@ const { title, description, schemaData } = Astro.props
 			name="description"
 			content={description ? description : 'Default site description'}
 		/>
-
-
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,16 +19,23 @@ const { title, description, schemaData } = Astro.props
 		/>
 		<!-- Stylesheets -->
 		<link rel="stylesheet" href="../src/styles/global.css" />
-
-		<link href="https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/css/pagedone.css " rel="stylesheet" />
+		<link href="https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/css/pagedone.css" rel="stylesheet" />
 		<link
 			href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Merriweather:wght@400;700&family=Roboto+Slab:wght@400;700&family=Source+Sans+Pro:wght@400;600;700&display=swap"
-			rel="stylesheet">
+			rel="stylesheet"
+		/>
 		<link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+			crossorigin=""
+		/>
 
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-					integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-					crossorigin="" />
-		<title></title>
-
-		</head>
+		<!-- Render JSON-LD schema data -->
+	{schemaData && (
+		<script type="application/ld+json">
+			{JSON.stringify(schemaData)}
+		</script>
+	)}
+</head>

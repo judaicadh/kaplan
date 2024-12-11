@@ -22,26 +22,22 @@ const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
 	key: 'navbar'
 })
 
-
-const redirectUrlPlugin = createRedirectUrlPlugin()
-
 function NavAutocomplete() {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const panelRootRef = useRef<Root | null>(null)
 	const rootRef = useRef<HTMLElement | null>(null)
 
 	// Normalization function
-	const normalizeValue = (value) =>
+	const normalizeValue = (value: string) =>
 		value
 			.toLowerCase()
-			.replace(/>/g, '_')
-			.replace(/\//g, '_')
-			.replace(/,/g, '_')
+			.replace(/ > /g, '_')
+			.replace(/\//g, '')
+			.replace(/,/g, '')
 			.replace(/&/g, 'and')
-			.replace(/ /g, '_')
+			.replace(/ /g, '')
 			.replace(/[()]/g, '')
 			.replace(/[^a-z0-9_,|]/g, '')
-
 
 	useEffect(() => {
 		if (!containerRef.current) {
@@ -89,14 +85,13 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?name=${item.label}`}
-										className="text-gray-700 hover:underline"
+										href={`/search/?name=${(item.label)}`}
+										className="text-blue-500 underline"
 									>
 										{item.label}
 									</a>
 								);
 							},
-
 						},
 					},
 					{
@@ -128,8 +123,8 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?geography=${(item.label)}`}
-										className="text-gray-700 hover:underline "
+										href={`/search/?geography=${normalizeValue(item.label)}`}
+										className="text-blue-500 underline"
 									>
 										{item.label}
 									</a>
@@ -166,8 +161,10 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?hierarchicalCategories=${(item.label)}`}
-										className="text-gray-700 hover:underline "
+										href={`/search/?hierarchicalCategories=${normalizeValue(
+											item.label
+										)}`}
+										className="text-blue-500 underline"
 									>
 										{item.label}
 									</a>
@@ -205,7 +202,7 @@ function NavAutocomplete() {
 									<ProductItem
 										hit={item}
 										components={components}
-
+										normalizeValue={normalizeValue}
 									/>
 								)
 							},
@@ -220,7 +217,7 @@ function NavAutocomplete() {
 			onSubmit({ state }) {
 				const query = state.query
 				if (query.trim()) {
-					window.location.href = `/search/?query=${(query)}`
+					window.location.href = `/search/?query=${encodeURIComponent(query)}`
 				}
 			},
 			renderer: {
@@ -252,21 +249,21 @@ function NavAutocomplete() {
 function ProductItem({
 											 hit,
 											 components,
-
+											 normalizeValue
 										 }: {
 	hit: ProductHit;
 	components: AutocompleteComponents;
-
+	normalizeValue: (value: string) => string;
 }) {
 	return (
 		<article className="aa-ItemWrapper">
 			<div className="aa-ItemContent">
 				<div className="aa-ItemIcon--picture">
-					<a href={`/item/${hit.slug}`}>
+					<a href={`/item/${normalizeValue(hit.slug)}`}>
 						<img src={hit.thumbnail} alt={hit.title} />
 					</a>
 				</div>
-				<a href={`/item/${hit.slug}`}>
+				<a href={`/item/${normalizeValue(hit.slug)}`}>
 					<div className="mt-6 aa-ItemContentTitle">
 						<components.Highlight hit={hit} attribute="title" />
 					</div>
