@@ -145,7 +145,7 @@ function App() {
 		<InstantSearch
 			searchClient={searchClient}
 			indexName="Dev_Kaplan"
-			routing={routing}
+			routing={true}
 			insights={true}
 			future={{
 				preserveSharedStateOnUnmount: true
