@@ -25,6 +25,7 @@ import CustomPagination from '@components/Search/CustomPagination.tsx'
 import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
+import { useState } from 'react'
 
 const customIcon = new L.DivIcon({
 	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
@@ -139,20 +140,34 @@ const routing = {
 
 
 function App() {
+	const [selectedFacets, setSelectedFacets] = useState({
+		hierarchicalCategories: [],
+		topic: [],
+		geography: [],
+		language: []
+	})
 
+	const handleFacetSelection = (facetType, value) => {
+		setSelectedFacets((prev) => ({
+			...prev,
+			[facetType]: value ? [value] : []
+		}))
+	}
 	return (
 
 		<InstantSearch
 			searchClient={searchClient}
 			indexName="Dev_Kaplan"
-			routing={true}
-			insights={true}
-			future={{
-				preserveSharedStateOnUnmount: true
+			onSearchStateChange={(updatedSearchState) => {
+				const { refinementList, hierarchicalMenu } = updatedSearchState['Dev_Kaplan'] || {}
+				setSelectedFacets({
+					hierarchicalCategories: hierarchicalMenu?.['hierarchicalCategories.lvl0'] || [],
+					topic: refinementList?.topic || [],
+					geography: refinementList?.geography || [],
+					language: refinementList?.language || []
+				})
 			}}
 		>
-			<Configure
-				analytics={true} />
 
 
 		<div className="bg-white mb-[100px]">
@@ -213,7 +228,8 @@ function App() {
 
 									<CustomRefinementList accordionOpen={false} showMore={true} showSearch={true} limit={5} label="Name"
 																				attribute="name" />
-									<CustomRefinementList showSearch={true} showMore={true} limit={5} label="Geography"
+									<CustomRefinementList accordionOpen={false} showSearch={true} showMore={true} limit={5}
+																				label="Geography"
 																				attribute="geography" />
 									<CustomRefinementList label="Collection" attribute="collection" />
 

@@ -31,16 +31,6 @@ function CustomRefinementList({
 		sortBy: ['count:desc', 'name:asc']
 	});
 
-	const normalizeValue = (value) =>
-		value
-			.toLowerCase()
-			.replace(/ > /g, '_')
-			.replace(/\//g, '_')
-			.replace(/,/g, '_')
-			.replace(/&/g, 'and')
-			.replace(/ /g, '_')
-			.replace(/[()]/g, '')
-			.replace(/[^a-z0-9_,|]/g, '')
 
 	const toggleSearch = () => setIsSearchVisible(!isSearchVisible)
 

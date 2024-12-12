@@ -28,16 +28,6 @@ function NavAutocomplete() {
 	const rootRef = useRef<HTMLElement | null>(null)
 
 	// Normalization function
-	const normalizeValue = (value: string) =>
-		value
-			.toLowerCase()
-			.replace(/ > /g, '_')
-			.replace(/\//g, '')
-			.replace(/,/g, '')
-			.replace(/&/g, 'and')
-			.replace(/ /g, '')
-			.replace(/[()]/g, '')
-			.replace(/[^a-z0-9_,|]/g, '')
 
 	useEffect(() => {
 		if (!containerRef.current) {
@@ -123,7 +113,7 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?geography=${normalizeValue(item.label)}`}
+										href={`/search/?geography=${(item.label)}`}
 										className="text-blue-500 underline"
 									>
 										{item.label}
@@ -161,7 +151,7 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?hierarchicalCategories=${normalizeValue(
+										href={`/search/?hierarchicalCategories=${(
 											item.label
 										)}`}
 										className="text-blue-500 underline"
@@ -202,7 +192,7 @@ function NavAutocomplete() {
 									<ProductItem
 										hit={item}
 										components={components}
-										normalizeValue={normalizeValue}
+
 									/>
 								)
 							},
@@ -248,27 +238,37 @@ function NavAutocomplete() {
 
 function ProductItem({
 											 hit,
-											 components,
-											 normalizeValue
+											 components
 										 }: {
 	hit: ProductHit;
 	components: AutocompleteComponents;
-	normalizeValue: (value: string) => string;
 }) {
 	return (
 		<article className="aa-ItemWrapper">
 			<div className="aa-ItemContent">
 				<div className="aa-ItemIcon--picture">
-					<a href={`/item/${(hit.slug)}`}>
-						<img src={hit.thumbnail} alt={hit.title} />
+					<a
+						href={`/item/${hit.slug}`}
+						aria-label={`View details for ${hit.title}`}
+					>
+						<img
+							src={hit.thumbnail || '/default-thumbnail.png'}
+							alt={hit.title || 'No title available'}
+						/>
 					</a>
 				</div>
-				<a href={`/item/${(hit.slug)}`}>
+				<a href={`/item/${hit.slug}`} aria-label={`View details for ${hit.title}`}>
 					<div className="mt-6 aa-ItemContentTitle">
-						<components.Highlight hit={hit} attribute="title" />
+						<components.Highlight
+							hit={hit}
+							attribute="title"
+						/>
 					</div>
 					<div className="aa-ItemContentDescription">
-						<components.Snippet hit={hit} attribute="description" />
+						<components.Snippet
+							hit={hit}
+							attribute="description"
+						/>
 					</div>
 				</a>
 			</div>
@@ -276,5 +276,4 @@ function ProductItem({
 		</article>
 	);
 }
-
 export default NavAutocomplete;
