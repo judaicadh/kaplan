@@ -19,7 +19,7 @@ const searchClient = algoliasearch(
 	'be46d26dfdb299f9bee9146b63c99c77'
 );
 const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
-	key: 'navbar'
+	key: 'search'
 })
 
 function NavAutocomplete() {
