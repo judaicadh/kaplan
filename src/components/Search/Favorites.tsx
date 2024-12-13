@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, CardActionArea, CardActions, CardContent, CardMedia, Typography } from '@mui/material'
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip, Typography } from '@mui/material'
 import FavoritesButton from '@components/Misc/FavoritesButton.tsx'
 
 type Favorite = {
@@ -89,12 +89,14 @@ const Favorites = () => {
 								</CardContent>
 							</CardActionArea>
 							<CardActions disableSpacing>
+								<Tooltip title="Favorite Item">
 								<FavoritesButton
 									objectID={favorite.objectID}
 									title={favorite.title}
 									slug={favorite.slug}
 									thumbnail={favorite.thumbnail}
 								/>
+								</Tooltip>
 							</CardActions>
 						</Card>
 					))}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import IconButton from '@mui/material/IconButton'
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded'
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded'
+import { Tooltip } from '@mui/material'
 
 type FavoritesButtonProps = {
 	objectID: string;
@@ -52,9 +53,11 @@ const FavoritesButton: React.FC<FavoritesButtonProps> = ({ objectID, title, slug
 	};
 
 	return (
+		<Tooltip title="Favorite Item">
 		<IconButton color="primary" onClick={toggleFavorite} title="Toggle Favorite">
 			{isFavorite ? <FavoriteRoundedIcon color="error" /> : <FavoriteBorderRoundedIcon />}
 		</IconButton>
+		</Tooltip>
 	);
 };
 
