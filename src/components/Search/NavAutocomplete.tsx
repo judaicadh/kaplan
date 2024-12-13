@@ -46,7 +46,7 @@ function NavAutocomplete() {
 					return []
 				}
 				return [
-					{
+					/*{
 						sourceId: 'nameCategories',
 						getItems({ query }) {
 							return getAlgoliaFacets({
@@ -54,34 +54,22 @@ function NavAutocomplete() {
 								queries: [
 									{
 										indexName: 'Dev_Kaplan',
-										facet: 'name',
+										facet: 'name', // Update this to your facet attribute
 										params: {
 											facetQuery: query,
-											maxFacetHits: 2
+											maxFacetHits: 5,
 										},
 									},
 								],
 							});
 						},
 						templates: {
-							header() {
-								return (
-									<Fragment>
-										<span className="aa-SourceHeaderTitle">Names</span>
-										<div className="aa-SourceHeaderLine" />
-									</Fragment>
-								)
-							},
 							item({ item }) {
-								return (
-									<a
-										href={`/search/?name=${(item.label)}`}
-										className="text-blue-500 underline"
-									>
-										{item.label}
-									</a>
-								);
+								return <a href={`/search/?name=${item.label}`}>{item.label}</a>;
+
+
 							},
+
 						},
 					},
 					{
@@ -92,7 +80,7 @@ function NavAutocomplete() {
 								queries: [
 									{
 										indexName: 'Dev_Kaplan',
-										facet: 'geography',
+										facet: 'geographic_subject.name',
 										params: {
 											facetQuery: query,
 											maxFacetHits: 2
@@ -161,7 +149,7 @@ function NavAutocomplete() {
 								)
 							}
 						}
-					},
+					},*/
 					{
 						sourceId: 'products',
 						getItems() {
