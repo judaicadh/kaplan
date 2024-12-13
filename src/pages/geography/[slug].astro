@@ -1,113 +1,142 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro'
 import items from '../../data/items.json'
-import GeoLayout from '../../layouts/GeoLayout.astro'
 import { slugify } from '../../utils/slugify.js'
 
-// Generate dynamic paths based on slugified geography names
+// Generate dynamic paths based on geography names
 export async function getStaticPaths() {
-	const geographyItems = items.flatMap((item) =>
+	const geographySlugs = items.flatMap((item) =>
 		(item.geography || []).map((geo) => ({
 			params: { slug: slugify(geo.name) }
 		}))
-	)
+	);
 
-	const uniquePaths = Array.from(
-		new Set(geographyItems.map((path) => JSON.stringify(path)))
-	).map((path) => JSON.parse(path))
+	// Deduplicate slugs
+	const uniquePaths = Array.from(new Set(geographySlugs.map((path) => JSON.stringify(path))))
+		.map((path) => JSON.parse(path))
 
 	return uniquePaths
 }
 
-// Extract the slug from the URL
+// Get the dynamic slug from the URL
 const { slug } = Astro.params
 
-// Find the corresponding geography data by matching the slug
-const geographyData = items.flatMap((item) =>
-	item.geography || []
-).find((geo) => slugify(geo.name) === slug)
+// Find the geography data for the given slug
+const geographyData = items
+	.flatMap((item) => item.geography || [])
+	.find((geo) => slugify(geo.name) === slug)
 
 if (!geographyData) {
 	throw new Error(`Geography with slug "${slug}" not found.`)
 }
 
-// Fetch additional data from Wikidata
-let wikidataResult = null
-try {
-	const response = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${geographyData.uri.split('/').pop()}.json`)
-	const wikidata = await response.json()
-	const entity = wikidata.entities[geographyData.uri.split('/').pop()]
+// Extract the URI and other details
+const { name: geographyName, uri: geographyUri } = geographyData
 
-	wikidataResult = {
-		label: entity.labels?.en?.value || geographyData.name,
-		description: entity.descriptions?.en?.value || 'No description available.'
-	}
-} catch (error) {
-	console.error('Error fetching data from Wikidata:', error)
+if (!geographyUri) {
+	throw new Error(`No URI found for geography: ${geographyName}`)
 }
 
-// Filter items associated with this geography
-const associatedItems = items.filter(
-	(item) =>
-		(item.geography || []).some(
-			(geo) => slugify(geo.name) === slug
-		)
+// Fetch data from Wikidata using SPARQL
+let sparqlData = null
+try {
+	const sparqlQuery = `
+    SELECT ?property ?propertyLabel ?value ?valueLabel WHERE {
+      wd:${geographyUri} ?property ?value .
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+    }
+    LIMIT 100
+  `
+
+	const response = await fetch('https://query.wikidata.org/sparql', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body: `query=${encodeURIComponent(sparqlQuery)}`
+	})
+
+	const results = await response.json()
+	sparqlData = results.results.bindings.map((binding) => ({
+		property: binding.propertyLabel?.value || 'Unknown Property',
+		value: binding.valueLabel?.value || 'Unknown Value'
+	}))
+} catch (error) {
+	console.error('Error fetching SPARQL data:', error)
+}
+
+// Find all items associated with this geography
+const associatedItems = items.filter((item) =>
+	(item.geography || []).some((geo) => slugify(geo.name) === slug)
 )
+
+// Metadata for the page
+const title = `Geography: ${geographyName} - Kaplan Collection of Early American Judaica`
+const metaDescription = `Explore items related to the geography ${geographyName}. Discover resources from the Kaplan Collection of Early American Judaica.`
 ---
 
-<GeoLayout title={wikidataResult?.label || 'Geography'}>
+<BaseLayout title={title} description={metaDescription}>
+	<head>
+		<meta name="description" content={metaDescription} />
+	</head>
 	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
 		<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
-			<div class="prose dark:prose-invert">
-				<!-- Page Header -->
-				<h1 class="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white">
-					{wikidataResult?.label || geographyData.name || 'Geography not found'}
-				</h1>
-				<hr class="my-6 border-gray-200 dark:border-gray-800" />
+			<h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
+				Geography: {geographyName}
+			</h1>
 
-				<!-- Description Section -->
-				{wikidataResult?.description ? (
-					<p class="text-lg text-gray-700 dark:text-gray-300">
-						{wikidataResult.description}
-					</p>
-				) : (
-					<p class="text-gray-600 dark:text-gray-400">No description available.</p>
-				)}
-
-				<!-- Associated Items Section -->
-				{associatedItems.length > 0 ? (
-					<>
-						<h2 class="text-2xl font-bold mt-8">Associated Items</h2>
-						<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-4">
-							{associatedItems.map((item) => (
-								<div class="border rounded-lg overflow-hidden">
-									<a href={`/item/${item.slug}`}>
-										<img
-											src={item.thumbnail}
-											alt={item.title}
-											class="w-full h-48 object-cover"
-										/>
-										<div class="p-4">
-											<p class="font-semibold">{item.title}</p>
-										</div>
-									</a>
-								</div>
-							))}
-						</div>
-					</>
-				) : (
-					<p>No associated items found.</p>
-				)}
-
-				<!-- Back Link -->
+			{sparqlData ? (
 				<div class="mt-6">
-					<a
-						href="/geography"
-						class="text-blue-600 hover:underline"
-					>
-						Back to Geographies
-					</a>
+					<h2 class="text-xl font-bold">Details from Wikidata</h2>
+					<ul class="mt-4 space-y-2">
+						{sparqlData.map((item, index) => (
+							<li key={index} class="text-gray-700 dark:text-gray-300">
+								<strong>{item.property}:</strong> {item.value}
+							</li>
+						))}
+					</ul>
 				</div>
+			) : (
+				<p class="text-gray-600 dark:text-gray-300 mt-6">
+					No additional information available from Wikidata for {geographyName}.
+				</p>
+			)}
+
+			<hr class="my-6 border-gray-200 dark:border-gray-800" />
+
+			<h2 class="text-xl font-bold mt-8">Associated Items</h2>
+			<div class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 gap-6 mt-6">
+				{associatedItems.map((item) => (
+					<div
+						key={item.id}
+						class="p-4 border border-gray-200 rounded-lg shadow hover:shadow-lg transition"
+					>
+						<a href={`/item/${item.slug}`} class="block">
+							{item.thumbnail ? (
+								<img
+									src={item.thumbnail}
+									alt={item.title}
+									class="w-full h-48 object-contain rounded-lg mb-4"
+								/>
+							) : (
+								<div
+									class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500">
+									No Image
+								</div>
+							)}
+						</a>
+						<a
+							href={`/item/${item.slug}`}
+							class="block text-blue-600 hover:underline text-lg font-semibold"
+						>
+							{item.title}
+						</a>
+						<p class="truncate text-gray-600 mt-2 dark:text-gray-400">
+							{item.description || 'No description available.'}
+						</p>
+					</div>
+				))}
 			</div>
 		</div>
 	</section>
-</GeoLayout>
+</BaseLayout>

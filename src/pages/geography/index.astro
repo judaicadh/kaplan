@@ -1,7 +1,7 @@
 ---
 import { fetchWikidata } from '../../utils/sparql.js'
 import Layout from '../../layouts/GeoLayout.astro'
-
+const { wikidataResult, geographyData, associatedItems } = Astro.props
 // SPARQL query to fetch geographic entities
 const sparqlQuery = `
 SELECT ?place ?placeLabel WHERE {
