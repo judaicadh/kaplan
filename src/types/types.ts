@@ -2,12 +2,12 @@ import type { Hit } from '@algolia/client-search'
 
 // Define the ProductRecord type
 export type ProductRecord = {
-	name: string[];
+	name: string;
   type: string[];
 	date: number; // Assuming date is stored as a UNIX timestamp
   description: string;
   title: string;
-  geography: string[];
+	geographic_subject: string[];
   thumbnail: string;
   slug: string;
 	url?: string; // Optional URL for the item

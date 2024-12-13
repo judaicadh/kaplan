@@ -401,6 +401,7 @@ const isValidTimestamp = (timestamp) => {
 			const parsedSubjects = parseTestField(item.test)
 			const parsedGeographyField = parseGeographyField(item.geographyField)
 
+
 			console.log(`Processing Item ID: ${item.id}`)
 			console.log(`genre Field: ${item.genre}`)
 			console.log(`Generated Hierarchical Categories:`, JSON.stringify(hierarchicalCategories, null, 2))
@@ -445,6 +446,8 @@ const isValidTimestamp = (timestamp) => {
 				language: item.language ? item.language.split('|').map((sub) => sub.trim()) : [],
 				name: item.name ? item.name.split('|').map((sub) => sub.trim()) : [],
 				people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map((sub) => sub.trim()) : [],
+				personAI: item.PersonName_AI ? item.PersonName_AI.split('|').map((sub) => sub.trim()) : [],
+				businessAI: item.BusinessName_AI ? item.BusinessName_AI.split('|').map((sub) => sub.trim()) : [],
 				topic: item.Topic ? item.Topic.split('|').map((sub) => sub.trim()) : [],
 				type: item.genre ? item.genre.split('|').map((sub) => sub.trim()) : [],
 				subjectAI: parsedSubjects,

@@ -6,11 +6,11 @@ import type { ProductRecord } from './types.ts'
 export type CustomRecord = AlgoliaHit<{
 	objectID: string;
 	name: string;
-	language: string[];
+	language: string;
 	dateC: string;
 	description: string;
 	title: string;
-	geography: string[];
+	geographic_subject: string[];
 	thumbnail: string;
 	slug: string;
 	url?: string;

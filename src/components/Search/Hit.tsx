@@ -7,7 +7,11 @@ import FavoritesButton from '@components/Misc/FavoritesButton.tsx'
 type HitProps = {
 	hit: AlgoliaHit<{
 		objectID: string;
+		startDate1: number;
+		endDate1: number;
 		name: string;
+		personAI: string;
+		businessAI: string;
 		type: string[];
 		subtype: string;
 		topic: string;
