@@ -26,6 +26,7 @@ import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { useState } from 'react'
+import VirtualFilters from '@components/Search/VirtualFilters.tsx'
 
 const customIcon = new L.DivIcon({
 	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
@@ -52,100 +53,63 @@ const dateFields = [
 	'startDate11', 'endDate11'
 ]
 
-
 const routing = {
 	router: history(),
+	windowTitle({ hierarchicalCategories, query }) {
+		const queryTitle = query ? `Results for "${query}"` : 'Search'
+
+		if (hierarchicalCategories) {
+			return `${hierarchicalCategories} – ${queryTitle}`
+		}
+
+		return queryTitle
+	},
 	stateMapping: {
 		stateToRoute(uiState) {
-			const indexUiState = uiState['Dev_Kaplan'] || {}
+			const indexUiState = uiState[indexName]
+			console.log('stateToRoute - uiState:', uiState)
+			console.log('stateToRoute - indexUiState:', indexUiState)
 
-			const normalizeValue = (value) =>
-				value
-					.toLowerCase()
-					.replace(/ > /g, '_')
-					.replace(/\//g, '_')
-					.replace(/,/g, '_')
-					.replace(/&/g, 'and') // Replace `&` with "and"
-					.replace(/ /g, '_') // Replace spaces with underscores
-					.replace(/[()]/g, '')
-					.replace(/[^a-z0-9_,|]/g, ''); // Remove unwanted characters
-
-			const formatList = (list) =>
-				list ? list.map(normalizeValue).join(',') : ''
-
-			const formatHierarchicalCategories = (hierarchicalMenu) =>
-				Object.values(hierarchicalMenu || {})
-					.flatMap((value) =>
-						Array.isArray(value) ? value.map(normalizeValue) : [normalizeValue(value)]
-					)
-					.join(normalizeValue('/'))
-
-			// Remove empty states
-			const removeEmpty = (state) =>
-				Object.fromEntries(
-					Object.entries(state).filter(([_, value]) => value && value !== '')
-				)
-
-			return removeEmpty({
-				query: indexUiState.query || '',
-				page: indexUiState.page || '',
-				hierarchicalCategories: formatHierarchicalCategories(indexUiState.hierarchicalMenu),
-				geography: formatList(indexUiState.refinementList?.geography),
-				language: formatList(indexUiState.refinementList?.language),
-				name: (indexUiState.refinementList?.name),
-				topic: formatList(indexUiState.refinementList?.topic)
-			});
-		},
-		routeToState(routeState) {
-			const parseList = (list) =>
-				list ? list.split(',').map((item) => item.replace(/_/g, ' ')) : []
 
 			return {
-				Dev_Kaplan: {
-					query: routeState.query || '',
-					page: parseInt(routeState.page, 10) || 1,
-					refinementList: {
-						topic: parseList(routeState.topic),
-						geography: parseList(routeState.geography),
-						language: parseList(routeState.language),
-						name: parseList(routeState.name)
+				q: indexUiState.query,
+				hierarchicalCategories: indexUiState.hierarchicalMenu?.['hierarchicalCategories.lvl0'],
+				name: indexUiState.refinementList?.name,
+				topic: indexUiState.refinementList?.topic,
+				subcollection: indexUiState.refinementList?.subcollection,
+				collection: indexUiState.refinementList?.collection,
+				language: indexUiState.refinementList?.language,
+				'geographic_subject.name': indexUiState.refinementList?.['geographic_subject.name'],
+				page: indexUiState.page,
+				sortBy: indexUiState.sortBy,
+				filterBy: indexUiState.filterBy
+			}
+		},
+		routeToState(routeState) {
+			return {
+				[indexName]: {
+					query: routeState.q,
+					menu: {
+						'hierarchicalCategories.lvl0': routeState.hierarchicalCategories
 					},
-					hierarchicalMenu: routeState.hierarchicalCategories
-						? {
-							'hierarchicalCategories.lvl0': parseList(routeState.hierarchicalCategories)
-						}
-						: {}
+					refinementList: {
+						collection: routeState.collection,
+						language: routeState.language,
+						name: routeState.name,
+						topic: routeState.topic,
+						subcollection: routeState.subcollection,
+						'geographic_subject.name': routeState['geographic_subject.name']
+
+					},
+					page: routeState.page
 				},
 			};
 		},
 	},
-	createURL({ qsModule, routeState, location }) {
-		const baseUrl = location.href.split('?')[0]
-
-		// Filter out empty parameters
-		const filteredRouteState = Object.fromEntries(
-			Object.entries(routeState).filter(([_, value]) => value && value !== '')
-		)
-
-		// Create the query string
-		const queryString = qsModule.stringify(filteredRouteState, {
-			addQueryPrefix: true,
-			arrayFormat: 'comma'
-		})
-
-		// Return clean base URL if query string is empty
-		return queryString ? `${baseUrl}${queryString}` : `${baseUrl}/search`
-	}
 };
 
-
 function App() {
-	const [selectedFacets, setSelectedFacets] = useState({
-		hierarchicalCategories: [],
-		topic: [],
-		geography: [],
-		language: []
-	})
+
 
 	const handleFacetSelection = (facetType, value) => {
 		setSelectedFacets((prev) => ({
@@ -153,21 +117,39 @@ function App() {
 			[facetType]: value ? [value] : []
 		}))
 	}
+	type SelectedFacets = {
+		hierarchicalCategories: string[];
+		topic: string[];
+		geography: string[];
+		language: string[];
+		name: string[];
+	};
+
+	const [selectedFacets, setSelectedFacets] = useState<SelectedFacets>({
+		hierarchicalCategories: [],
+		topic: [],
+		geography: [],
+		language: [],
+		name: []
+	})
+	const searchParams = new URLSearchParams(window.location.search)
+	const uiStateFromUrl = searchParams.get('uiState')
+	const initialUiState = uiStateFromUrl ? JSON.parse(uiStateFromUrl) : {}
+
 	return (
+
 
 		<InstantSearch
 			searchClient={searchClient}
 			indexName="Dev_Kaplan"
-			onSearchStateChange={(updatedSearchState) => {
-				const { refinementList, hierarchicalMenu } = updatedSearchState['Dev_Kaplan'] || {}
-				setSelectedFacets({
-					hierarchicalCategories: hierarchicalMenu?.['hierarchicalCategories.lvl0'] || [],
-					topic: refinementList?.topic || [],
-					geography: refinementList?.geography || [],
-					language: refinementList?.language || []
-				})
+			insights={true}
+			routing={routing}
+			future={{
+				preserveSharedStateOnUnmount: true
 			}}
 		>
+
+			<VirtualFilters />
 
 
 		<div className="bg-white mb-[100px]">
@@ -230,7 +212,7 @@ function App() {
 																				attribute="name" />
 									<CustomRefinementList accordionOpen={false} showSearch={true} showMore={true} limit={5}
 																				label="Geography"
-																				attribute="geography" />
+																				attribute={'geographic_subject.name'} />
 									<CustomRefinementList label="Collection" attribute="collection" />
 
 									<CustomRefinementList label="Language" limit={4} showMore={true} attribute="language" />
