@@ -41,11 +41,11 @@ if (!subjectUri) {
 
 console.log('Subject URI:', subjectUri)
 
-const pageTitle = `Browse items with Subject: ${subjectName}`
-const metaDescription = `Explore items related to the subject ${subjectName}. Learn more about this topic via the Library of Congress.`
+const title = `Subject: ${subjectName} - Kaplan Collection of Early American Judaica`
+const metaDescription = `Explore items related to the subject ${subjectName}. See items related to ${subjectName} from the Kaplan Collection of Early American Judaica .`
 ---
 
-<BaseLayout title={`Browse items with Subject: ${subjectName}`} }>
+<BaseLayout title={title} description={metaDescription} }>
 	<head>
 		<meta name="description" content={metaDescription} />
 		{subjectUri &&
