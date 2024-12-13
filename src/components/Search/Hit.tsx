@@ -9,13 +9,12 @@ type HitProps = {
 		objectID: string;
 		name: string;
 		type: string[];
-		categories: string[];
-		subtype: string[];
-		topic: string[];
+		subtype: string;
+		topic: string;
 		dateC: string;
 		description: string;
 		title: string;
-		geography: string[];
+		geographic_subject: string[];
 		thumbnail: string;
 		slug: string;
 		url?: string;
@@ -130,8 +129,8 @@ export function Hit({ hit, sendEvent }: HitProps) {
 						className="text-sm text-gray-600 mt-1"
 						color="textSecondary"
 					>
-						<strong>{hit.type}</strong> - {hit.dateC}
-						<TopicBadges hit={hit} />
+
+					<TopicBadges hit={hit} />
 					</Typography>
 				</CardContent>
 			</CardActionArea>
