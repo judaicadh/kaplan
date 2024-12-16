@@ -50,6 +50,7 @@
     "@iconify-json/mdi": "^1.2.2",
     "@internetarchive/bookreader": "^5.0.0-79",
     "@material-tailwind/react": "^2.1.10",
+    "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
     "@mui/styled-engine-sc": "^6.2.0",
     "@mui/x-date-pickers": "^7.23.2",
