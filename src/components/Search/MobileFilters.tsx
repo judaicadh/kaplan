@@ -5,43 +5,39 @@ import CustomHierarchicalMenu from '@components/Search/HierarchicalMenu.tsx'
 import { ClearFiltersMobile } from '@components/Search/ClearFiltersMobile.tsx'
 import { ClearFilters } from '@components/Search/ClearFilters.tsx'
 import CustomClearRefinements from '@components/Search/CustomClearRefinements.tsx'
-
 function MobileFilters() {
 	const [isFilterOpen, setIsFilterOpen] = useState(false)
-	const filterPanelRef = useRef(null)
-	const toggleButtonRef = useRef(null)
+
+	// Correctly type the refs
+	const filterPanelRef = useRef<HTMLDivElement | null>(null)
+	const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
 
 	const toggleFilterMenu = () => {
 		setIsFilterOpen((prev) => !prev)
-	}
+	};
 
 	// Close panel on outside click
 	useEffect(() => {
-		const handleOutsideClick = (event) => {
+		const handleOutsideClick = (event: MouseEvent) => {
+			const target = event.target as Node | null // Explicitly cast to Node
+
 			if (
 				filterPanelRef.current &&
-				!filterPanelRef.current.contains(event.target) &&
-				!toggleButtonRef.current.contains(event.target)
+				!filterPanelRef.current.contains(target) &&
+				toggleButtonRef.current &&
+				!toggleButtonRef.current.contains(target)
 			) {
 				setIsFilterOpen(false)
 			}
-		}
+		};
 
-		if (isFilterOpen) {
-			document.addEventListener('mousedown', handleOutsideClick)
-		} else {
+		document.addEventListener('mousedown', handleOutsideClick)
+
+		return () => {
 			document.removeEventListener('mousedown', handleOutsideClick)
 		}
+	}, []);
 
-		return () => document.removeEventListener('mousedown', handleOutsideClick)
-	}, [isFilterOpen])
-
-	// Trap focus within the filter panel
-	useEffect(() => {
-		if (isFilterOpen) {
-			toggleButtonRef.current.focus()
-		}
-	}, [isFilterOpen])
 
 	const dateFields = [
 		'startDate1',

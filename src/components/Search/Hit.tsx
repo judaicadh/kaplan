@@ -14,7 +14,7 @@ type HitProps = {
 		businessAI: string;
 		type: string[];
 		subtype: string;
-		topic: string;
+		topic: string[];
 		dateC: string;
 		description: string;
 		title: string;
