@@ -118,7 +118,7 @@
     "tify": "^0.31.0",
     "typecheck": "^0.1.2",
     "typescript": "^5.7.2",
-    "vite": "^6.0.3",
+    "vite": "^5.4.11",
     "webpack": "^5.97.1"
   },
   "devDependencies": {
@@ -136,9 +136,7 @@
     "@tailwindcss/forms": "^0.5.9",
     "@types/leaflet": "^1.9.15",
     "@types/lodash.debounce": "^4.0.9",
-    "@types/react": "^19.0.1",
     "@types/react-datepicker": "^7.0.0",
-    "@types/react-dom": "^19.0.2",
     "css-loader": "^7.1.2",
     "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.2",
