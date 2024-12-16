@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import Viewer from '@samvera/clover-iiif/viewer'
 
 interface CloverProps {
@@ -9,7 +9,7 @@ const Clover: React.FC<CloverProps> = ({ manifestUrls }) => {
 	const [selectedManifest, setSelectedManifest] = useState(manifestUrls[0])
 
 	// Define Viewer options
-	const viewerOptions = {
+	const viewerOptions = useMemo(() => ({
 		showTitle: false,
 		informationPanel: {
 			open: false // Example: Configure information panel visibility
@@ -17,18 +17,18 @@ const Clover: React.FC<CloverProps> = ({ manifestUrls }) => {
 		openSeadragon: {
 			gestureSettingsMouse: {
 				scrollToZoom: true
-			}
-		}
-	}
+			},
+		},
+	}), []);
 
 	// Handle selection change in dropdown
 	const handleManifestChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		setSelectedManifest(event.target.value)
-	}
+	};
 
 	return (
 		<div className="space-y-4">
-			{/* Show dropdown only if there are multiple manifests */}
+			{/* Dropdown for multiple manifests */}
 			{manifestUrls.length > 1 && (
 				<div className="manifest-selector space-y-2">
 					<label
@@ -42,6 +42,7 @@ const Clover: React.FC<CloverProps> = ({ manifestUrls }) => {
 						value={selectedManifest}
 						onChange={handleManifestChange}
 						className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+						aria-label="Select a IIIF manifest"
 					>
 						{manifestUrls.map((url, index) => (
 							<option key={index} value={url}>
@@ -54,7 +55,10 @@ const Clover: React.FC<CloverProps> = ({ manifestUrls }) => {
 
 			{/* Viewer Container */}
 			<div
-				className="viewer-container border border-gray-300 rounded-md p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+				className="viewer-container border border-gray-300 rounded-md p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+				role="region"
+				aria-label="IIIF Viewer"
+			>
 				{selectedManifest ? (
 					<Viewer iiifContent={selectedManifest} options={viewerOptions} />
 				) : (
@@ -62,7 +66,7 @@ const Clover: React.FC<CloverProps> = ({ manifestUrls }) => {
 				)}
 			</div>
 		</div>
-	)
-}
+	);
+};
 
 export default Clover

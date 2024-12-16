@@ -25,7 +25,7 @@ import CustomPagination from '@components/Search/CustomPagination.tsx'
 import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import VirtualFilters from '@components/Search/VirtualFilters.tsx'
 
 const customIcon = new L.DivIcon({
@@ -108,83 +108,57 @@ const routing = {
 	},
 };
 
-function App() {
-
-
-	const handleFacetSelection = (facetType, value) => {
-		setSelectedFacets((prev) => ({
-			...prev,
-			[facetType]: value ? [value] : []
-		}))
-	}
-	type SelectedFacets = {
-		hierarchicalCategories: string[];
-		topic: string[];
-		geography: string[];
-		language: string[];
-		name: string[];
-	};
-
-	const [selectedFacets, setSelectedFacets] = useState<SelectedFacets>({
-		hierarchicalCategories: [],
-		topic: [],
-		geography: [],
-		language: [],
-		name: []
-	})
-	const searchParams = new URLSearchParams(window.location.search)
-	const uiStateFromUrl = searchParams.get('uiState')
-	const initialUiState = uiStateFromUrl ? JSON.parse(uiStateFromUrl) : {}
+const App = () => {
+	const initialUiState = useMemo(() => {
+		const searchParams = new URLSearchParams(window.location.search)
+		const uiStateFromUrl = searchParams.get('uiState')
+		return uiStateFromUrl ? JSON.parse(uiStateFromUrl) : {}
+	}, [])
 
 	return (
-
-
 		<InstantSearch
 			searchClient={searchClient}
-			indexName="Dev_Kaplan"
-			insights={true}
+			indexName={indexName}
 			routing={routing}
-			future={{
-				preserveSharedStateOnUnmount: true
-			}}
+			insights
+			initialUiState={initialUiState}
+			future={{ preserveSharedStateOnUnmount: true }}
 		>
-
 			<VirtualFilters />
-
-
-		<div className="bg-white mb-[100px]">
-				<div>
-					{/* Main content */}
-					<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-						{/* Header Section */}
-						<div className="bg-white border-gray-200 grid   grid-cols-3 md:grid-cols-4   py-4 items-center">
-							<div className="    ">
-								<h1 className="text-xl font-serif md:text-2xl font-bold text-gray-900">Discover</h1>
-							</div>
-							<div className="md:w-full md:col-span-3">
-								<CustomSearchBox />
-							</div>
-							<div className="flex justify-end ">
-								<MobileFilters />
-							</div>
+			<div className="bg-white dark:bg-gray-900 min-h-screen mb-[100px]">
+				<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+					{/* Header Section */}
+					<div
+						className="bg-white dark:bg-gray-800 py-4 border-b border-gray-200 dark:border-gray-700 grid grid-cols-3 md:grid-cols-4 items-center">
+						<h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Discover</h1>
+						{/* Search Box */}
+						<div className="md:col-span-3 xs:col-span-1">
+							<CustomSearchBox />
 						</div>
-
-						<div className="flex flex-col sm:flex-row pt-1 sm:justify-between sm:items-center space-y-4 sm:space-y-0">
-							<CustomBreadcrumb
-								attributes={[
-									'hierarchicalCategories.lvl0',
-									'hierarchicalCategories.lvl1',
-									'hierarchicalCategories.lvl2'
-								]}
-							/>
+						{/* Mobile Filters Button */}
+						<div className="col-span-1 flex justify-end">
+							<MobileFilters />
 						</div>
+					</div>
+
+					{/* Breadcrumb and Filters */}
+					<div className="flex flex-col sm:flex-row justify-between items-center my-4 space-y-4 sm:space-y-0">
+						<CustomBreadcrumb
+							attributes={[
+								'hierarchicalCategories.lvl0',
+								'hierarchicalCategories.lvl1',
+								'hierarchicalCategories.lvl2'
+							]}
+						/>
+					</div>
+
 						{/* Filters and Content Section */}
 						<section aria-labelledby="products-heading" className="bg-white pt-6">
 							<h2 id="products-heading" className="sr-only">Filters</h2>
-							<div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
+							<div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 								{/* Desktop Filters */}
 								<aside
-									className=" bg-white lg:block hidden md:visible top-3 space-y-6 border-r border-b  ">
+									className="col-span-1 bg-white lg:block hidden md:visible top-3 space-y-6 border-r border-b  ">
 
 									<CustomClearRefinements />
 
@@ -225,11 +199,16 @@ function App() {
 
 
 								{/* Results and Sorting */}
-								<div className="lg:col-span-3 space-y-6">
+
+								{/* Stats, Sort, and Hits Per Page */}
+								<div className="md:col-span-3 sm:col-span-1 space-y-6">
 									{/* Stats, Sort, and Hits Per Page */}
 									<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
+										{/* Stats */}
 										<Stats />
-										<div className="flex flex-row-reverse">
+
+										{/* SortBy and HitsPerPage */}
+										<div className="flex items-center space-x-4">
 											<CustomSortBy />
 											<CustomHitsPerPage
 												items={[
@@ -239,26 +218,21 @@ function App() {
 												]}
 											/>
 										</div>
-
 									</div>
 
-									{/* Hits */}
+									{/* Hits Section */}
 									<NoResultsBoundary fallback={<NoResults />}>
-										<div className="">
+										<div className=" sm:grid-cols-1   lg:grid-cols-3  ">
 											<CustomHits />
-											<CustomPagination />
 										</div>
-
+										<CustomPagination />
 									</NoResultsBoundary>
-
-									{/* Pagination */}
-
 								</div>
 							</div>
 						</section>
-					</main>
-				</div>
+				</main>
 			</div>
+
 		</InstantSearch>
 	)
 }

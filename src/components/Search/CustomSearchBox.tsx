@@ -42,7 +42,7 @@ function CustomSearchBox(props) {
 					inputRef.current.focus()
 				}
 			}}
-			className="sm:col-span-1 md:col-span-3   "
+
 		>
 
 			<label htmlFor="default-search"
