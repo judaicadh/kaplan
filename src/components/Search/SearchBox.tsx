@@ -1,3 +1,4 @@
+/*
 import React from 'react'
 
 footer({ state })
@@ -5,7 +6,7 @@ footer({ state })
 	const { query } = state
 	return (
 		<div>
-			{/* Dummy content for scrollability */}
+			{/!* Dummy content for scrollability *!/}
 
 
 			<div
@@ -72,4 +73,4 @@ onSelect({
 	window.location.href = `/search/?q=${encodeURIComponent(query)}`
 }
 ,
-}
+}*/
