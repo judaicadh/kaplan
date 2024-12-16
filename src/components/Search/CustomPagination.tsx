@@ -1,6 +1,10 @@
 import { usePagination } from 'react-instantsearch'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleDoubleLeft, faAngleDoubleRight, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faAngleLeft, faAngleRight, faAngleDoubleLeft, faAngleDoubleRight)
 
 function CustomPagination(props) {
 	const {
