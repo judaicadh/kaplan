@@ -6,34 +6,33 @@ import Oswald from '@fontsource-variable/oswald'
 import Merriweather from '@fontsource-variable/merriweather'
 const { title, description } = Astro.props
 import Confetti from '../components/Misc/Confetti.tsx'
-
 ---
+
 <html lang="en">
 
 <head>
 	<Header title={title} description={description} />
-
 </head>
-<body>
 
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
 <script is:inline src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-
 <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 				integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
 				crossorigin=""></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/js/pagedone.js"></script>
 
+<div class="flex flex-col min-h-screen">
+	<!-- Navigation -->
+	<Nav />
 
+	<!-- Main Content -->
+	<main class="flex-grow">
+		<slot /> <!-- Page content will be injected here -->
+	</main>
 
-
-<Nav />
-
-<main class="mb-24">
-
-	<slot /> <!-- Page content will be injected here -->
-</main>
-
-<Footer />
-
+	<!-- Footer -->
+	<Footer />
+</div>
 </body>
+
 </html>

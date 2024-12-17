@@ -1,28 +1,43 @@
 ---
 import { Image } from 'astro:assets';
-import JudaicaDHLogo from '../../images/Judaica Digital Humanities Logo 2020_RGB.png';
+import JudaicaDHLogo from '../../../src/images/Judaica Digital Humanities Logo 2020_RGB.png'
 
 ---
 
-<footer class="fixed bottom-0 h-20 left-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
-    <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
-        <div class="sm:flex sm:items-center sm:justify-between">
-            <a href="https://judaicadhpenn.org/" class="  flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
-
-            <img src={JudaicaDHLogo.src}  class="h-14" alt="Judaica DH at Penn Logo"  decoding="async"  loading="lazy"> </a>
-    <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
-
-        <li>
-					<a href="https://github.com/judaicadh/kaplan" class="hover:underline me-4 md:me-6">Site Documentation</a>
-				</li>
-			<li>
-				<a href="/about/" class="hover:underline me-4 md:me-6">About</a>
-        </li>
-        <li>
-					<a href="/collections/" class="hover:underline me-4 md:me-6">Featured</a>
-        </li>
-        <li>
-            <a href="https://judaicadhpenn.org" target="_blank" class="hover:underline">Judaica DH at Penn</a>
-        </li>
-    </ul>
+<footer class="w-full bg-white border-t border-gray-200 shadow dark:bg-gray-800 dark:border-gray-600">
+	<div class="max-w-screen-xl mx-auto p-4 md:p-6">
+		<div class="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
+			<!-- Logo -->
+			<a href="https://judaicadhpenn.org/"
+				 class="flex items-center space-x-3 rtl:space-x-reverse"
+				 aria-label="Judaica Digital Humanities at Penn">
+				<img
+					src={JudaicaDHLogo.src}
+					class="h-14 w-auto"
+					alt="Judaica Digital Humanities Logo"
+					loading="lazy"
+					decoding="async">
+			</a>
+			<!-- Footer Links -->
+			<nav aria-label="Footer Navigation" class="flex justify-center md:justify-end">
+				<ul
+					class="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 text-sm text-gray-600 dark:text-gray-400">
+					<li>
+						<a href="https://github.com/judaicadh/kaplan" class="hover:underline focus:ring-2 focus:ring-gray-500">Site
+							Documentation</a>
+					</li>
+					<li>
+						<a href="/about/" class="hover:underline focus:ring-2 focus:ring-gray-500">About</a>
+					</li>
+					<li>
+						<a href="/collections/" class="hover:underline focus:ring-2 focus:ring-gray-500">Featured</a>
+					</li>
+					<li>
+						<a href="https://judaicadhpenn.org" target="_blank"
+							 class="hover:underline focus:ring-2 focus:ring-gray-500">Judaica DH at Penn</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
 </footer>
