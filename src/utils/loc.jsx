@@ -24,8 +24,8 @@ function SubjectInfo({ subjectUri }) {
 			} catch (err) {
 				setError(err.message)
 			}
-		})()
-	}, [subjectUri])
+		})();
+	}, [subjectUri]);
 
 	if (error) return <p className="text-red-600">Error: {error}</p>
 	if (!locData.length) return <p className="text-gray-600">Loading information...</p>
@@ -39,24 +39,55 @@ function SubjectInfo({ subjectUri }) {
 				return [...closeMatches, ...hasCloseAuthorities].map((link) => link['@id'])
 			})
 		)
-	)
+	);
+
 	const notes = locData.flatMap((item) => item['http://www.loc.gov/mads/rdf/v1#note'] || []).map((note) => note['@value'])
 	const variants = locData.flatMap((item) => item['http://www.loc.gov/mads/rdf/v1#variantLabel'] || []).map((variant) => variant['@value'])
 
 	// Map URIs to sources and logos
 	const getSourceLogo = (uri) => {
-		if (uri.includes('worldcat.org')) return { name: 'OCLC', logo: '../../src/images/logos/oclc-logo.png' }
-		if (uri.includes('aat.getty.edu')) return { name: 'AAT', logo: '../../src/images/logos/aat-logo.png' }
-		if (uri.includes('bnf.fr')) return { name: 'BNF', logo: '../../src/images/logos/bnf-logo.png' }
-		if (uri.includes('wikidata.org')) return { name: 'Wikidata', logo: '../../src/images/logos/wikidata-logo.png' }
-		if (uri.includes('loc.gov')) return { name: 'LOC', logo: '../../src/images/logos/loc-logo.png' }
-		if (uri.includes('ndl.go.jp')) return { name: 'NDL', logo: '../../src/images/logos/ndl-logo.png' }
-		if (uri.includes('d-nb.info')) return { name: 'DNB', logo: '../../src/images/logos/dnb-logo.png' }
-		if (uri.includes('purl.org/bncf')) return { name: 'BNCF', logo: '../../src/images/logos/bncf-logo.png' }
-		if (uri.includes('yso.fi')) return { name: 'Finto', logo: '../../src/images/logos/finto-logo.png' }
-		if (uri.includes('bne.es')) return { name: 'BNE', logo: '../../src/images/logos/bne-logo.png' }
+		if (uri.includes('worldcat.org')) return { name: 'OCLC', logo: '../../../src/images/logos/oclc-logo.png' }
+		if (uri.includes('aat.getty.edu')) return { name: 'AAT', logo: '../../../src/images/logos/aat-logo.png' }
+		if (uri.includes('bnf.fr')) return { name: 'BNF', logo: '../../../src/images/logos/bnf-logo.png' }
+		if (uri.includes('wikidata.org')) return { name: 'Wikidata', logo: '../../../src/images/logos/wikidata-logo.png' }
+		if (uri.includes('loc.gov') || uri.endsWith('.json')) return {
+			name: 'LOC',
+			logo: '../../../src/images/logos/loc-logo.png'
+		}
+		if (uri.includes('ndl.go.jp')) return { name: 'NDL', logo: '../../../src/images/logos/ndl-logo.png' }
+		if (uri.includes('d-nb.info')) return { name: 'DNB', logo: '../../../src/images/logos/dnb-logo.png' }
+		if (uri.includes('purl.org/bncf')) return { name: 'BNCF', logo: '../../../src/images/logos/bncf-logo.png' }
+		if (uri.includes('yso.fi')) return { name: 'Finto', logo: '../../../src/images/logos/finto-logo.png' }
+		if (uri.includes('bne.es')) return { name: 'BNE', logo: '../../../src/images/logos/bne-logo.png' }
 
-		return { name: 'Unknown', logo: '../../src/images/logos/loc-logo.png' }
+		return null // Do not return Unknown
+	};
+
+	// Add LOC link explicitly
+	const locLink = {
+		name: 'LOC',
+		logo: '../../src/images/logos/loc-logo.png',
+		href: subjectUri.replace('.json', '')
+	}
+
+	// Filter out duplicates by source
+	const uniqueSources = new Set()
+	const filteredExternalLinks = externalLinks.filter((link) => {
+		const source = getSourceLogo(link)?.name
+		if (source && !uniqueSources.has(source)) {
+			uniqueSources.add(source)
+			return true
+		}
+		return false
+	}).map((link) => {
+		const source = getSourceLogo(link)
+		return source ? { ...source, href: link } : null
+	})
+
+	// Ensure LOC link is included
+	if (!uniqueSources.has('LOC')) {
+		filteredExternalLinks.unshift(locLink)
+		uniqueSources.add('LOC')
 	}
 
 	return (
@@ -76,57 +107,32 @@ function SubjectInfo({ subjectUri }) {
 					</div>
 				)}
 
-				{/* Library of Congress Link */}
-				{subjectUri && (
-					<p className="text-gray-600 dark:text-gray-300 mt-4">
-						View more about this subject on the{' '}
-						<a
-							href={subjectUri.replace('.json', '')}
-							className="text-blue-600 hover:underline"
-							target="_blank"
-							rel="noopener noreferrer"
-							title="Library of Congress Subject Page"
-						>
-							Library of Congress Subject Page
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								height="12"
-								viewBox="0 0 512 512"
-								fill="currentColor"
-								className="inline ml-1"
-							>
-								<path
-									d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l82.7 0L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3l0 82.7c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160c0-17.7-14.3-32-32-32L320 0zM80 32C35.8 32 0 67.8 0 112L0 432c0 44.2 35.8 80 80 80l320 0c44.2 0 80-35.8 80-80l0-112c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 112c0 8.8-7.2 16-16 16L80 448c-8.8 0-16-7.2-16-16l0-320c0-8.8 7.2-16 16-16l112 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L80 32z" />
-							</svg>
-						</a>
-					</p>
-				)}
-
 				{/* Horizontal Menu for External Links */}
+				<hr class="my-6 border-gray-200 dark:border-gray-800" />
+
 				<div>
-					<h2 className="text-lg font-semibold">Linked Data</h2>
-					{externalLinks.length > 0 ? (
+					<h2 className="text-lg text-slate-500 font-semibold">Linked Data</h2>
+
+
+					{filteredExternalLinks.length > 0 ? (
 						<ul className="flex flex-wrap space-x-4 mt-2">
-							{externalLinks.map((link, index) => {
-								const { name, logo } = getSourceLogo(link)
-								return (
-									<li key={index} className="flex items-center">
-										<a
-											href={link}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="flex items-center space-x-2"
-										>
-											<img
-												src={logo}
-												alt={name}
-												className="w-5 h-5"
-											/>
-											<span className="text-sm">{name}</span>
-										</a>
-									</li>
-								)
-							})}
+							{filteredExternalLinks.map((link, index) => (
+								<li key={index} className="flex items-center">
+									<a
+										href={link.href}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="flex items-center space-x-2"
+									>
+										<img
+											src={link.logo}
+											alt={link.name}
+											className="w-5 h-5"
+										/>
+										<span className="text-sm">{link.name}</span>
+									</a>
+								</li>
+							))}
 						</ul>
 					) : (
 						<p>No external links available.</p>
@@ -178,9 +184,7 @@ function SubjectInfo({ subjectUri }) {
 				)}
 			</div>
 		</div>
-	)
+	);
 }
 
-
 export default SubjectInfo
-

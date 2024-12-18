@@ -46,7 +46,7 @@ const metaDescription = `Explore items related to the subject ${subjectName}. Se
 ---
 
 <BaseLayout title={title} description={metaDescription} }>
-	<head>
+	<head title={title}>
 		<meta name="description" content={metaDescription} />
 		{subjectUri &&
 			<link rel="canonical" href={subjectUri} />}
