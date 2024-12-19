@@ -46,19 +46,40 @@ function SubjectInfo({ subjectUri }) {
 
 	// Map URIs to sources and logos
 	const getSourceLogo = (uri) => {
-		if (uri.includes('worldcat.org')) return { name: 'OCLC', logo: '../../../src/images/logos/oclc-logo.png' }
-		if (uri.includes('aat.getty.edu')) return { name: 'AAT', logo: '../../../src/images/logos/aat-logo.png' }
-		if (uri.includes('bnf.fr')) return { name: 'BNF', logo: '../../../src/images/logos/bnf-logo.png' }
-		if (uri.includes('wikidata.org')) return { name: 'Wikidata', logo: '../../../src/images/logos/wikidata-logo.png' }
+		if (uri.includes('worldcat.org')) return {
+			name: 'OCLC',
+			logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/OCLC_logo.svg/1200px-OCLC_logo.svg.png'
+		}
+		if (uri.includes('aat.getty.edu')) return {
+			name: 'AAT',
+			logo: 'https://triplydb.com/imgs/avatars/d/5dc7c4f2d64fe90358026ac4.png?v=0'
+		}
+		if (uri.includes('bnf.fr')) return {
+			name: 'BNF',
+			logo: 'https://the-public-domain-review.imgix.net/sources/bnf.png?h=1200'
+		}
+		if (uri.includes('viaf.org')) return {
+			name: 'VIAF',
+			logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/VIAF_icon.svg/1200px-VIAF_icon.svg.png'
+		}
+		if (uri.includes('wikidata.org')) return {
+			name: 'Wikidata',
+			logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Wikidata-logo-v3.png/640px-Wikidata-logo-v3.png'
+		}
 		if (uri.includes('loc.gov') || uri.endsWith('.json')) return {
 			name: 'LOC',
 			logo: '../../../src/images/logos/loc-logo.png'
 		}
-		if (uri.includes('ndl.go.jp')) return { name: 'NDL', logo: '../../../src/images/logos/ndl-logo.png' }
-		if (uri.includes('d-nb.info')) return { name: 'DNB', logo: '../../../src/images/logos/dnb-logo.png' }
-		if (uri.includes('purl.org/bncf')) return { name: 'BNCF', logo: '../../../src/images/logos/bncf-logo.png' }
-		if (uri.includes('yso.fi')) return { name: 'Finto', logo: '../../../src/images/logos/finto-logo.png' }
-		if (uri.includes('bne.es')) return { name: 'BNE', logo: '../../../src/images/logos/bne-logo.png' }
+		if (uri.includes('d-nb.info')) return {
+			name: 'DNB',
+			logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/DNB.svg/2560px-DNB.svg.png'
+		}
+		if (uri.includes('purl.org/bncf')) return {
+			name: 'BNCF',
+			logo: 'https://www.bncf.firenze.sbn.it/wp-content/uploads/2023/04/bncf_logo.png'
+		}
+
+		if (uri.includes('bne.es')) return { name: 'BNE', logo: 'https://datos.bne.es/img/logoBNEpositivo.jpg' }
 
 		return null // Do not return Unknown
 	};
