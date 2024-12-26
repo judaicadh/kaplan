@@ -179,35 +179,44 @@ const genreToHierarchy = {
 		'Decorative Art': [
 			'Lamp',
 			'Medal',
-			'Sampler',
 			'Silver',
-			'Textiles',
-			'Visual Works',
+			'Sculpture',
 			'Plaque',
-			'Sculpture'
-		],
-
-		'Ritual Objects': [
 			'Mezuzah',
 			'Menorah',
 			'Kiddush Cup',
-			'Tzedakah Box'
-		],
-		'Advertising Objects': [
 			'Advertising Mirror',
 			'Advertising Pin',
 			'Brush',
+
+		],
+		'Containers': [
 			'Wood Crate',
 			'Pouch',
 			'Bottle',
 			'Crock',
 			'Match Safe',
 			'Jug',
-			'Glassware'
+			'Glassware',
+			'Tzedakah Box'
 		]
 
 	},
 	'Manuscript/Mixed Material': {
+		'Cards': [
+			'Calling Cards',
+			'Dance Card',
+			'Postcard',
+			'Trade Card',
+			'Trade Cards',
+			'Greeting Cards'
+		],
+		'Correspondence': [
+			'Letters',
+			'Letter',
+			'Envelope',
+			'Envelopes'
+		],
 		'Manuscripts': [
 			'Manuscript',
 			'Diary',
@@ -217,31 +226,18 @@ const genreToHierarchy = {
 			'Petition',
 			'Legal Document',
 			'Will',
-			'Military Record',
-			'Military Related Letter',
+			'Record',
 			'Brief',
 			'Contract',
-			'Deed'
-		],
-		'Letters & Cards': [
-			'Calling Cards',
-			'Dance Card',
+			'Deed',
 			'Envelope',
-			'Greeting Cards',
 			'Invitation',
-			'Letter',
-			'Postcard',
 			'Playbill',
 			'Program',
-			'Trade Card',
-			'Ticket'
-		],
-
-		'Financial Records': [
+			'Ticket',
 			'Billhead',
 			'Bond',
-			'Business Letter',
-			'Business Report',
+			'Report',
 			'Receipt',
 			'Ledger',
 			'Promissory Note',
@@ -256,7 +252,7 @@ const genreToHierarchy = {
 			'Check'
 		]
 	},
-	'Photo, Print, Drawing': {
+	'Visual Arts': {
 		'Photography': [
 			'Photographs',
 			'Albumen Prints',
@@ -268,19 +264,36 @@ const genreToHierarchy = {
 			'Tintypes',
 			'Photograph Albums'
 		],
-		'Fine Art': [
+		'Needlework': [
+			'Textiles',
+			'Sampler'
+		],
+		'Paintings': [
+			'Oil Painting',
+			'Watercolor'
+		],
+		'Drawing': [
 			'Drawing',
+			'Pastel',
+			'Sketches'
+		],
+		'Printing': [
 			'Engraving',
 			'Etching',
 			'Lithograph',
 			'Micrography',
-			'Oil Painting',
-			'Pastel',
 			'Print',
-			'Sketches',
-			'Watercolor',
 			'Woodcuts',
-			'Chromolithograph'
+			'Chromolithograph',
+			'Visual Works'
+		],
+		'Metalwork': [
+			'Plaque',
+			'Silver',
+			'Medal'
+		],
+		'Sculpture': [
+			'Sculpture'
 		]
 	},
 	'Book/Printed Material': {
@@ -291,26 +304,19 @@ const genreToHierarchy = {
 			'Almanac',
 			'Report',
 			'Bookplate',
-			'Printed Material'
-		],
-
-		'Religious Materials': [
+			'Printed Material',
 			'Ketubah',
 			'Donation Recorder',
 			'Prayer Book',
 			'Torah Scroll'
 		]
 	},
-	'Notated Music': {
-		'Music': [
+	'Notated Music': [
 			'Sheet Music'
-		]
-	},
-	'Map': {
-		'Cartographic': [
-			'Map'
-		]
-	},
+	],
+	'Map': [
+		'Map'
+	],
 	'Newspaper': {
 		'Periodicals': [
 			'Newspaper',
@@ -331,17 +337,24 @@ const generateHierarchicalCategories = (genreField) => {
 	// Split the `genreField` into individual genres
 	const genres = genreField.split('|').map((t) => t.trim())
 
-	// Loop through the genreToHierarchy object to map the genreField values
 	genres.forEach((genre) => {
 		let foundMatch = false
 
+		// Loop through the genreToHierarchy object to map the genreField values
 		for (const [lvl0, subcategories] of Object.entries(genreToHierarchy)) {
-			for (const [lvl1, items] of Object.entries(subcategories)) {
-				if (items.includes(genre)) {
-					hierarchicalCategories.lvl0.push(lvl0)
-					hierarchicalCategories.lvl1.push(`${lvl0} > ${lvl1}`)
-					hierarchicalCategories.lvl2.push(`${lvl0} > ${lvl1} > ${genre}`)
-					foundMatch = true
+			if (Array.isArray(subcategories) && subcategories.includes(genre)) {
+				// Handle flat top-level categories like Notated Music or Map
+				hierarchicalCategories.lvl0.push(lvl0)
+				foundMatch = true
+			} else if (typeof subcategories === 'object') {
+				// Handle hierarchical subcategories
+				for (const [lvl1, items] of Object.entries(subcategories)) {
+					if (items.includes(genre)) {
+						hierarchicalCategories.lvl0.push(lvl0)
+						hierarchicalCategories.lvl1.push(`${lvl0} > ${lvl1}`)
+						hierarchicalCategories.lvl2.push(`${lvl0} > ${lvl1} > ${genre}`)
+						foundMatch = true
+					}
 				}
 			}
 		}
@@ -349,14 +362,14 @@ const generateHierarchicalCategories = (genreField) => {
 		if (!foundMatch) {
 			console.warn(`No match found in hierarchy for genre: "${genre}"`)
 		}
-	})
+	});
 
 	// Deduplicate and return the categories
 	return {
 		lvl0: [...new Set(hierarchicalCategories.lvl0)],
 		lvl1: [...new Set(hierarchicalCategories.lvl1)],
 		lvl2: [...new Set(hierarchicalCategories.lvl2)]
-	}
+	};
 };
 const parseGeographyField = (geography) => {
 	if (!geography) return []
