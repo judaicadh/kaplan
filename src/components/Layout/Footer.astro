@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import JudaicaDHLogo from 'src/images/Judaica Digital Humanities Logo 2020_RGB.png'
+import JudaicaDHLogo from 'src/images/JudaicaDHlogo.png'
 ---
 
 <footer class="w-full bg-white border-t border-gray-200 shadow dark:bg-gray-800 dark:border-gray-600">
@@ -10,13 +10,11 @@ import JudaicaDHLogo from 'src/images/Judaica Digital Humanities Logo 2020_RGB.p
 			<a href="https://judaicadhpenn.org/"
 				 class="flex items-center space-x-3 rtl:space-x-reverse"
 				 aria-label="Judaica Digital Humanities at Penn">
-				<img
-					src={JudaicaDHLogo.src}
+				<Image src={JudaicaDHLogo}
 					class="h-14 w-auto"
-					alt="Judaica Digital Humanities Logo"
-					loading="lazy"
 					decoding="async"
-				>
+							 loading="lazy"
+							 alt="Judaica Digital Humanities Logo" />
 			</a>
 			<!-- Footer Links -->
 			<nav aria-label="Footer Navigation" class="flex justify-center md:justify-end">
