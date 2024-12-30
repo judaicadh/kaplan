@@ -1,10 +1,9 @@
 import { defineConfig, passthroughImageService } from 'astro/config'
-
+import robotsTxt from 'astro-robots-txt'
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
-import robotsTxt from "astro-robots-txt";
 
 
 import preact from '@astrojs/preact'
