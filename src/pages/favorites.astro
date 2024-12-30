@@ -3,10 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Favorites from '../components/Search/Favorites'
 ---
 <BaseLayout title="Favorites - Kaplan Collection of Early American Judaica"
-						description="Items marked as 'favorites' from the Kaplan Collection of Early American Judaica"></BaseLayout>
+						description="Items marked as 'favorites' from the Kaplan Collection of Early American Judaica">
 <section class="pb-24">
 
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 <Favorites client:only="react" />
 	</div>
 </section>
+</BaseLayout>
