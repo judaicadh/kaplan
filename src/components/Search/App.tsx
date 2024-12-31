@@ -112,19 +112,32 @@ const App = () => {
 	const initialUiState = useMemo(() => {
 		const searchParams = new URLSearchParams(window.location.search)
 		const uiStateFromUrl = searchParams.get('uiState')
-		return uiStateFromUrl ? JSON.parse(uiStateFromUrl) : {}
-	}, [])
+			? JSON.parse(searchParams.get('uiState'))
+			: {};
+
+		// Add default filter for collection:E if it's not already specified
+		return {
+			[indexName]: {
+				refinementList: {
+					collection: ['E'], // Default filter
+					...(uiStateFromUrl[indexName]?.refinementList || {}) // Merge with URL state
+				},
+				...uiStateFromUrl[indexName] // Merge other states
+			}
+		}
+	}, []);
 
 	return (
 		<InstantSearch
 			searchClient={searchClient}
 			indexName={indexName}
-			routing={routing}
+			routing={true}
 			insights
 			initialUiState={initialUiState}
 			future={{ preserveSharedStateOnUnmount: true }}
 		>
-			<VirtualFilters />
+
+		<VirtualFilters />
 			<div className="bg-white dark:bg-gray-900 min-h-screen mb-[100px]">
 				<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 					{/* Header Section */}
