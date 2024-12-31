@@ -327,40 +327,40 @@ const genreToHierarchy = {
 	}
 };
 const generateHierarchicalCategories = (genreField) => {
-	const hierarchicalCategories = { lvl0: [], lvl1: [], lvl2: [] }
+	const hierarchicalCategories = { lvl0: [], lvl1: [], lvl2: [] };
 
 	if (!genreField) {
-		console.warn('genre field is missing or empty.')
-		return hierarchicalCategories
+		console.warn("Genre field is missing or empty.");
+		return hierarchicalCategories;
 	}
 
 	// Split the `genreField` into individual genres
-	const genres = genreField.split('|').map((t) => t.trim())
+	const genres = genreField.split("|").map((t) => t.trim());
 
 	genres.forEach((genre) => {
-		let foundMatch = false
+		let foundMatch = false;
 
 		// Loop through the genreToHierarchy object to map the genreField values
 		for (const [lvl0, subcategories] of Object.entries(genreToHierarchy)) {
 			if (Array.isArray(subcategories) && subcategories.includes(genre)) {
-				// Handle flat top-level categories like Notated Music or Map
-				hierarchicalCategories.lvl0.push(lvl0)
-				foundMatch = true
+				// Handle flat top-level categories
+				hierarchicalCategories.lvl0.push(lvl0);
+				foundMatch = true;
 			} else if (typeof subcategories === 'object') {
 				// Handle hierarchical subcategories
 				for (const [lvl1, items] of Object.entries(subcategories)) {
 					if (items.includes(genre)) {
-						hierarchicalCategories.lvl0.push(lvl0)
-						hierarchicalCategories.lvl1.push(`${lvl0} > ${lvl1}`)
-						hierarchicalCategories.lvl2.push(`${lvl0} > ${lvl1} > ${genre}`)
-						foundMatch = true
+						hierarchicalCategories.lvl0.push(lvl0);
+						hierarchicalCategories.lvl1.push(`${lvl0} > ${lvl1}`);
+						hierarchicalCategories.lvl2.push(`${lvl0} > ${lvl1} > ${genre}`);
+						foundMatch = true;
 					}
 				}
 			}
 		}
 
 		if (!foundMatch) {
-			console.warn(`No match found in hierarchy for genre: "${genre}"`)
+			console.warn(`No match found in hierarchy for genre: "${genre}"`);
 		}
 	});
 
@@ -371,70 +371,113 @@ const generateHierarchicalCategories = (genreField) => {
 		lvl2: [...new Set(hierarchicalCategories.lvl2)]
 	};
 };
-const parseGeographyField = (geography) => {
-	if (!geography) return []
-	const entries = geography.split('|').map((entry) => entry.trim())
-	return entries.map((entry) => {
-		const [namePart, uriPart] = entry.split(', uri:').map((part) => part.trim())
-		const name = namePart.replace('name:', '').trim()
-		const uri = uriPart?.trim()
-		return { name, uri }
-	}).filter((item) => item.name && item.uri)
-}
 
+const parseNameUriField = (field) => {
+	if (!field || field.trim() === "") {
+		console.warn("Field is missing or empty.");
+		return [];
+	}
 
-// Function to create a slug
-const parseTestField = (test) => {
-	if (!test) return []
-	const entries = test.split('|').map((entry) => entry.trim())
-	return entries.map((entry) => {
-		const [namePart, uriPart] = entry.split(', uri:').map((part) => part.trim())
-		const name = namePart.replace('name:', '').trim()
-		const uri = uriPart?.trim()
-		return { name, uri }
-	}).filter((item) => item.name && item.uri)
+	// Split and parse entries
+	return field.split("|").map((entry) => {
+		const [namePart, uriPart] = entry.split(", uri:").map((part) => part.trim());
+		const name = namePart?.replace("name:", "").trim();
+		const uri = uriPart?.trim();
+
+		if (name && uri) {
+			return { name, uri };
+		} else {
+			console.warn(`Invalid entry: "${entry}"`);
+			return null;
+		}
+	}).filter(Boolean);
 };
+
 const isValidTimestamp = (timestamp) => {
-	const minTimestamp = Math.floor(new Date('1300-01-01T00:00:00Z').getTime() / 1000)
-	const maxTimestamp = Math.floor(Date.now() / 1000)
-	return timestamp >= minTimestamp && timestamp <= maxTimestamp
+	const minTimestamp = Math.floor(new Date("1300-01-01T00:00:00Z").getTime() / 1000);
+	const maxTimestamp = Math.floor(Date.now() / 1000);
+	return timestamp >= minTimestamp && timestamp <= maxTimestamp;
 };
+const parseGeographyField = (geographyField) => {
+	if (!geographyField || geographyField.trim() === "") {
+		// Return an empty array if the field is missing or empty
+		console.warn("Geography field is missing or empty.");
+		return [];
+	}
+
+	// Split by '|' and parse each entry
+	return geographyField.split("|").map((entry) => {
+		const [namePart, uriPart] = entry.split(", uri:").map((part) => part.trim());
+		const name = namePart?.replace("name:", "").trim();
+		const uri = uriPart?.trim();
+
+		if (name && uri) {
+			return { name, uri };
+		} else {
+			console.warn(`Invalid geography entry: "${entry}"`);
+			return null;
+		}
+	}).filter(Boolean); // Filter out invalid entries
+};
+
 
 (async () => {
 	try {
-		const jsonArray = await csv({ separator: ',' }).fromFile(csvFilePath)
-
+		const jsonArray = await csv({ separator: "," }).fromFile(csvFilePath);
 
 		const formattedData = jsonArray.map((item, index) => {
-			const hierarchicalCategories = generateHierarchicalCategories(item.genre)
-			const datePairs = {}
-			const startDates = item.start_date?.split('|').map((s) => s.trim()).filter(Boolean) || []
-			const endDates = item.end_date?.split('|').map((s) => s.trim()).filter(Boolean) || []
-			const maxLength = Math.min(startDates.length, endDates.length)
-			const parsedSubjects = parseTestField(item.test)
-			const parsedGeographyField = parseGeographyField(item.geographyField)
+			const hierarchicalCategories = generateHierarchicalCategories(item.genre);
 
+			// Update the field name to match the CSV header
+			const parsedTestField = parseNameUriField(item.test); // Use the same parser for `test`
+			const parsedGeographyField = parseNameUriField(item.geographyField); // Use the same parser for `test`
+
+			// Process start and end dates
+			const startDates = item.start_date?.split("|").map((s) => s.trim()).filter(Boolean) || [];
+			const endDates = item.end_date?.split("|").map((s) => s.trim()).filter(Boolean) || [];
+			const datePairs = {};
+			const maxLength = Math.min(startDates.length, endDates.length);
+
+			for (let i = 0; i < maxLength; i++) {
+				const startTimestamp = parseInt(startDates[i], 10);
+				const endTimestamp = parseInt(endDates[i], 10);
+
+				if (isValidTimestamp(startTimestamp)) {
+					datePairs[`startDate${i + 1}`] = startTimestamp;
+				} else {
+					console.warn(`Invalid start timestamp for item ${item.id || `index ${index}`}: ${startTimestamp}`);
+				}
+
+				if (isValidTimestamp(endTimestamp)) {
+					datePairs[`endDate${i + 1}`] = endTimestamp;
+				} else {
+					console.warn(`Invalid end timestamp for item ${item.id || `index ${index}`}: ${endTimestamp}`);
+				}
+			}
+
+
+			for (let i = 0; i < maxLength; i++) {
+				const startTimestamp = parseInt(startDates[i], 10);
+				const endTimestamp = parseInt(endDates[i], 10);
+
+				if (isValidTimestamp(startTimestamp)) {
+					datePairs[`startDate${i + 1}`] = startTimestamp;
+				} else {
+					console.warn(`Invalid start timestamp for item ${item.id || `index ${index}`}: ${startTimestamp}`);
+				}
+
+				if (isValidTimestamp(endTimestamp)) {
+					datePairs[`endDate${i + 1}`] = endTimestamp;
+				} else {
+					console.warn(`Invalid end timestamp for item ${item.id || `index ${index}`}: ${endTimestamp}`);
+				}
+			}
 
 			console.log(`Processing Item ID: ${item.id}`)
 			console.log(`genre Field: ${item.genre}`)
 			console.log(`Generated Hierarchical Categories:`, JSON.stringify(hierarchicalCategories, null, 2))
 
-			for (let i = 0; i < maxLength; i++) {
-				const startTimestamp = parseInt(startDates[i], 10)
-				const endTimestamp = parseInt(endDates[i], 10)
 
-				if (isValidTimestamp(startTimestamp)) {
-					datePairs[`startDate${i + 1}`] = startTimestamp
-				} else {
-					console.warn(`Invalid start timestamp for item ${item.id || `index ${index}`}: ${startTimestamp}`)
-				}
-
-				if (isValidTimestamp(endTimestamp)) {
-					datePairs[`endDate${i + 1}`] = endTimestamp
-				} else {
-					console.warn(`Invalid end timestamp for item ${item.id || `index ${index}`}: ${endTimestamp}`)
-				}
-			}
 
 			// Generate hierarchical categories using the correct `item.genre`
 
@@ -463,7 +506,7 @@ const isValidTimestamp = (timestamp) => {
 				businessAI: item.BusinessName_AI ? item.BusinessName_AI.split('|').map((sub) => sub.trim()) : [],
 				topic: item.Topic ? item.Topic.split('|').map((sub) => sub.trim()) : [],
 				type: item.genre ? item.genre.split('|').map((sub) => sub.trim()) : [],
-				subjectAI: parsedSubjects,
+				subjectAI: parsedTestField,
 				geography: parsedGeographyField,
 				hierarchicalCategories,
 				...datePairs,

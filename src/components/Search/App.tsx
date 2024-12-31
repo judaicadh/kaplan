@@ -10,7 +10,7 @@ import DateRangeSlider from '@components/Search/DateRangeSlider.tsx'
 import '../../styles/App/App.css'
 import '../../styles/App/Theme.css'
 import '../../styles/App/App.mobile.css'
-
+import qs from "qs";
 import { NoResultsBoundary } from '@components/Search/NoResultsBoundary.tsx'
 import { NoResults } from '@components/Search/NoResults.tsx'
 import CustomHierarchicalMenu from '@components/Search/HierarchicalMenu.tsx'
@@ -53,7 +53,7 @@ const dateFields = [
 	'startDate11', 'endDate11'
 ]
 
-const routing = {
+/*const routing2 = {
 	router: history(),
 	windowTitle({ hierarchicalCategories, query }) {
 		const queryTitle = query ? `Results for "${query}"` : 'Search'
@@ -106,32 +106,155 @@ const routing = {
 			};
 		},
 	},
+};*/
+
+
+const initialUiState = {
+	Dev_Kaplan: {
+		refinementList: {
+			collection: ["E"] // Default to collection "E"
+
+		}
+	}
 };
 
-const App = () => {
-	const initialUiState = useMemo(() => {
-		const searchParams = new URLSearchParams(window.location.search)
-		const uiStateFromUrl = searchParams.get('uiState')
-			? JSON.parse(searchParams.get('uiState'))
-			: {};
 
-		// Add default filter for collection:E if it's not already specified
+type RouteState = {
+	query?: string;
+	page?: number;
+	hierarchicalCategories?: string[];
+	collection?: string[];
+	subcollection?: string[];
+	language?: string[];
+	topic?: string[];
+};
+
+const routing = {
+	router: history({
+		createURL({ qsModule, routeState, location }: { qsModule: any; routeState: RouteState; location: Location }) {
+			// Extract base URL
+			const urlParts = location.href.match(/^(.*?)\/search/);
+			const baseUrl = `${urlParts ? urlParts[1] : ""}/`;
+
+			// Define query parameters
+			const queryParameters = {
+				query: routeState.query ? routeState.query : undefined,
+				page: routeState.page !== 1 ? routeState.page : undefined,
+				// Exclude `collection` if it's the default value ('E')
+				collection: routeState.collection && !routeState.collection.includes("E") ? routeState.collection : undefined,
+				subcollection: routeState.subcollection?.length ? routeState.subcollection : undefined,
+				language: routeState.language?.length ? routeState.language : undefined,
+				topic: routeState.topic?.join(",") || undefined,
+				hierarchicalCategories: routeState.hierarchicalCategories?.join("/") || undefined
+			};
+
+			// Convert query parameters to a query string
+			const queryString = qsModule.stringify(queryParameters, {
+				addQueryPrefix: true,
+				arrayFormat: "comma" // Format arrays with commas
+			});
+
+			return `${baseUrl}search${queryString}`;
+		},
+
+		parseURL({ qsModule, location }: { qsModule: any; location: Location }): RouteState {
+			// Parse query parameters
+			const queryParameters = qsModule.parse(location.search.slice(1));
+
+			return {
+				query: queryParameters.query || "",
+				page: queryParameters.page ? Number(queryParameters.page) : 1,
+				collection: queryParameters.collection
+					? Array.isArray(queryParameters.collection)
+						? queryParameters.collection
+						: [queryParameters.collection]
+					: ["E"], // Default to 'E' if not specified
+				subcollection: queryParameters.subcollection
+					? Array.isArray(queryParameters.subcollection)
+						? queryParameters.subcollection
+						: [queryParameters.subcollection]
+					: [],
+				language: queryParameters.language
+					? Array.isArray(queryParameters.language)
+						? queryParameters.language
+						: [queryParameters.language]
+					: [],
+				topic: queryParameters.topic
+					? String(queryParameters.topic)
+						.split(",")
+						.map((value) => decodeURIComponent(value.trim()))
+					: [],
+				hierarchicalCategories: queryParameters.hierarchicalCategories
+					? queryParameters.hierarchicalCategories.split("/")
+					: []
+			};
+		}
+	}),
+
+	stateMapping: {
+		stateToRoute(uiState): RouteState {
+			const indexUiState = uiState["Dev_Kaplan"] || {};
+
+			return {
+				query: indexUiState.query,
+				page: indexUiState.page,
+				hierarchicalCategories: Array.isArray(indexUiState.hierarchicalMenu?.categories)
+					? indexUiState.hierarchicalMenu.categories
+					: [],
+				collection: indexUiState.refinementList?.collection && !indexUiState.refinementList.collection.includes("E")
+					? indexUiState.refinementList.collection
+					: undefined, // Exclude default collection from the URL
+				subcollection: indexUiState.refinementList?.subcollection || [],
+				language: indexUiState.refinementList?.language || [],
+				topic: indexUiState.refinementList?.topic || []
+			};
+		},
+
+		routeToState(routeState: RouteState) {
+			return {
+				Dev_Kaplan: {
+					query: routeState.query,
+					page: routeState.page,
+					hierarchicalMenu: {
+						categories: routeState.hierarchicalCategories || []
+					},
+					refinementList: {
+						collection: routeState.collection || ["E"], // Default to 'E' if not specified
+						subcollection: routeState.subcollection || [],
+						language: routeState.language || [],
+						topic: routeState.topic || []
+					}
+				}
+			};
+		}
+	}
+};
+const App = () => {
+	// Initialize UI state with a default filter for collection
+	const initialUiState = useMemo(() => {
+		const searchParams = new URLSearchParams(window.location.search);
+
+		// Explicitly handle `null` to satisfy TypeScript
+		const uiStateString = searchParams.get("uiState");
+		const uiStateFromUrl = uiStateString !== null ? JSON.parse(uiStateString) : {};
+
 		return {
 			[indexName]: {
 				refinementList: {
-					collection: ['E'], // Default filter
-					...(uiStateFromUrl[indexName]?.refinementList || {}) // Merge with URL state
+					collection: "E", // Default filter
+					...(uiStateFromUrl[indexName]?.refinementList || {})
 				},
-				...uiStateFromUrl[indexName] // Merge other states
-			}
-		}
+				...uiStateFromUrl[indexName]
+			},
+		};
 	}, []);
+
 
 	return (
 		<InstantSearch
 			searchClient={searchClient}
 			indexName={indexName}
-			routing={true}
+			routing={routing}
 			insights
 			initialUiState={initialUiState}
 			future={{ preserveSharedStateOnUnmount: true }}
@@ -199,7 +322,7 @@ const App = () => {
 																				attribute="name" />
 									<CustomRefinementList accordionOpen={false} showSearch={true} showMore={true} limit={5}
 																				label="Geography"
-																				attribute={'geographic_subject.name'} />
+																				attribute={"geography.name"} />
 									<CustomRefinementList label="Collection" attribute="collection" />
 
 									<CustomRefinementList label="Language" limit={4} showMore={true} attribute="language" />
