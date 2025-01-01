@@ -272,7 +272,7 @@ const App = () => {
 							<CustomSearchBox />
 						</div>
 						{/* Mobile Filters Button */}
-						<div className="col-span-1 flex justify-end">
+						<div className="col-span-1 flex justify-end md:hidden">
 							<MobileFilters />
 						</div>
 					</div>
