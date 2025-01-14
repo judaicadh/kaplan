@@ -241,7 +241,7 @@ const App = () => {
 		return {
 			[indexName]: {
 				refinementList: {
-					collection: "E", // Default filter
+					collection: "Arnold and Deanne Kaplan Collection of Early American Judaica", // Default filter
 					...(uiStateFromUrl[indexName]?.refinementList || {})
 				},
 				...uiStateFromUrl[indexName]
