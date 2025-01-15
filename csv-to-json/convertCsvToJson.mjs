@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvFilePath = path.join(__dirname, './Kaplan20240808 (40).csv')
+const csvFilePath = path.join(__dirname, "./Kaplan20240808 (42).csv");
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 /*
 const genreToHierarchy = {
@@ -484,6 +484,7 @@ const parseGeographyField = (geographyField) => {
 
 			return {
 				id: item.id?.toString() || '',
+				wikibaseid: item.wikibaseid?.toString() || "",
 				link: item.colendalink?.toString() || '',
 				date1: item.date?.toString() || '',
 				collection: item.Collection?.toString() || '',

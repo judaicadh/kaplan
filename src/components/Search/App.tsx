@@ -112,7 +112,7 @@ const dateFields = [
 const initialUiState = {
 	Dev_Kaplan: {
 		refinementList: {
-			collection: ["E"] // Default to collection "E"
+			collection: ["Arnold and Deanne Kaplan Collection of Early American Judaica"] // Default to collection "E"
 
 		}
 	}
@@ -241,7 +241,6 @@ const App = () => {
 		return {
 			[indexName]: {
 				refinementList: {
-					collection: "Arnold and Deanne Kaplan Collection of Early American Judaica", // Default filter
 					...(uiStateFromUrl[indexName]?.refinementList || {})
 				},
 				...uiStateFromUrl[indexName]
