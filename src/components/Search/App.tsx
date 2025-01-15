@@ -168,7 +168,7 @@ const routing = {
 					? Array.isArray(queryParameters.collection)
 						? queryParameters.collection
 						: [queryParameters.collection]
-					: ["E"], // Default to 'E' if not specified
+					: ["Arnold and Deanne Kaplan Collection of Early American Judaica"], // Default to 'E' if not specified
 				subcollection: queryParameters.subcollection
 					? Array.isArray(queryParameters.subcollection)
 						? queryParameters.subcollection
