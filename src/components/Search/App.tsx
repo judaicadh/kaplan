@@ -219,7 +219,7 @@ const routing = {
 						categories: routeState.hierarchicalCategories || []
 					},
 					refinementList: {
-						collection: routeState.collection || ["E"], // Default to 'E' if not specified
+						collection: routeState.collection || ["Arnold and Deanne Kaplan Collection of Early American Judaica"], // Default to 'E' if not specified
 						subcollection: routeState.subcollection || [],
 						language: routeState.language || [],
 						topic: routeState.topic || []
