@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const csvFilePath = path.join(__dirname, "./Kaplan20240808 (42).csv");
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
+
 /*
 const genreToHierarchy = {
 	'Commercial Activity': {
