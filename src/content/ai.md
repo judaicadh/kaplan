@@ -27,7 +27,10 @@ produce enhanced descriptions. The AI model is asked to:
 * Identify key details, such as names, dates, subjects, and locations
 * Analyze images using IIIF manifests, when available
 * Write narrative-style descriptions that highlight what makes each item unique
-  To improve results, we grouped objects by type, processing items like letters, trade cards, and billheads in separate
+
+##### Access our repository [here](https://github.com/judaicadh/kaplanai/tree/main)
+
+To improve results, we grouped objects by type, processing items like letters, trade cards, and billheads in separate
   batches (we aren’t convinced that results necessarily improved). Each batch’s system instructions included examples
   relevant to that object type. Aside from the object-specific examples, the system instructions remained nearly
   identical across batches to ensure consistency and comparability in the output. Google defines system instructions as
@@ -206,6 +209,8 @@ Output
 "Address": "NOT ENOUGH INFO"
 }
 ```
+
+##### Access our repository [here](https://github.com/judaicadh/kaplanai/tree/main)
 
 ## Results
 
