@@ -1,0 +1,292 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Kaplan from "../../images/kaplan_logo.png";
+import { Content as AI } from "../../content/ai.md";
+import MeettheCollectors from "../../content/Meet the Collectors.md";
+import Aboutthecollection from "../../content/aboutthecollection.md";
+import ProcessingtheCollection from "../../content/processingthecollection.md";
+import PathfromCollector from "../../content/pathfromcollectortocollection.md";
+import TraditionofPhilanthropy from "../../content/traditionofphilanthropy.md";
+---
+
+<BaseLayout title="About">
+
+  <!-- Mobile Sidebar Toggle Button (visible on mobile only) -->
+  <button
+    id="sidebar-toggle"
+    class="block md:hidden p-2 m-4 bg-indigo-600 text-white rounded"
+    aria-expanded="false"
+    aria-controls="default-sidebar"
+    onclick="toggleSidebar();"
+  >
+    Menu
+  </button>
+
+  <!-- Main container: stacks vertically on mobile, horizontal on md+ -->
+  <div class="flex flex-col md:flex-row">
+
+    <!-- Sidebar -->
+    <aside
+      id="default-sidebar"
+      class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0"
+      aria-label="Sidebar"
+    >
+      <div class="px-4 py-6">
+        <ul class="tab-nav flex flex-col gap-6">
+          <li>
+            <a href="#aboutthekaplancollection"
+               class="font-semibold text-lg text-indigo-600 hover:text-indigo-800 transition">
+              About the Kaplan Collection
+            </a>
+          </li>
+          <ul class="ml-4 pl-2 border-l border-gray-200">
+            <li class="pb-2">
+              <a href="#theearlyamericanJudaicacollection"
+                 class="hover:underline font-medium text-base leading-6 text-gray-600 hover:text-indigo-600 transition">
+                The Collection of Early American Judaica
+              </a>
+            </li>
+            <li>
+              <a href="#processingthecollection"
+                 class="hover:underline font-medium text-base leading-6 text-gray-600 hover:text-indigo-600 transition">
+                Processing the Collection
+              </a>
+            </li>
+          </ul>
+          <li>
+            <a href="#aboutthewebsite" class="font-semibold text-lg text-indigo-600 hover:text-indigo-800 transition">
+              About this Website
+            </a>
+          </li>
+          <ul class="ml-4 pl-2 border-l border-gray-200">
+            <li class="pb-2">
+              <a href="#faq"
+                 class="hover:underline font-medium text-base leading-6 text-gray-600 hover:text-indigo-600 transition">
+                FAQs
+              </a>
+            </li>
+            <li>
+              <a href="#ai"
+                 class="hover:underline font-medium text-base leading-6 text-gray-600 hover:text-indigo-600 transition">
+                Using AI
+              </a>
+            </li>
+          </ul>
+          <li>
+            <a href="#judaicadh" class="font-semibold text-lg text-indigo-600 hover:text-indigo-800 transition">
+              About Judaica DH
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto md:ml-64">
+      <div class="mx-auto pt-6 px-4 sm:px-6 lg:px-12">
+
+        <!-- About Section -->
+        <section id="aboutthekaplancollection"
+                 class="grid sm:grid-cols-1 lg:grid-cols-2 md:gap-8 md:h-full pb-20 border-b-2">
+          <div>
+            <h6 class="text-lg text-indigo-600 font-medium mb-2">About</h6>
+            <h2 class="text-gray-900 text-4xl font-bold mb-4">About the Kaplan Collection</h2>
+            <p class="text-gray-500 text-base leading-relaxed mb-6">
+              The Penn Libraries holds the Arnold and Deanne Kaplan Collection of Early American Judaica, a collection
+              of 13,000+ items (and counting), valued in excess of $12 million. It is the most important private
+              collection of its kind, documenting the social and economic development of early Jewish life in the
+              Western Hemisphere. The core of the Kaplan Collection covers the period before mass Jewish migration to
+              the Americas in the late 1880s.
+            </p>
+          </div>
+          <div class="hidden lg:block">
+            <img class="w-full rounded-lg shadow-lg" src={Kaplan.src} alt="Kaplan Collection" />
+          </div>
+        </section>
+
+        <!-- The Early American Judaica Section -->
+        <section class="border-b-2 pt-6">
+          <div id="theearlyamericanJudaicacollection">
+            <h6 class="text-lg text-indigo-600 font-medium mb-2">About</h6>
+            <h2 class="text-gray-900 text-4xl font-bold mb-6">The Early American Judaica Collection</h2>
+            <div class="space-y-4">
+              <div class="max-w-7xl py-8">
+                <p class="text-gray-700 leading-relaxed">
+                  The Arnold and Deanne Kaplan Collection of Early American Judaica, donated to the University of
+                  Pennsylvania Libraries in 2012 by the Kaplans, and growing each year, teaches us about the everyday
+                  lives, families, businesses, communal institutions, religious organizations, voluntary associations,
+                  and political circumstances of Jewish life throughout the western hemisphere over four centuries. It
+                  provides a unique window into the changing character of colonial life and culture around the Atlantic
+                  world and within the United States.
+                </p>
+                <!-- Image Strip -->
+                <div class="flex flex-wrap justify-center gap-4 mt-6">
+                  <a href="../item/p3014v" target="_blank" rel="noopener">
+                    <img class="w-32 h-auto" title="Hyman Gratz" alt="Hyman Gratz"
+                         src="http://kaplan.exhibits.library.upenn.edu/files/original/6c1f75893a40f4e8c2f914306d4610e2.png" />
+                  </a>
+                  <a href="../item/p31d6q" target="_blank" rel="noopener">
+                    <img class="w-32 h-auto" title="Fechheimer, Karpeles and Co." alt="Fechheimer, Karpeles and Co."
+                         src="http://kaplan.exhibits.library.upenn.edu/files/original/22ab81940805ace5b568c0924e473196.png" />
+                  </a>
+                  <a href="../item/p30v89h03" target="_blank" rel="noopener">
+                    <img class="w-32 h-auto" title="Morris Gross, Clothier" alt="Morris Gross, Clothier"
+                         src="http://kaplan.exhibits.library.upenn.edu/files/original/b46f01cd354568f8782264641d32aa14.png" />
+                  </a>
+                  <a href="../item/p32t65" target="_blank" rel="noopener">
+                    <img class="w-32 h-auto" title="Judah P. Benjamin" alt="Judah P. Benjamin"
+                         src="http://kaplan.exhibits.library.upenn.edu/files/original/d5a35f3822dd668d0e272abc6d01e612.png" />
+                  </a>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mt-8">A Collection Unlike Any Other</h2>
+                <p class="text-gray-700 leading-relaxed mt-4">
+                  The Kaplans’ core collecting focus over the last half-century has been on the evolution of Jewish
+                  business life in the Americas. Unique financial records, manuscript ledgers, and correspondence
+                  document Jewish commercial networks in North America. Thousands of sources detail the daily struggles
+                  of Jewish peddlers, craftsmen, and small business owners.
+                </p>
+                <p class="text-center font-semibold text-lg italic text-gray-800 mt-8">
+                  Thanks to the Kaplan Collection, we now have the ability to study and analyze in precise detail a wide
+                  spectrum of Jewish business experiences.
+                </p>
+                <!-- Second Image Strip -->
+                <div class="flex flex-wrap justify-center gap-4 mt-6">
+                  <a href="../item/p31c1tm5w" target="_blank" rel="noopener">
+                    <img class="w-32 h-auto" title="Levi Strauss" alt="Levi Strauss"
+                         src="http://kaplan.exhibits.library.upenn.edu/files/original/7468cced663e0ab190f42c94a16c8044.png" />
+                  </a>
+                  <a href="../item/p3611k" target="_blank" rel="noopener">
+                    <img class="w-32 h-auto" title="Einstein Brothers" alt="Einstein Brothers"
+                         src="http://kaplan.exhibits.library.upenn.edu/files/original/658a0d1679fafcf4922a2e5034432d80.png" />
+                  </a>
+                  <a href="../item/p3tb0xx24" target="_blank" rel="noopener">
+                    <img class="w-32 h-auto" title="Jacobs & Bernstein" alt="Jacobs & Bernstein"
+                         src="http://kaplan.exhibits.library.upenn.edu/files/original/a47bd9335924b45c6af49d023211e094.png" />
+                  </a>
+                  <a href="../item/p31x2c" target="_blank" rel="noopener">
+                    <img class="w-32 h-auto" title="Henry Levie" alt="Henry Levie"
+                         src="http://kaplan.exhibits.library.upenn.edu/files/original/4589303c2e75f41705a790a8c6811f18.png" />
+                  </a>
+                </div>
+                <p class="text-gray-700 leading-relaxed mt-8">
+                  The Kaplan Collection also contains diverse materials including early Jewish photography, oil
+                  paintings, textiles, and three-dimensional artifacts.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Processing the Collection -->
+        <section class="border-b-2 pt-6">
+          <div id="processingthecollection">
+            <h6 class="text-lg text-indigo-600 font-medium mb-2">About</h6>
+            <h2 class="text-gray-900 text-4xl font-bold mb-6">Processing the Collection</h2>
+            <article class="prose max-w-4xl w-full px-4 mx-auto">
+              <ProcessingtheCollection />
+            </article>
+          </div>
+        </section>
+
+        <!-- More Information -->
+        <section class="border-b-2 pt-6 px-6">
+          <div id="moreinformation">
+            <h6 class="text-lg text-indigo-600 font-medium mb-2">Website</h6>
+            <h2 class="text-gray-900 text-4xl font-bold mb-6">About this Website</h2>
+            <div class="space-y-4">
+              <p></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="py-24">
+          <div id="faq" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-16">
+              <h6 class="text-lg text-indigo-600 font-medium text-center mb-2">FAQs</h6>
+              <h2 class="text-4xl font-manrope text-center font-bold text-gray-900 leading-[3.25rem]">
+                Frequently asked questions
+              </h2>
+            </div>
+            <div class="accordion-group" data-accordion="default-accordion">
+              <!-- Accordion items here (omitted for brevity; adjust as needed) -->
+              <div
+                class="accordion py-8 px-6 border-b border-solid border-gray-200 transition-all duration-500 rounded-2xl hover:bg-indigo-50"
+                id="basic-heading-one-with-arrow">
+                <button
+                  class="accordion-toggle group inline-flex items-center justify-between text-gray-900 w-full transition duration-500 text-left hover:text-indigo-600"
+                  aria-controls="basic-collapse-one-with-arrow">
+                  <h5>How do I download images of the objects from the Kaplan Collection?</h5>
+                  <svg class="text-gray-500 transition duration-500 group-hover:text-indigo-600" width="22" height="22"
+                       viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M16.5 8.25L12.4142 12.3358C11.7475 13.0025 11.4142 13.3358 11 13.3358C10.5858 13.3358 10.2525 13.0025 9.58579 12.3358L5.5 8.25"
+                      stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+                <div id="basic-collapse-one-with-arrow" class="accordion-content w-full px-0 overflow-hidden"
+                     style="max-height: 250px;">
+                  <p class="text-base text-gray-900 leading-6">Coming soon...</p>
+                </div>
+              </div>
+              <!-- Additional accordion items... -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Using AI -->
+
+
+        <!-- About Judaica DH Section -->
+        <section id="aboutjudaicadh" class="pt-6 px-6 pb-40 gap-8 border-b-2">
+          <div>
+            <h6 class="text-lg text-indigo-600 font-medium mb-2">About this Website</h6>
+            <h2 class="text-gray-900 text-4xl font-bold mb-4">About Judaica DH at Penn</h2>
+            <p class="text-gray-500 text-base leading-relaxed mb-6">
+            </p>
+            <a href="https://www.library.upenn.edu/kislak/judaicadh"
+               class="px-4 py-2 bg-indigo-600 hover:bg-indigo-800 text-white text-sm font-medium rounded-lg transition">
+              Learn more
+            </a>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll-to-Top Button -->
+  <div
+    id="scrollToTop"
+    class="fixed opacity-90 bottom-14 right-6 z-50 px-4 py-2 bg-indigo-600 hover:bg-indigo-800 text-white text-sm font-medium rounded-lg transition"
+    style="display: none;"
+    onclick="window.scrollTo({ top: 0, behavior: " smooth" });"
+  >
+    <svg height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+      <path fill="#f7f7f7"
+            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2 160 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-306.7L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z" />
+    </svg>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("default-sidebar");
+      const toggleButton = document.getElementById("sidebar-toggle");
+      const isExpanded = toggleButton.getAttribute("aria-expanded") === "true";
+
+      if (isExpanded) {
+        sidebar.classList.add("-translate-x-full");
+      } else {
+        sidebar.classList.remove("-translate-x-full");
+      }
+      toggleButton.setAttribute("aria-expanded", !isExpanded);
+    }
+
+    // Scroll-to-Top Button Logic
+    window.addEventListener("scroll", () => {
+      const scrollToTop = document.getElementById("scrollToTop");
+      scrollToTop.style.display = window.scrollY > 100 ? "block" : "none";
+    });
+  </script>
+
+</BaseLayout>

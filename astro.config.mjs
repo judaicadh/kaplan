@@ -5,9 +5,13 @@ import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
 
+import { rehypeHeadingIds } from "@astrojs/markdown-remark";
 export default defineConfig({
   site: 'https://www.kaplancollection.org', // Update to your canonical URL
   prefetch: true,
+  markdown: {
+    rehypePlugins: [rehypeHeadingIds]
+  },
   vite: {
     resolve: {
       alias: {
