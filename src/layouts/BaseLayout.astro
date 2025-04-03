@@ -13,7 +13,27 @@ import Confetti from '../components/Misc/Confetti.tsx'
 <head>
 	<meta name="google-site-verification" content="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
 	<Header title={title} description={description} />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css" />
 
+	<script is:inline type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-QL528RZ3BB"></script>
+
+	<script is:inline type="text/partytown">
+		window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    // This should ALWAYS be set before the gtag("config", "G-QL528RZ3BB"); line
+    gtag("consent", "default", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+    });
+
+    gtag("config", "G-QL528RZ3BB");
+	</script>
 	<script
 		is:inline
 		src="https://www.googletagmanager.com/gtag/js?id=G-PQRJQQNM"
@@ -57,6 +77,9 @@ import Confetti from '../components/Misc/Confetti.tsx'
 	<!-- Footer -->
 	<Footer />
 </div>
+<script type="module" src="/src/scripts/cookieconsent-config.js"></script>
+
+
 </body>
 
 </html>

@@ -4,8 +4,8 @@ import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
-
 import { rehypeHeadingIds } from "@astrojs/markdown-remark";
+import partytown from "@astrojs/partytown";
 export default defineConfig({
   site: 'https://www.kaplancollection.org', // Update to your canonical URL
   prefetch: true,
@@ -29,23 +29,17 @@ export default defineConfig({
   typescript: {
     tsconfig: './tsconfig.json'
   },
-  integrations: [
-    react({ experimentalReactChildren: true }),
-    tailwind(),
-    icon({
-      include: {
-        mdi: ['magnify', 'account-plus', 'account-minus']
+  integrations: [react({ experimentalReactChildren: true }), tailwind(), icon({
+    include: {
+      mdi: ["magnify", "account-plus", "account-minus"]
+    }
+  }), sitemap(), robotsTxt({
+    policy: [
+      {
+        userAgent: "*",
+        allow: "/"
       }
-    }),
-    sitemap(),
-    robotsTxt({
-      policy: [
-        {
-          userAgent: '*',
-          allow: '/'
-        }
-      ],
-      sitemap: 'https://www.kaplancollection.org/sitemap.xml'
-    })
-  ]
+    ],
+    sitemap: "https://www.kaplancollection.org/sitemap.xml"
+  }), partytown()]
 })
