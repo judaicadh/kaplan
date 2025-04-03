@@ -11,12 +11,12 @@ import Confetti from '../components/Misc/Confetti.tsx'
 <html lang="en">
 
 <head>
-
-
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta name="google-site-verification" content="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
 	<Header title={title} description={description} />
-	<script is:inline type="text/partytown" async src="https://www.googletagmanager.com/gtag/js?id=G-QL528RZ3BB"></script>
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-QL528RZ3BB"></script>
+
+	<!-- Optional: Set default consent before GTM loads -->
 	<script>
 		window.dataLayer = window.dataLayer || [];
 
@@ -24,21 +24,37 @@ import Confetti from '../components/Misc/Confetti.tsx'
 			dataLayer.push(arguments);
 		}
 
-		gtag("js", new Date());
-
-		gtag("config", "G-QL528RZ3BB");
+		gtag("consent", "default", {
+			ad_storage: "denied",
+			analytics_storage: "denied"
+		});
 	</script>
+
+	<!-- Google Tag Manager -->
+	<script>
+		(function(w, d, s, l, i) {
+			w[l] = w[l] || [];
+			w[l].push({
+				"gtm.start":
+					new Date().getTime(), event: "gtm.js"
+			});
+			var f = d.getElementsByTagName(s)[0],
+				j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : "";
+			j.async = true;
+			j.src =
+				"https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+			f.parentNode.insertBefore(j, f);
+		})(window, document, "script", "dataLayer", "GTM-PQRJQQNM");
+	</script>
+
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css" />
-
-
-
-
 </head>
 
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-<!-- Google Tag Manager (noscript) -->
-
-<!-- End Google Tag Manager (noscript) -->
+<noscript>
+	<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PQRJQQNM"
+					height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
 <script is:inline src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 				integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
