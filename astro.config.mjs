@@ -40,6 +40,6 @@ export default defineConfig({
         allow: "/"
       }
     ],
-    sitemap: "https://www.kaplancollection.org/sitemap.xml"
+
   }), partytown()]
 })
