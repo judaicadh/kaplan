@@ -3,16 +3,6 @@
 
 
 ## Project Structure
-
-You'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
+ 
+ 
  
