@@ -218,19 +218,6 @@ const routing = {
 	}
 };
 const App = () => {
-	const initialUiState = useMemo(() => {
-		const searchParams = new URLSearchParams(window.location.search);
-		const uiStateString = searchParams.get("uiState");
-		const uiStateFromUrl = uiStateString !== null ? JSON.parse(uiStateString) : {};
-		return {
-			[indexName]: {
-				refinementList: {
-					...(uiStateFromUrl[indexName]?.refinementList || {})
-				},
-				...uiStateFromUrl[indexName]
-			},
-		};
-	}, []);
 
 	return (
 		<InstantSearch
@@ -238,7 +225,6 @@ const App = () => {
 			indexName={indexName}
 			routing={routing}
 			insights
-			initialUiState={initialUiState}
 			future={{ preserveSharedStateOnUnmount: true }}
 		>
 			<Configure filters='collection:"Arnold and Deanne Kaplan Collection of Early American Judaica"' />
