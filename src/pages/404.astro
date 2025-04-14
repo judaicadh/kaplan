@@ -1,20 +1,20 @@
 ---
-
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="Page Not Found">
-<main class="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
-	<div class="text-center">
-		<p class="text-base font-semibold text-sky-600">404</p>
-		<h1 class="mt-4 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">Page not found</h1>
-		<p class="mt-6 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">Sorry, we couldn't find the page you’re looking for.</p>
-		<div class="mt-10 flex items-center justify-center gap-x-6">
-			<a href="/"
-				 class="rounded-md bg-sky-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">Go
-				back home</a>
-			<a href="/search" class="text-sm font-semibold text-gray-900">New Search <span
-				aria-hidden="true">&rarr;</span></a>
-		</div>
-	</div>
-</main>
+<BaseLayout title="Redirecting…">
+	<script>
+		const path = window.location.pathname + window.location.search + window.location.hash;
+		const match = /^\/(search|item|subject|subcollection|collection|name|geography|type)/.test(path);
+
+		if (match) {
+			// Push the real URL into history *before* redirecting
+			const finalPath = "/index.html?redirect=true&path=" + encodeURIComponent(path);
+			window.history.pushState(null, "", finalPath);
+			window.location.reload(); // so the app runs from index.html
+		}
+	</script>
+
+	<main class="min-h-screen flex items-center justify-center">
+		<p class="text-gray-500">Redirecting...</p>
+	</main>
 </BaseLayout>
