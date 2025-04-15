@@ -6,7 +6,6 @@ import {
 	Stats
 } from 'react-instantsearch'
 
-import type { Router, UiState } from "instantsearch.js";
 import DateRangeSlider from '@components/Search/DateRangeSlider.tsx'
 import '../../styles/App/App.css'
 import '../../styles/App/Theme.css'
