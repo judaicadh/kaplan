@@ -6,7 +6,7 @@ import {
 	Stats
 } from 'react-instantsearch'
 
-import type { UiState } from "instantsearch.js";
+import type { Router, UiState } from "instantsearch.js";
 import DateRangeSlider from '@components/Search/DateRangeSlider.tsx'
 import '../../styles/App/App.css'
 import '../../styles/App/Theme.css'
@@ -97,6 +97,23 @@ function getCategoryName(slug: string) {
 		.join(" ");
 }
 
+function slugify(str: string): string {
+	return str
+		.toLowerCase()
+		.trim()
+		.replace(/\s+/g, "-")
+		.replace(/[^\w\-]+/g, "")
+		.replace(/\-\-+/g, "-")
+		.replace(/^-+/, "")
+		.replace(/-+$/, "");
+}
+
+function deslugify(slug: string): string {
+	// Convert 'mercantile-news' to 'Mercantile News'
+	return slug
+		.replace(/-/g, " ")
+		.replace(/\b\w/g, (l) => l.toUpperCase());
+}
 // Normalizes query param values into arrays
 function normalizeToArray(value: any) {
 	if (Array.isArray(value)) return value;
@@ -108,7 +125,7 @@ const defaultCollection = "Arnold and Deanne Kaplan Collection of Early American
 
 const routing = {
 	router: history({
-		// Use the full array of hierarchical categories for the window title.
+		// Customize the window title using hierarchicalCategories.
 		windowTitle({
 									hierarchicalCategories,
 									query
@@ -133,15 +150,14 @@ const routing = {
 			routeState: any;
 			location: Location;
 		}) {
-			// Extract the base URL before /search.
+			// Extract the base URL before /search
 			const urlParts = location.href.match(/^(.*?)\/search/);
 			const baseUrl = `${urlParts ? urlParts[1] : ""}/`;
 
-			// Use the array "hierarchicalCategories" to build the path.
+			// Use the hierarchicalCategories array to build the category path.
 			const categories: string[] = routeState.hierarchicalCategories || [];
-			const validCategories = categories.filter((c) => c); // remove undefined, null, or empty string.
-			const categoryPath = validCategories.length
-				? `${validCategories.map(getCategorySlug).join("/")}/`
+			const categoryPath = categories.length
+				? `${categories.map(getCategorySlug).join("/")}/`
 				: "";
 
 			const queryParameters: Record<string, any> = {};
@@ -152,27 +168,29 @@ const routing = {
 				queryParameters.page = routeState.page;
 			}
 			if (routeState.topic && routeState.topic.length) {
-				queryParameters.topic = routeState.topic.map(encodeURIComponent);
+				queryParameters.topic = routeState.topic.map(slugify);
 			}
 			if (routeState.language && routeState.language.length) {
-				queryParameters.language = routeState.language.map(encodeURIComponent);
+				queryParameters.language = routeState.language.map(slugify);
 			}
 			if (routeState.collection && routeState.collection.length) {
-				queryParameters.collection = routeState.collection.map(encodeURIComponent);
+				queryParameters.collection = routeState.collection.map(slugify);
 			}
 			if (routeState.subcollection && routeState.subcollection.length) {
-				queryParameters.subcollection = routeState.subcollection.map(encodeURIComponent);
+				queryParameters.subcollection = routeState.subcollection.map(slugify);
 			}
 			if (routeState.name && routeState.name.length) {
-				queryParameters.name = routeState.name.map(encodeURIComponent);
+				queryParameters.name = routeState.name.map(slugify);
 			}
 			if (routeState.geography && routeState.geography.length) {
-				queryParameters.geography = routeState.geography.map(encodeURIComponent);
+				queryParameters.geography = routeState.geography.map(slugify);
 			}
+
 			const queryString = qsModule.stringify(queryParameters, {
 				addQueryPrefix: true,
 				arrayFormat: "repeat"
 			});
+
 			return `${baseUrl}search/${categoryPath}${queryString}`;
 		},
 
@@ -183,33 +201,32 @@ const routing = {
 			qsModule: any;
 			location: Location;
 		}) {
-			// Extract the category path from the URL.
+			// Extract hierarchical categories from the path.
 			const pathnameMatches = location.pathname.match(/search\/(.*?)\/?$/);
-			const categoryPath = pathnameMatches && pathnameMatches[1] ? pathnameMatches[1] : "";
+			const categoryPath = (pathnameMatches && pathnameMatches[1]) || "";
 			const hierarchicalCategories = categoryPath
 				? categoryPath.split("/").filter(Boolean).map(getCategoryName)
 				: [];
 
+			// Destructure query parameters.
 			const {
 				query = "",
 				page,
 				topic = [],
-				collection = [],
 				language = [],
 				subcollection = [],
 				name = [],
-				geography = []
+				geography = [],
+				collection = []
 			} = qsModule.parse(location.search.slice(1));
 
-			const allTopics = Array.isArray(topic) ? topic : [topic].filter(Boolean);
-			let allCollections = Array.isArray(collection) ? collection : [collection].filter(Boolean);
-			if (!allCollections.length) {
-				allCollections = [defaultCollection];
-			}
-			const allLanguages = Array.isArray(language) ? language : [language].filter(Boolean);
-			const allSubcollections = Array.isArray(subcollection) ? subcollection : [subcollection].filter(Boolean);
-			const allNames = Array.isArray(name) ? name : [name].filter(Boolean);
-			const allGeography = Array.isArray(geography) ? geography : [geography].filter(Boolean);
+			// Ensure we have arrays.
+			const allTopics = normalizeToArray(topic).map(decodeURIComponent).map(deslugify);
+			const allCollections = normalizeToArray(collection).map(decodeURIComponent).map(deslugify);
+			const allLanguages = normalizeToArray(language).map(decodeURIComponent).map(deslugify);
+			const allSubcollections = normalizeToArray(subcollection).map(decodeURIComponent).map(deslugify);
+			const allNames = normalizeToArray(name).map(decodeURIComponent).map(deslugify);
+			const allGeography = normalizeToArray(geography).map(decodeURIComponent).map(deslugify);
 
 			return {
 				query: decodeURIComponent(query),
@@ -219,68 +236,52 @@ const routing = {
 				language: allLanguages.map(decodeURIComponent),
 				subcollection: allSubcollections.map(decodeURIComponent),
 				name: allNames.map(decodeURIComponent),
-				geography: allGeography.map(decodeURIComponent),
-				hierarchicalCategories // Return the full multi-level array.
+				// Map the URL key "geography" to the internal attribute "geography.name"
+				"geography.name": allGeography.map(decodeURIComponent),
+				hierarchicalCategories
 			};
 		},
 	}),
 
 	stateMapping: {
-		// Convert UI state into a simple route state.
+		// Converts InstantSearch's internal state into a simple route state.
 		stateToRoute(uiState: any) {
 			const indexUiState = uiState[indexName] || {};
-
-			// Extract individual levels from the hierarchical menu.
-			const lvl0 = indexUiState.hierarchicalMenu?.["hierarchicalCategories.lvl0"];
-			const lvl1 = indexUiState.hierarchicalMenu?.["hierarchicalCategories.lvl1"];
-			const lvl2 = indexUiState.hierarchicalMenu?.["hierarchicalCategories.lvl2"];
-
-			// Build an array that includes the first value from each level if available.
-			const hierarchicalCategories: string[] = [];
-			if (lvl0 && lvl0[0]) hierarchicalCategories.push(lvl0[0]);
-			if (lvl1 && lvl1[0]) hierarchicalCategories.push(lvl1[0]);
-			if (lvl2 && lvl2[0]) hierarchicalCategories.push(lvl2[0]);
-
-			const collectionFromState = indexUiState.refinementList?.collection || [];
 
 			return {
 				query: indexUiState.query,
 				page: indexUiState.page,
-				hierarchicalCategories, // Combined multi-level array.
+				// Extract the hierarchicalCategories array from the internal state.
+				hierarchicalCategories:
+					indexUiState.hierarchicalMenu?.["hierarchicalCategories.lvl0"] || [],
 				topic: indexUiState.refinementList?.topic || [],
 				language: indexUiState.refinementList?.language || [],
-				collection:
-					collectionFromState.length === 1 && collectionFromState[0] === defaultCollection
-						? []
-						: collectionFromState,
+				collection: indexUiState.refinementList?.collection || [],
 				subcollection: indexUiState.refinementList?.subcollection || [],
 				name: indexUiState.refinementList?.name || [],
+				// Map the internal "geography.name" to the URL key "geography".
 				geography: indexUiState.refinementList?.["geography.name"] || []
 			};
 		},
 
-		// Convert a simple route state back into UI state.
+		// Converts the simple route state into InstantSearch's uiState.
 		routeToState(routeState: any): any {
-			const cats: string[] = routeState.hierarchicalCategories || [];
 			return {
 				[indexName]: {
 					query: routeState.query,
 					page: routeState.page,
-					// Map the route array back into hierarchicalMenu with separate keys.
 					hierarchicalMenu: {
-						"hierarchicalCategories.lvl0": cats[0] ? [cats[0]] : [],
-						"hierarchicalCategories.lvl1": cats[1] ? [cats[1]] : [],
-						"hierarchicalCategories.lvl2": cats[2] ? [cats[2]] : []
+						"hierarchicalCategories.lvl0": routeState.hierarchicalCategories || []
 					},
 					refinementList: {
 						topic: routeState.topic || [],
-						collection:
-							routeState.collection && routeState.collection.length > 0
-								? routeState.collection
-								: [defaultCollection],
+						collection: routeState.collection?.length
+							? routeState.collection
+							: ["Arnold and Deanne Kaplan Collection of Early American Judaica"],
 						language: routeState.language || [],
 						subcollection: routeState.subcollection || [],
 						name: routeState.name || [],
+						// Map the URL key "geography" to the internal attribute "geography.name"
 						"geography.name": routeState.geography || [],
 					},
 				},
@@ -302,6 +303,7 @@ const App = () => {
 			indexName={indexName}
 			routing={routing}
 			insights
+
 			future={{ preserveSharedStateOnUnmount: true }}
 		>
 			<div className="bg-white dark:bg-gray-900 min-h-screen mb-[100px]">

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import {
 	useHierarchicalMenu,
 	type UseHierarchicalMenuProps
@@ -18,26 +18,14 @@ function CustomHierarchicalMenu(props: CustomHierarchicalMenuProps) {
 		createURL
 	} = useHierarchicalMenu(props);
 
-	const typeDescriptions = {
-		/*
-				'3D Object': 'Three dimensional objects',
-				'Book/Printed Material': 'Printed materials including books, pamphlets, and reports.',
-				'Manuscript/Mixed Material': 'Handwritten or typed documents.',
-				'Letters & Cards': 'Correspondence including personal and business communications.',
-				Photographs: 'Visual materials capturing moments in history.',
-
-
-
-				'Trade Cards': 'Promotional items used in trade during the 19th century.'
-				*/
-
+  const typeDescriptions: Record<string, string> = {
+    // Add your tooltips here if needed
 	};
 
 	return (
-		<div className="w-full px-4">
-			<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{props.title}</h3>
+    <div className="w-full px-4 pb-6">
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">{props.title}</h3>
 
-			{/* Render the hierarchical menu */}
 			<HierarchicalList
 				items={items}
 				onNavigate={refine}
@@ -45,12 +33,11 @@ function CustomHierarchicalMenu(props: CustomHierarchicalMenuProps) {
 				typeDescriptions={typeDescriptions}
 			/>
 
-			{/* Show More/Less button */}
 			{canToggleShowMore && (
 				<button
 					type="button"
 					onClick={toggleShowMore}
-					className="mt-3 w-full p-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md dark:bg-gray-700 dark:text-blue-400 dark:hover:bg-gray-600"
+          className="mt-4 w-full p-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md dark:bg-gray-700 dark:text-blue-400 dark:hover:bg-gray-600"
 					aria-expanded={isShowingMore}
 				>
 					{isShowingMore ? 'Show Less' : 'Show More'}
@@ -75,39 +62,34 @@ const HierarchicalList = React.memo(function HierarchicalList({
 																																typeDescriptions
 																															}: HierarchicalListProps) {
 	if (!items || items.length === 0) {
-		return null // No categories to display
+    return null;
 	}
 
 	return (
-		<ul role="list" className="mr-1  text-gray-900">
+    <ul className="space-y-1">
 			{items.map((item) => {
-				const descriptionKey = item.label.trim()
+        const descriptionKey = item.label.trim();
 
 				return (
 					<li key={item.value} className="relative">
-						<div className="flex items-center justify-between">
-							{/* Label and Icon */}
-							<a
-								href={createURL(item.value)}
-								aria-current={item.isRefined ? 'page' : undefined}
-								className={`flex items-center space-x-2 py-2 px-3 text-sm rounded-lg font-medium transition-all ${
-									item.isRefined
-										? 'bg-sky-100 text-sky-700 underline font-semibold'
-										: 'text-gray-700 hover:bg-gray-100 dark:text-gray-300'
-								}`}
-								onClick={(event) => {
-									if (isModifierClick(event)) {
-										return
-									}
-									event.preventDefault()
-									onNavigate(item.value)
-								}}
-							>
-								<span>{item.label}</span>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2 w-full">
+                <button
+                  type="button"
+                  onClick={() => onNavigate(item.value)}
+                  aria-current={item.isRefined ? "page" : undefined}
+                  className={`flex-grow text-left py-2 px-3 text-sm rounded-lg font-medium transition ${
+                    item.isRefined
+                      ? "bg-sky-100 text-sky-700 underline font-semibold"
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300"
+                  }`}
+                >
+                  {item.label}
+                </button>
 
-								{/* Tooltip Icon */}
+                {/* Tooltip */}
 								{typeDescriptions[descriptionKey] && (
-									<div className="relative group">
+                  <div className="relative group shrink-0">
 										<button
 											type="button"
 											className="text-gray-400 hover:text-gray-500 focus:outline-none"
@@ -117,7 +99,6 @@ const HierarchicalList = React.memo(function HierarchicalList({
 												aria-hidden="true"
 												fill="currentColor"
 												viewBox="0 0 20 20"
-												xmlns="http://www.w3.org/2000/svg"
 											>
 												<path
 													fillRule="evenodd"
@@ -127,29 +108,26 @@ const HierarchicalList = React.memo(function HierarchicalList({
 											</svg>
 											<span className="sr-only">Show information</span>
 										</button>
-										{/* Tooltip Content */}
-										<div
-											className="absolute hidden group-hover:block z-10 text-sm text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm w-72 p-3 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
-											style={{ top: '100%', left: '0' }}
-										>
+                    <div
+                      className="absolute hidden group-hover:block z-10 text-sm text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm w-72 p-3 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+                      style={{ top: "100%", left: "0" }}>
 											<h3 className="font-semibold text-gray-900 dark:text-white">{item.label}</h3>
 											<p>{typeDescriptions[descriptionKey]}</p>
 										</div>
 									</div>
 								)}
-							</a>
+              </div>
 
 							{/* Count */}
-							<span
-								className="ml-2 bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"
-							>
-								{item.count}
-							</span>
+              <span
+                className="ml-2 bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
+                {item.count}
+              </span>
 						</div>
 
-						{/* Render subcategories */}
+            {/* Subcategories */}
 						{item.data && (
-							<div className="ml-4 border-l border-gray-300 pl-4">
+              <div className="ml-4 mt-2 border-l border-gray-200 pl-4 dark:border-gray-700">
 								<HierarchicalList
 									items={item.data}
 									onNavigate={onNavigate}
@@ -165,15 +143,4 @@ const HierarchicalList = React.memo(function HierarchicalList({
 	);
 });
 
-function isModifierClick(event: React.MouseEvent) {
-	const isMiddleClick = event.button === 1
-	return (
-		isMiddleClick ||
-		event.altKey ||
-		event.ctrlKey ||
-		event.metaKey ||
-		event.shiftKey
-	);
-}
-
-export default CustomHierarchicalMenu
+export default CustomHierarchicalMenu;
