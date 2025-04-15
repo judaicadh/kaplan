@@ -1,9 +1,0 @@
----
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import App from "../../components/Search/App.tsx";
-const description = "Search the Arnold and Deanne Kaplan collection of Early American Judaica";
-export const prerender = false;
----
-<BaseLayout title="Search" description={description}>
-  <App client:only="react" />
-</BaseLayout>

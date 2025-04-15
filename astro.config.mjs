@@ -36,6 +36,9 @@ const subjectSlugs = Array.from(new Set(rawSubjects))
 export default defineConfig({
   site: "https://www.kaplancollection.org",
   base: "/",
+  build: {
+    format: "directory"
+  },
   markdown: {
     rehypePlugins: [rehypeHeadingIds]
   },
