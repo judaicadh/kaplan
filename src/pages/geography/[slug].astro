@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import items from '../../data/items.json'
 import { slugify } from '../../utils/slugify.js'
-
+export const prerender = true;
 // Generate dynamic paths based on geography names
 export async function getStaticPaths() {
 	const geographySlugs = items.flatMap((item) =>
@@ -10,7 +10,7 @@ export async function getStaticPaths() {
 			params: { slug: slugify(geo.name) }
 		}))
 	);
-	export const prerender = true;
+
 	const uniquePaths = Array.from(new Set(geographySlugs.map((path) => JSON.stringify(path))))
 		.map((path) => JSON.parse(path))
 
