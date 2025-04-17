@@ -53,8 +53,8 @@ const Favorites = () => {
 
 	return (
 		<div className="pb-20 px-7">
-			<h4 className="mb-4 text-xl font-serif">Your Favorites</h4>
-			{favorites.length === 0 ? (
+
+		{favorites.length === 0 ? (
 				<div className="text-center mt-10">
 
 					<Typography variant="body1">You have no favorites yet. Start adding some and they will appear

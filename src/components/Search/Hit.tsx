@@ -64,48 +64,6 @@ function TopicBadges({ hit }: { hit: HitProps['hit'] }) {
 }
 
 export function Hit({ hit, sendEvent }: HitProps) {
-	const [isFavorite, setIsFavorite] = useState(false)
-
-	// Utility function for managing favorites
-	const manageFavorites = useCallback(() => {
-		const favorites = JSON.parse(localStorage.getItem('favorites') || '[]')
-		return {
-			isFavorite: favorites.some((fav: { objectID: string }) => fav.objectID === hit.objectID),
-			updateFavorites: (action: 'add' | 'remove') => {
-				const updatedFavorites =
-					action === 'add'
-						? [...favorites, hit]
-						: favorites.filter((fav: { objectID: string }) => fav.objectID !== hit.objectID)
-				localStorage.setItem('favorites', JSON.stringify(updatedFavorites))
-				return updatedFavorites
-			}
-		}
-	}, [hit])
-
-	// Initialize favorite state and set up listener
-	useEffect(() => {
-		const { isFavorite } = manageFavorites()
-		setIsFavorite(isFavorite)
-
-		const handleFavoritesUpdated = () => {
-			const { isFavorite } = manageFavorites()
-			setIsFavorite(isFavorite)
-		}
-
-		window.addEventListener('favoritesUpdated', handleFavoritesUpdated)
-		return () => window.removeEventListener('favoritesUpdated', handleFavoritesUpdated)
-	}, [hit.objectID, manageFavorites]);
-
-	const toggleFavorite = () => {
-		const action = isFavorite ? 'remove' : 'add'
-		manageFavorites().updateFavorites(action)
-		setIsFavorite(!isFavorite)
-
-		// Dispatch event
-		const event = new Event('favoritesUpdated')
-		window.dispatchEvent(event)
-	};
-
 	const handleClick = () => {
 		sendEvent('click', 'Item Clicked', {
 			objectID: hit.objectID,
@@ -113,10 +71,8 @@ export function Hit({ hit, sendEvent }: HitProps) {
 		});
 	};
 
-
 	return (
 		<Card className="shadow-md hover:shadow-lg transition rounded-md">
-			{/* Image and Title Section */}
 			<CardActionArea
 				onClick={handleClick}
 				href={`/item/${hit.slug}`}
@@ -142,14 +98,11 @@ export function Hit({ hit, sendEvent }: HitProps) {
 
 			<Divider />
 
-			{/* Topics and Favorite Button Row */}
 			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
-				{/* Topic Badges */}
 				<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
 					<TopicBadges hit={hit} />
 				</Box>
 
-				{/* Favorites Button */}
 				<Box>
 					<FavoritesButton
 						objectID={hit.objectID}
