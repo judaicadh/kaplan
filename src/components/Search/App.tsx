@@ -1,5 +1,5 @@
 import { algoliasearch } from 'algoliasearch'
-import L from 'leaflet'
+
 import {
 	Configure,
 	InstantSearch,
