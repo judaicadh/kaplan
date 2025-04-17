@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import netlify from "@astrojs/netlify";
-
+import fs from "node:fs";
+import path from "node:path";
 import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
 import react from "@astrojs/react";
@@ -14,7 +15,7 @@ import partytown from "@astrojs/partytown";
 export default defineConfig({
   site: "https://www.kaplancollection.org",
   base: "/",
-  output: "server", // or 'hybrid'
+  output: "server",
   adapter: netlify(),
 
   vite: {
@@ -22,7 +23,12 @@ export default defineConfig({
       include: ["@mui/utils/chainPropTypes"]
     },
     ssr: {
-      noExternal: ["@mui/material", "@mui/utils"]
+      noExternal: ["@mui/material", "@mui/icons-material", "@mui/utils"]
+    },
+    resolve: {
+      alias: {
+        "@mui/material/utils": path.resolve("node_modules/@mui/material/utils/index.js")
+      }
     }
   },
 
