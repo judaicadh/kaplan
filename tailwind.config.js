@@ -6,8 +6,8 @@ module.exports = withMT({
     "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}", // All file types that might use Tailwind classes
     "./node_modules/flowbite/**/*.js",
     "./node_modules/flowbite-react/dist/types/components/**/*.ts",
-    "./node_modules//@material-tailwind/react/components/**/*.{js,ts,jsx,tsx}",
-    "./node_modules//@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}",
+		"./node_modules/@material-tailwind/react/components/**/*.{js,ts,jsx,tsx}",
+		"./node_modules/@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}",
     "./node_modules/react-tailwindcss-datepicker/dist/index.esm.{js,ts}",
 
 

@@ -18,23 +18,6 @@ export default defineConfig({
   output: "server",
   adapter: netlify(),
 
-  vite: {
-    optimizeDeps: {
-      include: ["@mui/utils/chainPropTypes"]
-    },
-    ssr: {
-      noExternal: ["@mui/material", "@mui/icons-material", "@mui/utils"]
-    },
-    resolve: {
-      alias: {
-        "@mui/material/utils": path.resolve("node_modules/@mui/material/utils/index.js")
-      }
-    }
-  },
-
-  experimental: {
-    session: true
-  },
 
   markdown: {
     rehypePlugins: [rehypeHeadingIds]
