@@ -246,10 +246,7 @@ const routing = {
 					indexUiState.hierarchicalMenu?.["hierarchicalCategories.lvl0"] || [],
 				topic: indexUiState.refinementList?.topic || [],
 				language: indexUiState.refinementList?.language || [],
-				collection:
-					indexUiState.refinementList?.collection?.[0] !== defaultCollection
-						? indexUiState.refinementList.collection
-						: undefined,
+				collection: indexUiState.refinementList?.collection || [],
 				subcollection: indexUiState.refinementList?.subcollection || [],
 				name: indexUiState.refinementList?.name || [],
 				// Map the internal "geography.name" to the URL key "geography".
