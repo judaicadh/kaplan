@@ -10,7 +10,7 @@ export async function getStaticPaths() {
 			params: { slug: slugify(geo.name) }
 		}))
 	);
-
+	export const prerender = true;
 	const uniquePaths = Array.from(new Set(geographySlugs.map((path) => JSON.stringify(path))))
 		.map((path) => JSON.parse(path))
 

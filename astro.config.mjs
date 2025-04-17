@@ -61,7 +61,7 @@ export default defineConfig({
         ...itemSlugs,
         ...subjectSlugs,
         ...geographySlugs,
-        ...searchSlugs
+
       ]
     }),
     robotsTxt({

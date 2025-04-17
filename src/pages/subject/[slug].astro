@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import items from '../../data/items.json'
 import { slugify } from '../../utils/slugify.js'
 import SubjectInfo from '../../utils/loc.jsx'
-
+export const prerender = true;
 // Generate dynamic paths using slugs
 export async function getStaticPaths() {
 	const subjectUris = items.flatMap((item) =>

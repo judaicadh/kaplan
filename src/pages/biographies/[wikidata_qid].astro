@@ -1,6 +1,6 @@
 ---
 import items from '../../data/items.json';
-
+export const prerender = true;
 // Use peopleURI to define the paths, extracting wikidata_qid
 export async function getStaticPaths() {
     return items

@@ -1,7 +1,7 @@
 ---
 import App from '../../components/Search/App'; // Adjust path if necessary
 import items from '../../data/items.json';
-
+export const prerender = true;
 // A simple slugify function that replaces spaces with dashes and removes non-word characters.
 function slugify(str: string): string {
   return str

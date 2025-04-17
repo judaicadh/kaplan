@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { Content as AboutJudaicaDH } from "../../content/aboutJudaicaDH.md";
----
+export const prerender = true;
 
+---
 <BaseLayout title="About JudaicaDH">
   <article class="prose pt-4 pb-4 mx-auto max-w-4xl p-4">
     <AboutJudaicaDH />
