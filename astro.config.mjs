@@ -33,7 +33,8 @@ const subjectSlugs = Array.from(new Set(rawSubjects))
 export default defineConfig({
   site: "https://www.kaplancollection.org",
   base: "/",
-
+  output: "server", // or 'hybrid', depending on your need
+  adapter: netlify(),
   experimental: {
     session: true // ✅ this is the fix!
   },
