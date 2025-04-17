@@ -3,6 +3,7 @@ import L from 'leaflet'
 import {
 	Configure,
 	InstantSearch,
+	RefinementList,
 	Stats
 } from 'react-instantsearch'
 
@@ -13,7 +14,7 @@ import '../../styles/App/App.mobile.css'
 import qs from "qs";
 import { NoResultsBoundary } from '@components/Search/NoResultsBoundary.tsx'
 import { NoResults } from '@components/Search/NoResults.tsx'
-import CustomHierarchicalMenu from '@components/Search/HierarchicalMenu.tsx'
+import CustomHierarchicalMenu from '@components/Search/CustomHierarchicalMenu.tsx'
 import CustomToggleRefinement from '@components/Search/CustomToggleRefinement.tsx'
 import CustomRefinementList from '@components/Search/CustomRefinementList.tsx'
 import CustomSortBy from '@components/Search/CustomSortBy.tsx'
@@ -27,6 +28,7 @@ import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { useMemo } from "react";
 import VirtualFilters from '@components/Search/VirtualFilters.tsx'
+
 
 const customIcon = new L.DivIcon({
 	html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="40" height="47">
@@ -255,7 +257,10 @@ const routing = {
 					indexUiState.hierarchicalMenu?.["hierarchicalCategories.lvl0"] || [],
 				topic: indexUiState.refinementList?.topic || [],
 				language: indexUiState.refinementList?.language || [],
-				collection: indexUiState.refinementList?.collection || [],
+				collection:
+					indexUiState.refinementList?.collection?.[0] !== defaultCollection
+						? indexUiState.refinementList.collection
+						: undefined,
 				subcollection: indexUiState.refinementList?.subcollection || [],
 				name: indexUiState.refinementList?.name || [],
 				// Map the internal "geography.name" to the URL key "geography".
@@ -340,6 +345,7 @@ const App = () => {
 										"hierarchicalCategories.lvl2"
 									]}
 								/>
+
 								<CustomRefinementList
 									accordionOpen={true}
 									showMore={false}
@@ -378,6 +384,7 @@ const App = () => {
 									attribute="language"
 								/>
 								<CustomRefinementList label="Archival Collection" attribute="subcollection" />
+
 								<CustomToggleRefinement
 									attribute="hasRealThumbnail"
 									label="Only show items with images"

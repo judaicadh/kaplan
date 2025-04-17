@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import DateRangeSlider from '@components/Search/DateRangeSlider.tsx'
 import CustomRefinementList from '@components/Search/CustomRefinementList.tsx'
-import CustomHierarchicalMenu from '@components/Search/HierarchicalMenu.tsx'
+import CustomHierarchicalMenu from "@components/Search/CustomHierarchicalMenu.tsx";
 import { ClearFiltersMobile } from '@components/Search/ClearFiltersMobile.tsx'
 import { ClearFilters } from '@components/Search/ClearFilters.tsx'
 import CustomClearRefinements from '@components/Search/CustomClearRefinements.tsx'

@@ -73,19 +73,21 @@ const HierarchicalList = React.memo(function HierarchicalList({
 				return (
 					<li key={item.value} className="relative">
             <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2 w-full">
-                <button
-                  type="button"
-                  onClick={() => onNavigate(item.value)}
-                  aria-current={item.isRefined ? "page" : undefined}
-                  className={`flex-grow text-left py-2 px-3 text-sm rounded-lg font-medium transition ${
-                    item.isRefined
-                      ? "bg-sky-100 text-sky-700 underline font-semibold"
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300"
-                  }`}
-                >
-                  {item.label}
-                </button>
+							<div className="flex items-center gap-2 w-full"><a
+								href={createURL(item.value)}
+								onClick={(e) => {
+									e.preventDefault(); // prevent full page reload
+									onNavigate(item.value); // trigger refinement
+								}}
+								aria-current={item.isRefined ? "page" : undefined}
+								className={`flex-grow text-left py-2 px-3 text-sm rounded-lg font-medium transition ${
+									item.isRefined
+										? "bg-sky-100 text-sky-700 underline font-semibold"
+										: "text-gray-700 hover:bg-gray-100 dark:text-gray-300"
+								}`}
+							>
+								{item.label}
+							</a>
 
                 {/* Tooltip */}
 								{typeDescriptions[descriptionKey] && (

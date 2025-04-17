@@ -2,10 +2,7 @@
 import Nav from '../components/Layout/Nav.astro';
 import Footer from '../components/Layout/Footer.astro';
 import Header from "../components/Layout/Header.astro";
-import Oswald from "@fontsource-variable/oswald";
-import Merriweather from "@fontsource-variable/merriweather";
-// Optional: remove this if unused
-// import Confetti from '../components/Misc/Confetti.tsx';
+
 
 const { title, description } = Astro.props;
 ---
@@ -15,9 +12,24 @@ const { title, description } = Astro.props;
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta name="google-site-verification" content="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
-	<Header title={title} description={description} />
+
+	<!-- SEO -->
+	<title>{title}</title>
+	<meta name="description" content={description} />
+	<meta name="theme-color" content="#ffffff" />
+	<link rel="canonical" href={`${Astro.site}${Astro.url.pathname}`} />
 	<link rel="sitemap" href={`${Astro.site}/sitemap.xml`} />
+
+	<!-- Optional: Astro-specific SEO header component -->
+	<Header title={title} description={description} />
+
+	<!-- Per-page structured data injection -->
 	<slot name="headContent" />
+
+	<!-- Cookie Consent -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css" />
+
+	<!-- Google Tag Manager -->
 	<script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag() {
@@ -28,8 +40,6 @@ const { title, description } = Astro.props;
 			analytics_storage: "denied"
 		});
 	</script>
-
-	<!-- Google Tag Manager -->
 	<script>
 		(function(w, d, s, l, i) {
 			w[l] = w[l] || [];
@@ -42,33 +52,38 @@ const { title, description } = Astro.props;
 			f.parentNode.insertBefore(j, f);
 		})(window, document, "script", "dataLayer", "GTM-PQRJQQNM");
 	</script>
-
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css" />
 </head>
 
-<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-merriweather">
 <noscript>
-	<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PQRJQQNM"
-					height="0" width="0" style="display:none;visibility:hidden"></iframe>
+	<iframe
+		src="https://www.googletagmanager.com/ns.html?id=GTM-PQRJQQNM"
+		height="0"
+		width="0"
+		style="display:none;visibility:hidden"
+	></iframe>
 </noscript>
 
+<div class="flex flex-col min-h-screen">
+	<!-- Navigation -->
+	<Nav />
+
+	<!-- Main Content -->
+	<main class="flex-grow">
+		<slot /> <!-- Page content will be injected here -->
+	</main>
+
+	<!-- Footer -->
+	<Footer />
+</div>
+
+<!-- Scripts -->
 <script type="module" src="/src/scripts/cookieconsent-config.js"></script>
+
+<!-- Optional vendor JS (only load if needed) -->
 <script is:inline src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/js/pagedone.js"></script>
-
-<div class="flex flex-col min-h-screen">
-<!-- Navigation -->
-<Nav />
-
-<!-- Main Content -->
-<main class="flex-grow">
-<slot /> <!-- Page content will be injected here -->
-</main>
-
-<!-- Footer -->
-<Footer />
-</div>
 </body>
 </html>

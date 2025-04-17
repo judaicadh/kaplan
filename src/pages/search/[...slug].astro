@@ -1,0 +1,8 @@
+---
+// src/pages/search/[...slug].astro
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import App from "../../components/Search/App.tsx";
+---
+<BaseLayout>
+  <App client:only="react" />
+</BaseLayout>
