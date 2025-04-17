@@ -30,7 +30,7 @@ export default defineConfig({
     sitemap(),
     robotsTxt({
       policy: [{ userAgent: "*", allow: "/" }],
-      sitemap: "https://www.kaplancollection.org/sitemap.xml"
+      sitemap: "https://www.kaplancollection.org/sitemap-index.xml"
     }),
     partytown(),
     netlify()
