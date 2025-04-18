@@ -1,5 +1,5 @@
 import { algoliasearch } from 'algoliasearch'
-import React, { useEffect, useRef, createElement, Fragment } from "react";
+import React, { useEffect, useRef, createElement, Fragment, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { autocomplete, type AutocompleteOptions, getAlgoliaFacets, getAlgoliaResults } from '@algolia/autocomplete-js'
 import { createRedirectUrlPlugin } from "@algolia/autocomplete-plugin-redirect-url";
@@ -22,6 +22,40 @@ const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
 	key: 'search'
 })
 
+function slugify(str: string): string {
+	return str
+		.toLowerCase()
+		.trim()
+		.replace(/\s+/g, "-")
+		.replace(/[^\w\-]+/g, "")
+		.replace(/\-\-+/g, "-")
+		.replace(/^-+/, "")
+		.replace(/-+$/, "");
+}
+
+function getSearchUrl(params: Record<string, string | string[]>) {
+	const searchParams = new URLSearchParams();
+
+	const paramMap: Record<string, string> = {
+		"name": "name",
+		"collection": "collection",
+		"subject": "subject",
+		"geography.name": "geography",
+		"hierarchicalCategories.lvl0": "hierarchicalCategories"
+	};
+
+	for (const [key, value] of Object.entries(params)) {
+		const urlKey = paramMap[key] || key;
+		if (Array.isArray(value)) {
+			value.forEach((v) => searchParams.append(urlKey, slugify(v)));
+		} else {
+			searchParams.append(urlKey, slugify(value));
+		}
+	}
+
+	return `/search/?${searchParams.toString()}`;
+}
+
 function NavAutocomplete() {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const panelRootRef = useRef<Root | null>(null)
@@ -30,9 +64,7 @@ function NavAutocomplete() {
 	// Normalization function
 
 	useEffect(() => {
-		if (!containerRef.current) {
-			return undefined
-		}
+		if (!containerRef.current) return;
 
 		const search = autocomplete({
 			container: containerRef.current,
@@ -40,38 +72,19 @@ function NavAutocomplete() {
 			detachedMediaQuery: '',
 			openOnFocus: true,
 			insights: true,
+
+			classNames: {
+				panel: "max-h-[400px] flex flex-col overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900",
+				list: "overflow-y-auto grow",
+				input: "text-base text-gray-800"
+			},
 			plugins: [recentSearchesPlugin],
 			getSources({ query }) {
 				if (!query) {
 					return []
 				}
 				return [
-					/*{
-						sourceId: 'nameCategories',
-						getItems({ query }) {
-							return getAlgoliaFacets({
-								searchClient,
-								queries: [
-									{
-										indexName: 'Dev_Kaplan',
-										facet: 'name', // Update this to your facet attribute
-										params: {
-											facetQuery: query,
-											maxFacetHits: 5,
-										},
-									},
-								],
-							});
-						},
-						templates: {
-							item({ item }) {
-								return <a href={`/search/?name=${item.label}`}>{item.label}</a>;
 
-
-							},
-
-						},
-					},
 					{
 						sourceId: 'geographyCategories',
 						getItems({ query }) {
@@ -80,7 +93,7 @@ function NavAutocomplete() {
 								queries: [
 									{
 										indexName: 'Dev_Kaplan',
-										facet: 'geographic_subject.name',
+										facet: "geography.name",
 										params: {
 											facetQuery: query,
 											maxFacetHits: 2
@@ -101,19 +114,59 @@ function NavAutocomplete() {
 							item({ item }) {
 								return (
 									<a
-										href={`/search/?geography=${(item.label)}`}
-										className="text-blue-500 underline"
+										href={`/geography/${encodeURIComponent(slugify(item.label))}`}
+										className="text-blue-500 hover:underline"
 									>
+
 										{item.label}
 									</a>
-								)
+								);
 							}
 						}
 					},
+
 					{
-						sourceId: 'FormCategories',
+						sourceId: "subjectCategories",
 						getItems({ query }) {
 							return getAlgoliaFacets({
+								searchClient,
+								queries: [
+									{
+										indexName: "Dev_Kaplan",
+										facet: "subject",
+										params: {
+											facetQuery: query,
+											maxFacetHits: 2
+										}
+									}
+								]
+							});
+						},
+						templates: {
+							header() {
+								return (
+									<Fragment>
+										<span className="aa-SourceHeaderTitle">Subject</span>
+										<div className="aa-SourceHeaderLine" />
+									</Fragment>
+								);
+							},
+							item({ item }) {
+								return (
+									<a
+										href={`/subject/${encodeURIComponent(slugify(item.label))}`}
+										className="text-blue-500 hover:underline"
+									>
+										{item.label}
+									</a>
+								);
+							}
+						}
+					},
+					/*{
+						sourceId: 'FormCategories',
+						getItems({ query }) {
+							return getAlgoliaFacets<ProductHit>({
 								searchClient,
 								queries: [
 									{
@@ -153,7 +206,7 @@ function NavAutocomplete() {
 					{
 						sourceId: 'products',
 						getItems() {
-							return getAlgoliaResults({
+							return getAlgoliaResults<ProductHit>({
 								searchClient,
 								queries: [
 									{
@@ -168,10 +221,10 @@ function NavAutocomplete() {
 						templates: {
 							header() {
 								return (
-									<Fragment>
-										<span className="aa-SourceHeaderTitle">Items</span>
-										<div className="aa-SourceHeaderLine" />
-									</Fragment>
+									<span
+										className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 px-3 py-1 block border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
+  Geography
+</span>
 								)
 							},
 
@@ -182,27 +235,66 @@ function NavAutocomplete() {
 										components={components}
 
 									/>
-								)
+								);
 							},
 							noResults() {
-								return 'No products for this query.'
+								return "No results for this query.";
 							},
+							footer({ state }): ReactNode {
+								return (
+									<div
+										className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 z-10 p-3">
+										<a
+											href={getSearchUrl({ query: state.query })}
+											className="text-sm text-center text-blue-600 hover:underline block"
+										>
+											See all results for “{state.query}”
+										</a>
+									</div>
+								);
+							}
 						},
 					},
+					{
+						sourceId: "nameCategories",
+						getItems({ query }) {
+							return getAlgoliaFacets({
+								searchClient,
+								queries: [
+									{
+										indexName: "Dev_Kaplan",
+										facet: "name", // Update this to your facet attribute
+										params: {
+											facetQuery: query,
+											maxFacetHits: 5
+										}
+									}
+								]
+							});
+						},
+						templates: {
+							item({ item }) {
+								return <a href={getSearchUrl({ name: item.label })}>{item.label}</a>;
+
+
+							}
+
+						}
+					}
 				];
 			},
 
 			onSubmit({ state }) {
-				const query = state.query
-				if (query.trim()) {
-					window.location.href = `/search/?query=${encodeURIComponent(query)}`
+				const query = state.query.trim();
+				if (query) {
+					window.location.href = `/search/?query=${encodeURIComponent(query)}`;
 				}
 			},
 			renderer: {
-				createElement,
-				Fragment,
-				render: () => {
-				}
+				createElement: (type: any, props: any, ...children: any[]) => {
+					return React.createElement(type, props, ...children);
+				},
+				Fragment: React.Fragment
 			},
 			render({ children }, root) {
 				if (!panelRootRef.current || rootRef.current !== root) {

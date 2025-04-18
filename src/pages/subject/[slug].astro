@@ -1,27 +1,34 @@
 ---
+export const prerender = true;
+
+const { slug } = Astro.params;
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import items from '../../data/items.json'
 import { slugify } from '../../utils/slugify.js'
 import SubjectInfo from '../../utils/loc.jsx'
-export const prerender = true;
+
 // Generate dynamic paths using slugs
 export async function getStaticPaths() {
-	const subjectUris = items.flatMap((item) =>
-		item.subjectAI.map((subject) => slugify(subject.name))
+	const slugs = items.flatMap((item) =>
+		(item.subjectAI || [])
+			.filter((subject) => subject?.name)
+			.map((subject) => slugify(subject.name))
 	);
 
-	const uniqueSlugs = Array.from(new Set(subjectUris))
-
-	return uniqueSlugs.map((slug) => ({ params: { slug } }))
+	const uniqueSlugs = Array.from(new Set(slugs));
+	return uniqueSlugs.map((slug) => ({ params: { slug } }));
 }
+const url = `https://www.kaplancollection.org/subject/${slug}`;
 
 // Get the dynamic slug from the URL
-const { slug } = Astro.params
+
 
 // Find all items with the matching subject
-const subjectItems = items.filter((item) =>
-	item.subjectAI.some((subject) => slugify(subject.name) === slug)
-);
+const subjectItems = items
+	.filter((item) =>
+		item.subjectAI.some((subject) => slugify(subject.name) === slug)
+	)
+	.sort((a, b) => a.title.localeCompare(b.title));
 
 if (!subjectItems.length) {
 	throw new Error(`No items found for subject ${slug}`)
@@ -40,19 +47,33 @@ if (!subjectUri) {
 }
 
 console.log('Subject URI:', subjectUri)
-
+const jsonLdData = {
+	"@context": "https://schema.org",
+	"@type": "Thing",
+	"name": subjectName,
+	"url": `https://www.kaplancollection.org/subject/${slug}`,
+	"identifier": subjectUri
+};
 const title = `Subject: ${subjectName} - Kaplan Collection of Early American Judaica`
 const metaDescription = `Explore items related to the subject ${subjectName}. See items related to ${subjectName} from the Kaplan Collection of Early American Judaica .`
 ---
 
-<BaseLayout title={title} description={metaDescription} }>
-	<head title={title}>
+<BaseLayout title={title} description={metaDescription}>
+	<Fragment slot="headContent">
+		<meta name="title" content={title} />
 		<meta name="description" content={metaDescription} />
-		{subjectUri &&
-			<link rel="canonical" href={subjectUri} />}
-		{subjectUri &&
-			<link rel="alternate" type="application/json" href={`${subjectUri}.json`} />}
-	</head>
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={metaDescription} />
+		<meta property="og:url" content={url} />
+		<meta property="og:type" content="Place" />
+		<meta property="og:site_name" content="The Arnold and Deanne Kaplan Collection of Early American Judaica" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={metaDescription} />
+		<script type="application/ld+json">{JSON.stringify(jsonLdData)}</script>
+
+
+	</Fragment>
 	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
 		<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
 			<h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white">

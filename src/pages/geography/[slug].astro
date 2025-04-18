@@ -1,8 +1,10 @@
 ---
+export const prerender = true;
+
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import items from '../../data/items.json'
 import { slugify } from '../../utils/slugify.js'
-export const prerender = true;
+
 // Generate dynamic paths based on geography names
 export async function getStaticPaths() {
 	const geographySlugs = items.flatMap((item) =>
@@ -12,12 +14,12 @@ export async function getStaticPaths() {
 	);
 
 	const uniquePaths = Array.from(new Set(geographySlugs.map((path) => JSON.stringify(path))))
-		.map((path) => JSON.parse(path))
+		.map((path) => JSON.parse(path));
 
-	return uniquePaths
+	return uniquePaths;
 }
 
-const { slug } = Astro.params
+const { slug } = Astro.params;
 
 const geographyData = items
 	.flatMap((item) => item.geography || [])

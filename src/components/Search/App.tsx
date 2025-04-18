@@ -28,6 +28,7 @@ import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { useMemo } from "react";
 import VirtualFilters from '@components/Search/VirtualFilters.tsx'
+import DefaultCollectionBanner from "@components/Misc/DefaultCollectionBanner.tsx";
 
 const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
 const indexName = 'Dev_Kaplan'
@@ -256,6 +257,18 @@ const routing = {
 
 		// Converts the simple route state into InstantSearch's uiState.
 		routeToState(routeState: any): any {
+			const hasNoFilters =
+				!routeState.query &&
+				!routeState.topic?.length &&
+				!routeState.language?.length &&
+				!routeState.subcollection?.length &&
+				!routeState.name?.length &&
+				!routeState.geography?.length &&
+				!routeState.collection?.length &&
+				!routeState.hierarchicalCategories?.length;
+
+			const defaultCollection = ["Arnold and Deanne Kaplan Collection of Early American Judaica"];
+
 			return {
 				[indexName]: {
 					query: routeState.query,
@@ -265,9 +278,7 @@ const routing = {
 					},
 					refinementList: {
 						topic: routeState.topic || [],
-						collection: routeState.collection?.length
-							? routeState.collection
-							: ["Arnold and Deanne Kaplan Collection of Early American Judaica"],
+						collection: hasNoFilters ? defaultCollection : (routeState.collection || []),
 						language: routeState.language || [],
 						subcollection: routeState.subcollection || [],
 						name: routeState.name || [],
@@ -280,6 +291,14 @@ const routing = {
 	},
 };
 
+function isEmptySearch(): boolean {
+	if (typeof window === "undefined") return false;
+
+	const params = new URLSearchParams(window.location.search);
+
+	const keysToCheck = ["query", "topic", "language", "collection", "subcollection", "name", "geography"];
+	return keysToCheck.every(key => !params.get(key) && !params.getAll(key).length);
+}
 const App = () => {
 	if (typeof window !== "undefined" && window.location.search.includes("redirect=true")) {
 		const url = new URLSearchParams(window.location.search).get("path");
@@ -287,6 +306,7 @@ const App = () => {
 			window.history.replaceState(null, "", decodeURIComponent(url));
 		}
 	}
+	const showDefaultCollectionBanner = isEmptySearch();
 	return (
 		<InstantSearch
 			searchClient={searchClient}
@@ -317,6 +337,7 @@ const App = () => {
 							]}
 						/>
 					</div>
+					<DefaultCollectionBanner />
 					<section aria-labelledby="products-heading" className="bg-white pt-6">
 						<h2 id="products-heading" className="sr-only">Filters</h2>
 						<div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">

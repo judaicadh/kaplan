@@ -129,7 +129,7 @@ function SubjectInfo({ subjectUri }) {
 				)}
 
 				{/* Horizontal Menu for External Links */}
-				<hr class="my-6 border-gray-200 dark:border-gray-800" />
+				<hr className="my-6 border-gray-200 dark:border-gray-800" />
 
 				<div>
 					<h2 className="text-lg text-slate-500 font-semibold">Linked Data</h2>
