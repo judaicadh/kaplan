@@ -221,10 +221,10 @@ function NavAutocomplete() {
 						templates: {
 							header() {
 								return (
-									<span
-										className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 px-3 py-1 block border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
-  Geography
-</span>
+									<Fragment>
+										<span className="aa-SourceHeaderTitle">Item</span>
+										<div className="aa-SourceHeaderLine" />
+									</Fragment>
 								)
 							},
 
@@ -255,7 +255,7 @@ function NavAutocomplete() {
 							}
 						},
 					},
-					{
+					/*{
 						sourceId: "nameCategories",
 						getItems({ query }) {
 							return getAlgoliaFacets({
@@ -280,7 +280,7 @@ function NavAutocomplete() {
 							}
 
 						}
-					}
+					}*/
 				];
 			},
 
