@@ -5,30 +5,34 @@ import JudaicaDHlogo from '../../images/Judaica Digital Humanities Logo 2020_RGB
 
 <footer class="w-full bg-white border-t border-gray-200 shadow dark:bg-gray-800 dark:border-gray-600">
 	<div class="max-w-screen-xl mx-auto p-4 md:p-6">
-		<div class="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
+		<div class="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
 			<!-- Logo -->
 			<a href="https://judaicadhpenn.org/"
-				 class="flex items-center space-x-3 rtl:space-x-reverse"
+				 class="flex items-center justify-center md:justify-start"
 				 aria-label="Judaica Digital Humanities at Penn">
-				<img src={JudaicaDHlogo.src}
-					class="h-14 w-auto"
+				<img
+					src={JudaicaDHlogo.src}
+					alt="Judaica Digital Humanities Logo"
+					class="h-12 w-auto object-contain"
+					loading="lazy"
 					decoding="async"
-							 loading="lazy"
-							 alt="Judaica Digital Humanities Logo" />
+				/>
 			</a>
+
 			<!-- Footer Links -->
-			<nav aria-label="Footer Navigation" class="flex justify-center md:justify-end">
+			<nav aria-label="Footer Navigation">
 				<ul
-					class="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 text-sm text-gray-600 dark:text-gray-400">
+					class="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 text-sm text-gray-600 dark:text-gray-400 text-center md:text-right">
+
+					<li>
+						<a href="/about/aboutthecollection" class="hover:underline focus:ring-2 focus:ring-gray-500">About</a>
+					</li>
+					<li>
+						<a href="/search/" class="hover:underline focus:ring-2 focus:ring-gray-500">Search</a>
+					</li>
 					<li>
 						<a href="https://github.com/judaicadh/kaplan" class="hover:underline focus:ring-2 focus:ring-gray-500">Site
 							Documentation</a>
-					</li>
-					<li>
-						<a href="/about/" class="hover:underline focus:ring-2 focus:ring-gray-500">About</a>
-					</li>
-					<li>
-						<a href="/collections/" class="hover:underline focus:ring-2 focus:ring-gray-500">Featured</a>
 					</li>
 					<li>
 						<a href="https://judaicadhpenn.org" target="_blank"
