@@ -5,7 +5,25 @@ import CustomHierarchicalMenu from "@components/Search/CustomHierarchicalMenu.ts
 import { ClearFiltersMobile } from '@components/Search/ClearFiltersMobile.tsx'
 import { ClearFilters } from '@components/Search/ClearFilters.tsx'
 import CustomClearRefinements from '@components/Search/CustomClearRefinements.tsx'
-function MobileFilters() {
+
+type MobileFiltersProps = {
+	resetKey: number;
+	onResetDateSlider: () => void;
+	dateFilterActive: boolean;
+	setDateFilterActive: React.Dispatch<React.SetStateAction<boolean>>;
+	dateRange: { min: number; max: number } | undefined;
+	setDateRange: React.Dispatch<React.SetStateAction<{ min: number; max: number } | undefined>>;
+};
+
+function MobileFilters({
+												 resetKey,
+												 dateFilterActive,
+												 onResetDateSlider,
+												 setDateFilterActive,
+												 dateRange,
+												 setDateRange
+											 }: MobileFiltersProps) {
+
 	const [isFilterOpen, setIsFilterOpen] = useState(false)
 
 	// Correctly type the refs
@@ -18,8 +36,14 @@ function MobileFilters() {
 
 	// Close panel on outside click
 	useEffect(() => {
+		const handleEsc = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				setIsFilterOpen(false);
+			}
+		};
+
 		const handleOutsideClick = (event: MouseEvent) => {
-			const target = event.target as Node | null // Explicitly cast to Node
+			const target = event.target as Node | null;
 
 			if (
 				filterPanelRef.current &&
@@ -27,15 +51,18 @@ function MobileFilters() {
 				toggleButtonRef.current &&
 				!toggleButtonRef.current.contains(target)
 			) {
-				setIsFilterOpen(false)
+				setIsFilterOpen(false);
 			}
 		};
 
-		document.addEventListener('mousedown', handleOutsideClick)
+		document.addEventListener("keydown", handleEsc);
+		document.addEventListener("mousedown", handleOutsideClick);
 
+		// ✅ Combined cleanup
 		return () => {
-			document.removeEventListener('mousedown', handleOutsideClick)
-		}
+			document.removeEventListener("keydown", handleEsc);
+			document.removeEventListener("mousedown", handleOutsideClick);
+		};
 	}, []);
 
 
@@ -57,7 +84,7 @@ function MobileFilters() {
 				aria-expanded={isFilterOpen}
 				aria-controls="mobile-filter-panel"
 				aria-label="Toggle filter menu"
-				className="md:hidden flex justify-end rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
+				className="md:hidden flex items-center justify-end gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:hover:text-indigo-400"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -82,24 +109,22 @@ function MobileFilters() {
 			{isFilterOpen && (
 				<div className="relative z-40 lg:hidden" role="dialog" aria-modal="true">
 					{/* Overlay */}
-					<div
-						className="fixed inset-0 bg-black/25 transition-opacity"
-						aria-hidden="true"
-					></div>
+					<div className="fixed inset-0 bg-black/25 backdrop-blur-sm transition-opacity" aria-hidden="true" />
+
 
 					{/* Panel */}
 					<div
 						id="mobile-filter-panel"
 						ref={filterPanelRef}
-						className="fixed inset-y-0 right-0 z-50 flex w-full max-w-xs flex-col bg-white dark:bg-gray-800 py-4 pb-12 px-8 shadow-xl overflow-y-auto transition-transform transform translate-x-0"
+						className="fixed inset-y-0 right-0 z-50 flex w-full max-w-xs flex-col bg-white dark:bg-gray-800 shadow-xl overflow-y-auto transform transition-transform duration-300 ease-in-out translate-x-0"
 					>
-						<div className="flex items-center justify-between px-4">
+						<div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
 							<h2 className="text-lg font-medium text-gray-900 dark:text-white">Filters</h2>
 							<button
 								type="button"
 								onClick={toggleFilterMenu}
 								aria-label="Close filter menu"
-								className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 p-2 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+								className="rounded-md p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:hover:bg-gray-700"
 							>
 								<span className="sr-only">Close menu</span>
 								<svg
@@ -120,11 +145,9 @@ function MobileFilters() {
 						</div>
 
 						<form
-							className="border-t border-gray-200 dark:border-gray-700 space-y-6"
-							role="form"
+							className="flex-1 border-t border-gray-200 dark:border-gray-700 space-y-6 px-2 pt-4 pb-24 overflow-y-auto">
 
-						>
-							<CustomClearRefinements />
+
 							<CustomHierarchicalMenu
 								showMore={true}
 								title="Categories"
@@ -135,19 +158,38 @@ function MobileFilters() {
 								]}
 							/>
 							<CustomRefinementList label="Topic" attribute="topic" showMore />
+
 							<DateRangeSlider
-								title="Date Range"
+								key={resetKey}
+								title="Date"
 								dateFields={dateFields}
 								minTimestamp={-15135361438}
 								maxTimestamp={-631151999}
+								value={dateRange} // <- controlled value
+								onChange={(newValue) => {
+									setDateRange(newValue);
+									setDateFilterActive(true);
+								}}
 							/>
+
+
 							<CustomRefinementList label="Name" attribute="name" showMore />
 							<CustomRefinementList label="Collection" attribute="collection" />
 							<CustomRefinementList label="Language" attribute="language" showMore />
 							<CustomRefinementList label="Archival Collection" attribute="subcollection" />
 						</form>
+						<div
+							className="fixed bottom-0 w-full max-w-xs bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-4">
+							<div className="w-full text-center">
+								<CustomClearRefinements
+									onResetDateSlider={onResetDateSlider}
+									dateFilterActive={dateFilterActive}
+								/>
+							</div>
+						</div>
 					</div>
 				</div>
+
 			)}
 		</>
 	);

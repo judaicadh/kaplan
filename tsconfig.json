@@ -14,7 +14,7 @@
         "node_modules/@samvera/clover-iiif/dist/*"
       ]
     },
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "jsxImportSource": "react",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

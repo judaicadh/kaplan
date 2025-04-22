@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 import { Configure } from 'react-instantsearch';
 import Slider from '@mui/material/Slider';
-import { TextField } from '@mui/material'
-import dayjs from 'dayjs'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid'
+import { TextField } from "@mui/material";
+import dayjs from "dayjs";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
 type CombinedDateRangeSliderProps = {
 	minTimestamp: number;
 	maxTimestamp: number;
 	dateFields: string[];
 	title: string;
+	onDateChange?: (isActive: boolean) => void;
+
+	value?: { min: number; max: number }; // externally controlled value
+	onChange?: (newValue: { min: number; max: number }) => void; // external change handler
 };
 
 const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
@@ -18,71 +22,78 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 																																	 maxTimestamp,
 																																	 dateFields,
 																																	 title,
+																																	 onDateChange,
+																																	 value,
+																																	 onChange
 																																 }) => {
-	const [range, setRange] = useState<[number, number]>([minTimestamp, maxTimestamp]);
+	const isControlled = value !== undefined;
+	const [internalRange, setInternalRange] = useState<[number, number]>([minTimestamp, maxTimestamp]);
+	const range = isControlled ? [value!.min, value!.max] : internalRange;
+
 	const [filterString, setFilterString] = useState<string>('');
-	const [startDate, setStartDate] = useState<string>(dayjs(minTimestamp * 1000).format('YYYY'))
-	const [endDate, setEndDate] = useState<string>(dayjs(maxTimestamp * 1000).format('YYYY'))
+	const [startDate, setStartDate] = useState<string>(dayjs(range[0] * 1000).format("YYYY"));
+	const [endDate, setEndDate] = useState<string>(dayjs(range[1] * 1000).format("YYYY"));
+
+	const updateRange = (newRange: [number, number]) => {
+		if (!isControlled) setInternalRange(newRange);
+		onChange?.({ min: newRange[0], max: newRange[1] });
+		setStartDate(dayjs(newRange[0] * 1000).format("YYYY"));
+		setEndDate(dayjs(newRange[1] * 1000).format("YYYY"));
+	};
 
 	useEffect(() => {
-		// Update the Algolia filter string
+		const isActive = range[0] !== minTimestamp || range[1] !== maxTimestamp;
+		onDateChange?.(isActive);
+
 		const singleCondition = `(${dateFields[0]} <= ${range[1]} AND ${dateFields[1]} >= ${range[0]})`;
 		setFilterString(singleCondition);
 
-		// Update the URL parameters
 		const updateURL = setTimeout(() => {
 			const url = new URL(window.location.href);
-			if (range[0] !== minTimestamp) {
-				url.searchParams.set('start', startDate)
-			} else {
-				url.searchParams.delete('start')
-			}
-			if (range[1] !== maxTimestamp) {
-				url.searchParams.set('end', endDate)
-			} else {
-				url.searchParams.delete('end')
-			}
+			range[0] !== minTimestamp
+				? url.searchParams.set("start", dayjs(range[0] * 1000).format("YYYY"))
+				: url.searchParams.delete("start");
+			range[1] !== maxTimestamp
+				? url.searchParams.set("end", dayjs(range[1] * 1000).format("YYYY"))
+				: url.searchParams.delete("end");
 			window.history.replaceState(null, '', url.toString());
 		}, 500);
+
 		return () => clearTimeout(updateURL);
-	}, [range, startDate, endDate, minTimestamp, maxTimestamp, dateFields]);
+	}, [range, minTimestamp, maxTimestamp, dateFields]);
 
 	const handleSliderChange = (_: Event, newValue: number | number[]) => {
 		if (Array.isArray(newValue)) {
-			setRange([newValue[0], newValue[1]]);
-			setStartDate(dayjs(newValue[0] * 1000).format('YYYY'))
-			setEndDate(dayjs(newValue[1] * 1000).format('YYYY'))
+			updateRange([newValue[0], newValue[1]]);
 		}
 	};
 
 	const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const value = event.target.value
-		setStartDate(value)
-
-		const year = parseInt(value, 10)
+		const value = event.target.value;
+		setStartDate(value);
+		const year = parseInt(value, 10);
 		if (!isNaN(year)) {
-			const newDate = dayjs().year(year).startOf('year')
-			if (newDate.unix() >= minTimestamp && newDate.unix() <= range[1]) {
-				setRange([newDate.unix(), range[1]])
+			const newStart = dayjs().year(year).startOf("year").unix();
+			if (newStart >= minTimestamp && newStart <= range[1]) {
+				updateRange([newStart, range[1]]);
 			}
 		}
 	};
 
 	const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const value = event.target.value
-		setEndDate(value)
-
-		const year = parseInt(value, 10)
+		const value = event.target.value;
+		setEndDate(value);
+		const year = parseInt(value, 10);
 		if (!isNaN(year)) {
-			const newDate = dayjs().year(year).endOf('year')
-			if (newDate.unix() <= maxTimestamp && newDate.unix() >= range[0]) {
-				setRange([range[0], newDate.unix()])
+			const newEnd = dayjs().year(year).endOf("year").unix();
+			if (newEnd <= maxTimestamp && newEnd >= range[0]) {
+				updateRange([range[0], newEnd]);
 			}
 		}
 	};
 
 	return (
-		<div className="bg-white px-4    dark:bg-gray-900">
+		<div className="bg-white px-4 dark:bg-gray-900">
 			<Disclosure defaultOpen={true}>
 				{({ open }) => (
 					<>
@@ -97,7 +108,6 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 						</DisclosureButton>
 
 						<DisclosurePanel className="pt-3 px-4">
-
 							<Slider
 								getAriaLabel={(index) => `Date range slider thumb ${index + 1}`}
 								value={range}
@@ -108,7 +118,7 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 								valueLabelFormat={(value) => dayjs(value * 1000).format('YYYY')}
 								marks={[
 									{ value: minTimestamp, label: dayjs(minTimestamp * 1000).format('YYYY') },
-									{ value: maxTimestamp, label: dayjs(maxTimestamp * 1000).format('YYYY') }
+									{ value: maxTimestamp, label: dayjs(maxTimestamp * 1000).format("YYYY") }
 								]}
 								sx={{
 									width: '100%',
@@ -116,8 +126,8 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 									'& .MuiSlider-thumb': {
 										height: 24,
 										width: 24,
-										backgroundColor: '#fff'
-									}
+										backgroundColor: "#fff"
+									},
 								}}
 							/>
 
@@ -137,6 +147,7 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 									variant="outlined"
 								/>
 							</div>
+
 							{filterString && <Configure filters={filterString} />}
 						</DisclosurePanel>
 					</>
@@ -146,4 +157,4 @@ const DateRangeSlider: React.FC<CombinedDateRangeSliderProps> = ({
 	);
 };
 
-export default DateRangeSlider
+export default DateRangeSlider;

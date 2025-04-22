@@ -1,77 +1,77 @@
 import { useInstantSearch, useSearchBox } from 'react-instantsearch'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faCircleQuestion, faSearch } from "@fortawesome/free-solid-svg-icons";
 
-function CustomSearchBox(props) {
-	const { query, refine } = useSearchBox(props)
+type CustomSearchBoxProps = {
+	onResetQuery?: () => void;
+};
+
+function CustomSearchBox({ onResetQuery }: CustomSearchBoxProps) {
+	const { query, refine } = useSearchBox();
 	const { status } = useInstantSearch()
 	const [inputValue, setInputValue] = useState(query)
-	const [isInputVisible, setIsInputVisible] = useState(false)
 	const inputRef = useRef<HTMLInputElement>(null)
 
-	const isSearchStalled = status === 'stalled'
+	useEffect(() => {
+		setInputValue(query);
+	}, [query]);
 
 	function setQuery(newQuery: string) {
 		setInputValue(newQuery)
 		refine(newQuery)
 	}
 
-	/*	function toggleSearchInput() {
-			setIsInputVisible(!isInputVisible)
-			if (!isInputVisible && inputRef.current) {
-				inputRef.current.focus()
-			}
-		}*/
-
 	return (
-		<>
 		<form
-			action=""
 			role="search"
 			noValidate
-			onSubmit={(event) => {
-				event.preventDefault()
-				window.location.href = `/search?query=${encodeURIComponent(inputValue)}`
+			onSubmit={(e) => {
+				e.preventDefault();
+				refine(inputValue);
 			}}
-			onReset={(event) => {
-				event.preventDefault()
-				event.stopPropagation()
+			onReset={(e) => {
+				e.preventDefault();
 				setQuery('')
-				if (inputRef.current) {
-					inputRef.current.focus()
-				}
+				onResetQuery?.();
+				inputRef.current?.focus();
 			}}
-
+			className="w-full"
 		>
-
-			<label htmlFor="default-search"
-						 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-			<div className="relative  ">
-				<div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-					<button
-						// onClick={toggleSearchInput}
-						className="text-gray-400"
-						aria-label="Open search input"
-					>
-						<FontAwesomeIcon icon={faSearch} />
-					</button>
+			<div className="relative w-full">
+				{/* Search icon */}
+				<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+					<FontAwesomeIcon icon={faSearch} className="text-gray-400 dark:text-gray-300 text-sm" />
 				</div>
+
+				{/* Search input */}
 				<input
-					ref={inputRef} placeholder="Search..."
-					spellCheck={false} type="search"
+					ref={inputRef}
+					type="search"
+					placeholder="Search the collection..."
+					spellCheck={false}
+					aria-label="Search the collection"
 					value={inputValue}
-					onChange={(event) => {
-						setQuery(event.currentTarget.value)
-					}}
-					autoFocus
-					className="  md:w-full   p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					onChange={(e) => setQuery(e.currentTarget.value)}
+					className="block w-full pl-10 pr-12 py-3 text-sm sm:text-base border border-gray-300 rounded-md bg-white text-gray-900 dark:bg-gray-800 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
 				/>
 
+				{/* Help icon link */}
+				<a
+					href="/how-to-use-search"
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="Search help"
+					title="How to use search"
+					className="absolute inset-y-0 right-3 flex items-center"
+				>
+					<FontAwesomeIcon
+						icon={faCircleQuestion}
+						className="text-gray-500 hover:text-indigo-600 focus:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 dark:focus:text-indigo-400"
+					/>
+				</a>
 			</div>
 		</form>
-		</>
-
 	)
 }
 

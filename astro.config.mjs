@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+
 import netlify from "@astrojs/netlify";
 import fs from "node:fs";
 import path from "node:path";
@@ -9,7 +10,6 @@ import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 import { rehypeHeadingIds } from "@astrojs/markdown-remark";
 import partytown from "@astrojs/partytown";
-
 
 
 export default defineConfig({
@@ -25,6 +25,7 @@ export default defineConfig({
 
   integrations: [
     react({ experimentalReactChildren: true }),
+
     tailwind(),
     icon({ include: { mdi: ["magnify", "account-plus", "account-minus"] } }),
     sitemap(),
@@ -34,5 +35,6 @@ export default defineConfig({
     }),
     partytown(),
     netlify()
+
   ]
 });

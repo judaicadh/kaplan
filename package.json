@@ -36,6 +36,7 @@
     "@astrojs/sitemap": "^3.3.0",
     "@astrojs/tailwind": "^5.1.4",
     "@astrojs/ts-plugin": "^1.10.4",
+    "@astrojs/vue": "^5.0.10",
     "@atlas-viewer/iiif-image-api": "^2.2.1",
     "@babel/core": "^7.26.0",
     "@dbmdz/mirador-downloadmenu": "^1.0.6",
@@ -84,10 +85,12 @@
     "d3": "^7.9.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "esbuild": "^0.25.2",
     "eslint-config-algolia": "^23.2.1",
     "flowbite": "^2.5.2",
     "flowbite-datepicker": "^1.3.0",
     "flowbite-react": "^0.10.2",
+    "glycerine-viewer": "^1.3.1",
     "history": "^5.3.0",
     "instantsearch.css": "^8.5.1",
     "instantsearch.js": "^4.75.6",
@@ -126,6 +129,7 @@
     "typecheck": "^0.1.2",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
+    "vue": "^3.5.13",
     "webpack": "^5.97.1"
   },
   "devDependencies": {

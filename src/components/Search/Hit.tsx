@@ -72,7 +72,8 @@ export function Hit({ hit, sendEvent }: HitProps) {
 	};
 
 	return (
-		<Card className="shadow-md hover:shadow-lg transition rounded-md">
+		<Card
+			className="rounded-2xl shadow-sm hover:shadow-lg transition-transform hover:scale-[1.01] bg-white dark:bg-gray-800 w-full">
 			<CardActionArea
 				onClick={handleClick}
 				href={`/item/${hit.slug}`}
@@ -81,15 +82,24 @@ export function Hit({ hit, sendEvent }: HitProps) {
 			>
 				<CardMedia
 					component="img"
-					sx={{ height: 180, objectFit: 'contain' }}
+					sx={{
+						height: 180,
+						objectFit: "contain",
+						borderBottom: "1px solid #e5e7eb",
+						backgroundColor: "#f9fafb",
+						display: "block",           // Ensures it's block-level
+						marginLeft: "auto",         // Centers horizontally
+						marginRight: "auto",        // Centers horizontally
+						padding: "0.5rem",          // Optional: adds some spacing around image
+						maxWidth: "100%"           // Prevents overflow
+					}}
 					image={hit.thumbnail || '/placeholder.png'}
 					alt={hit.title || 'No title available'}
 				/>
 				<CardContent className="p-3 text-center">
 					<Typography
 						variant="body2"
-						sx={{ fontWeight: 'bold', fontSize: 14, color: 'text.primary' }}
-						className="line-clamp-2"
+						className="line-clamp-2 text-sm font-semibold text-gray-900 dark:text-white"
 					>
 						{hit.title || 'Untitled'}
 					</Typography>
@@ -103,7 +113,7 @@ export function Hit({ hit, sendEvent }: HitProps) {
 					<TopicBadges hit={hit} />
 				</Box>
 
-				<Box>
+				<Box className="flex items-center gap-2">
 					<FavoritesButton
 						objectID={hit.objectID}
 						title={hit.title}

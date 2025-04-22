@@ -1,25 +1,41 @@
-import { useClearRefinements } from 'react-instantsearch'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFilterCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { useClearRefinements } from "react-instantsearch";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilterCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
-function CustomClearRefinements(props) {
-	const { refine, canRefine } = useClearRefinements(props)
+type Props = {
+	onResetDateSlider: () => void;
+	dateFilterActive?: boolean;
+	dateRange?: { min: number; max: number };
+	setDateRange?: React.Dispatch<React.SetStateAction<{ min: number; max: number } | undefined>>;
+	defaultDateRange?: { min: number; max: number };
+};
 
-	// Only render the button if there are refinements to clear
-	if (!canRefine) {
-		return null
-	}
+function CustomClearRefinements({ onResetDateSlider, dateFilterActive, setDateRange }: Props) {
+	const { refine, canRefine } = useClearRefinements();
+
+	const handleClear = () => {
+		if (canRefine) {
+			refine();
+		}
+		if (dateFilterActive) {
+			onResetDateSlider();
+			setDateRange?.(undefined);
+		}
+	};
+
+	// Only show button if there are refinements or a date is active
+	if (!canRefine && !dateFilterActive) return null;
 
 	return (
-
-		<button type="button"
-						onClick={() => refine()}
-						className=" float-right text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-2 focus:outline-none focus:ring-gray-300 rounded-lg text-xs px-2 py-2.5 text-center me-0  dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
-			<FontAwesomeIcon icon={faFilterCircleXmark} className="pr-2" />
+		<button
+			type="button"
+			onClick={handleClear}
+			className="inline-flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+		>
+			<FontAwesomeIcon icon={faFilterCircleXmark} className="text-sm" />
 			Clear Filters
 		</button>
-
-	)
+	);
 }
 
-export default CustomClearRefinements
+export default CustomClearRefinements;
