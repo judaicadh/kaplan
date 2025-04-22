@@ -26,9 +26,11 @@ import CustomPagination from '@components/Search/CustomPagination.tsx'
 import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import VirtualFilters from '@components/Search/VirtualFilters.tsx'
 import DefaultCollectionBanner from "@components/Misc/DefaultCollectionBanner.tsx";
+import NavAutocomplete from "@components/Search/NavAutocomplete.tsx";
+import { Autocomplete } from "@components/Search/Autocomplete.tsx";
 
 const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
 const indexName = 'Dev_Kaplan'
@@ -306,6 +308,16 @@ const App = () => {
 			window.history.replaceState(null, "", decodeURIComponent(url));
 		}
 	}
+	const [resetKey, setResetKey] = useState(Date.now());
+
+	const [dateFilterActive, setDateFilterActive] = useState(false);
+	const [dateRange, setDateRange] = useState<{ min: number; max: number } | undefined>(undefined);
+	const handleReset = () => {
+		setResetKey(Date.now());
+		setDateFilterActive(false);
+		setDateRange(undefined); // ✅ clear date range when clearing all filters
+	};
+
 	const showDefaultCollectionBanner = isEmptySearch();
 	return (
 		<InstantSearch
@@ -317,15 +329,25 @@ const App = () => {
 			future={{ preserveSharedStateOnUnmount: true }}
 		>
 			<div className="bg-white dark:bg-gray-900 min-h-screen mb-[100px]">
-				<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 overflow-x-hidden">
 					<div
-						className="bg-white dark:bg-gray-800 py-4 border-b border-gray-200 dark:border-gray-700 grid grid-cols-3 md:grid-cols-4 items-center">
+						className="bg-gradent-to-r from-gray-100 via-white to-gray-100 dark:from-gray-800 dark:to-gray-900 py-6 px-4 md:px-6 lg:px-8 border-b border-gray-200 dark:border-gray-700 rounded-b-2xl shadow-sm grid grid-cols-1 md:grid-cols-4 items-center gap-4">
+
 						<h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Discover</h1>
 						<div className="md:col-span-3 xs:col-span-1">
-							<CustomSearchBox />
-						</div>
-						<div className="col-span-1 flex justify-end md:hidden">
-							<MobileFilters />
+							<div className="flex items-center justify-between gap-4 flex-wrap">
+								<div className="flex-grow">
+									<CustomSearchBox onResetQuery={handleReset} />
+								</div>
+								<MobileFilters
+									resetKey={resetKey}
+									onResetDateSlider={handleReset}
+									dateFilterActive={dateFilterActive}
+									setDateFilterActive={setDateFilterActive}
+									dateRange={dateRange}
+									setDateRange={setDateRange}
+								/>
+							</div>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row justify-between items-center my-4 space-y-4 sm:space-y-0">
@@ -342,7 +364,7 @@ const App = () => {
 						<h2 id="products-heading" className="sr-only">Filters</h2>
 						<div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 							<aside className="col-span-1 bg-white lg:block hidden md:visible top-3 space-y-6 border-r border-b">
-								<CustomClearRefinements />
+								{/*<CustomClearRefinements />*/}
 								<CustomHierarchicalMenu
 									showMore={false}
 									title="Form"
@@ -362,10 +384,16 @@ const App = () => {
 									attribute="topic"
 								/>
 								<DateRangeSlider
+									key={resetKey}
 									title="Date"
 									dateFields={dateFields}
 									minTimestamp={-15135361438}
 									maxTimestamp={-631151999}
+									value={dateRange} // <- controlled value
+									onChange={(newValue) => {
+										setDateRange(newValue);
+										setDateFilterActive(true);
+									}}
 								/>
 								<CustomRefinementList
 									accordionOpen={false}
@@ -390,7 +418,7 @@ const App = () => {
 									showMore={true}
 									attribute="language"
 								/>
-								<CustomRefinementList label="Archival Collection" attribute="subcollection" />
+								<CustomRefinementList label="Subcollections" attribute="subcollection" />
 
 								<CustomToggleRefinement
 									attribute="hasRealThumbnail"
@@ -398,9 +426,21 @@ const App = () => {
 								/>
 							</aside>
 							<div className="md:col-span-3 sm:col-span-1 space-y-6">
-								<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
-									<Stats />
-									<div className="flex items-center space-x-4">
+								<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+									{/* Left block: Stats and Clear Filters */}
+									<div className="flex flex-wrap items-center gap-2">
+										<Stats />
+										<CustomClearRefinements
+											onResetDateSlider={handleReset}
+											dateFilterActive={dateFilterActive}
+											dateRange={dateRange}
+											setDateRange={setDateRange}
+											defaultDateRange={{ min: -15135361438, max: -631151999 }} // 👈 must match your slider
+										/>
+									</div>
+
+									{/* Right block: Sort and Hits per Page */}
+									<div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
 										<CustomSortBy />
 										<CustomHitsPerPage
 											items={[
