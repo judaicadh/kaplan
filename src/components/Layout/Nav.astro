@@ -1,88 +1,83 @@
 ---
 // src/components/Nav.astro
-import FavoritesIcon from '../Misc/FavoritesIcon'
 import KaplanLogo from '../../../src/images/Asset 6.svg'
-import NavAutocomplete from '../Search/NavAutocomplete'
+import FavoritesIcon from "../Misc/FavoritesIcon";
 ---
 
-<nav class="bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700">
-	<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+<nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" role="navigation"
+		 aria-label="Main navigation">
+	<div class="max-w-screen-xl mx-auto px-4 py-4 flex items-center justify-between">
 		<!-- Logo -->
-		<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-			<img src={KaplanLogo.src} class="h-20" alt="Kaplan Collection Logo" />
+		<a href="/" class="flex items-center space-x-3">
+			<img src={KaplanLogo.src} class="h-16" alt="Kaplan Collection Logo" />
+			<span class="sr-only">Kaplan Collection Home</span>
 		</a>
 
-		<!-- Hamburger (mobile only) -->
-		<button
-			data-collapse-toggle="navbar-dropdown"
-			type="button"
-			class="inline-flex items-center p-2 w-10 h-10 justify-center text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-			aria-controls="navbar-dropdown"
-			aria-expanded="false"
-		>
-			<span class="sr-only">Open main menu</span>
-			<svg class="w-5 h-5" fill="none" viewBox="0 0 17 14" xmlns="http://www.w3.org/2000/svg">
-				<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M1 1h15M1 7h15M1 13h15" />
-			</svg>
-		</button>
-
-
-		<!-- Desktop Nav + Search -->
-		<div class="hidden w-full md:flex md:items-center md:justify-between md:w-auto" id="navbar-dropdown">
-			<ul class="flex items-center space-x-8 font-medium">
-				<li><a href="/" class="py-2 text-gray-900 hover:text-teal-700 dark:text-white">Home</a></li>
-
-				<li class="relative">
-					<!-- About Dropdown Trigger -->
-					<button
-						id="dropdownNavbarLink"
-						data-dropdown-toggle="dropdownNavbar"
-						class="flex items-center py-2 text-gray-900 hover:text-teal-700 dark:text-white"
-					>
-						About
-						<svg class="w-2.5 h-2.5 ms-2.5" fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
-							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-										d="m1 1 4 4 4-4" />
-						</svg>
-					</button>
-
-					<!-- About Dropdown Menu -->
-					<div
-						id="dropdownNavbar"
-						class="hidden absolute top-full mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-					>
-						<ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
-							<li><a href="/about/aboutthecollection" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">About
-								the Kaplan Collection</a></li>
-							<li><a href="/about/processingthecollection"
-										 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Processing the Collection</a></li>
-							<li><a href="/about/ai" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Using AI</a></li>
-							<li><a href="/about/aboutthiswebsite" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">About
-								this Website</a></li>
-						</ul>
-					</div>
+		<!-- Right: Nav + Favorites + Hamburger -->
+		<div class="flex items-center space-x-6">
+			<!-- Desktop Nav Links -->
+			<ul class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-800 dark:text-gray-100">
+				<li><a href="/"
+							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Home</a>
+				</li>
+				<li><a href="/about/aboutthecollection"
+							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">About</a>
+				</li>
+				<li><a href="/search"
+							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Search</a>
+				</li>
+				<li><a href="/subcollections"
+							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Subcollections</a>
+				</li>
+				<li><a href="/help"
+							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Help</a>
 				</li>
 
-				<li><a href="/search" class="py-2 hover:text-teal-700 dark:text-white">Search</a></li>
-				<li><a href="/collections" class="py-2 hover:text-teal-700 dark:text-white">Featured</a></li>
-
-        <!--		&lt;!&ndash; Desktop Search Bar &ndash;&gt;
-            <li class="hidden md:block w-64">
-              <NavAutocomplete client:only="react" />
-            </li>-->
-
-				<li>
-					<a href="/favorites">
-						<FavoritesIcon client:only="react" />
-					</a>
-				</li>
 			</ul>
-		</div>
 
-		<!-- 🔽 Mobile Search Bar (just below hamburger toggle) -->
-		<div class="block w-full mt-4 md:hidden">
-			<NavAutocomplete client:only="react" />
-		</div>
+			<!-- Favorites Icon -->
+			<a href="/favorites" aria-label="View Favorites"
+				 class="focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">
+				<FavoritesIcon client:only="react" />
+			</a>
 
-		<!-- Search Modal (mobile & desktop) -->
+			<!-- Mobile Hamburger -->
+			<button
+				id="hamburger"
+				type="button"
+				class="md:hidden text-gray-600 dark:text-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400"
+				aria-label="Toggle menu"
+				aria-controls="mobile-menu"
+				aria-expanded="false"
+				onclick="document.getElementById("mobile-menu").classList.toggle("hidden"); this.setAttribute("aria-expanded", this.getAttribute("aria-expanded") === "false" ? "true" : "false");"
+			>
+				<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M4 6h16M4 12h16M4 18h16" />
+				</svg>
+			</button>
+		</div>
+	</div>
+
+	<!-- Mobile Nav -->
+	<div id="mobile-menu" class="hidden md:hidden px-4 pb-4 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900">
+		<ul class="flex flex-col gap-3 text-sm">
+			<li><a href="/"
+						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Home</a>
+			</li>
+			<li><a href="/about/aboutthecollection"
+						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">About</a>
+			</li>
+			<li><a href="/search"
+						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Search</a>
+			</li>
+			<li><a href="/subcollections"
+						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Subcollections</a>
+			</li>
+			<li><a href="/help"
+						 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Help</a>
+			</li>
+
+		</ul>
+	</div>
+</nav>
