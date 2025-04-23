@@ -58,7 +58,7 @@ function CustomSearchBox({ onResetQuery }: CustomSearchBoxProps) {
 
 				{/* Help icon link */}
 				<a
-					href="/how-to-use-search"
+					href="/help"
 					target="_blank"
 					rel="noopener noreferrer"
 					aria-label="Search help"

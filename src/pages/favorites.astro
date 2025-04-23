@@ -1,6 +1,8 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FavoritesAlert from "../components/Misc/FavoritesAlert.tsx";
 import Favorites from "../components/Search/Favorites.jsx";
+
 ---
 
 <BaseLayout
@@ -9,14 +11,16 @@ import Favorites from "../components/Search/Favorites.jsx";
 >
 	<section class="py-16 bg-white dark:bg-gray-900 min-h-screen">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
 			<div class="mb-10 text-center">
+				<FavoritesAlert client:only="react" />
 				<h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
 					Your Favorites
 				</h1>
 				<p class="mt-2 text-gray-600 dark:text-gray-300 text-sm sm:text-base max-w-2xl mx-auto">
-					Explore the items you've bookmarked from the Kaplan Collection. These may include images, manuscripts,
-					newspapers, and more.
-				</p>
+					Explore the items you've bookmarked from the Kaplan Collection.</p>
+
+
 			</div>
 
 			<Favorites client:only="react" />
