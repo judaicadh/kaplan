@@ -3,7 +3,6 @@
 import KaplanLogo from '../../../src/images/Asset 6.svg'
 import FavoritesIcon from "../Misc/FavoritesIcon";
 ---
-
 <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" role="navigation"
 		 aria-label="Main navigation">
 	<div class="max-w-screen-xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -13,16 +12,42 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 			<span class="sr-only">Kaplan Collection Home</span>
 		</a>
 
-		<!-- Right: Nav + Favorites + Hamburger -->
+		<!-- Right Side: Nav, Favorites, Hamburger -->
 		<div class="flex items-center space-x-6">
-			<!-- Desktop Nav Links -->
+			<!-- Desktop Nav -->
 			<ul class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-800 dark:text-gray-100">
 				<li><a href="/"
 							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Home</a>
 				</li>
-				<li><a href="/about/aboutthecollection"
-							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">About</a>
+
+				<li class="relative group">
+					<button
+						id="dropdownNavbarLink"
+						aria-haspopup="true"
+						aria-expanded="false"
+						class="flex items-center gap-1 py-2 hover:text-teal-700 dark:hover:text-teal-400 focus:outline-none focus-visible:ring"
+					>
+						About
+						<svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="m1 1 4 4 4-4" />
+						</svg>
+					</button>
+					<!-- Dropdown -->
+					<div id="dropdownNavbar"
+							 class="absolute z-50 top-full mt-2 hidden group-hover:block bg-white divide-y divide-gray-100 rounded-lg shadow w-56 dark:bg-gray-700 dark:divide-gray-600"
+							 role="menu"
+							 aria-label="About links">
+						<ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
+							<li><a href="/about/aboutthecollection" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">About
+								the Kaplan Collection</a></li>
+							<li><a href="/about/processingthecollection"
+										 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Processing the Collection</a></li>
+							<li><a href="/about/ai" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Using AI</a></li>
+						</ul>
+					</div>
 				</li>
+
 				<li><a href="/search"
 							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Search</a>
 				</li>
@@ -32,7 +57,6 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 				<li><a href="/help"
 							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Help</a>
 				</li>
-
 			</ul>
 
 			<!-- Favorites Icon -->
@@ -41,7 +65,7 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 				<FavoritesIcon client:only="react" />
 			</a>
 
-			<!-- Mobile Hamburger -->
+			<!-- Hamburger Button -->
 			<button
 				id="hamburger"
 				type="button"
@@ -49,25 +73,53 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 				aria-label="Toggle menu"
 				aria-controls="mobile-menu"
 				aria-expanded="false"
-				onclick="document.getElementById("mobile-menu").classList.toggle("hidden"); this.setAttribute("aria-expanded", this.getAttribute("aria-expanded") === "false" ? "true" : "false");"
+				onclick="toggleMobileMenu();"
 			>
 				<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16" />
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
 				</svg>
 			</button>
 		</div>
 	</div>
 
-	<!-- Mobile Nav -->
+	<!-- Mobile Navigation -->
 	<div id="mobile-menu" class="hidden md:hidden px-4 pb-4 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900">
 		<ul class="flex flex-col gap-3 text-sm">
 			<li><a href="/"
 						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Home</a>
 			</li>
-			<li><a href="/about/aboutthecollection"
-						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">About</a>
+
+			<li>
+				<!-- About Mobile Toggle -->
+				<button
+					id="dropdownNavbarLinkMobile"
+					aria-haspopup="true"
+					aria-expanded="false"
+					onclick="toggleMobileAboutMenu();"
+					class="flex items-center gap-1 py-2 hover:text-teal-700 dark:hover:text-teal-400 focus:outline-none focus-visible:ring"
+				>
+					About
+					<svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									d="m1 1 4 4 4-4" />
+					</svg>
+				</button>
+
+				<div id="dropdownNavbarMobile"
+						 class="mt-2 hidden bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-lg shadow w-56"
+						 role="menu"
+						 aria-label="About links">
+					<ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
+						<li><a href="/about/aboutthecollection" role="menuitem"
+									 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">About the Kaplan Collection</a></li>
+						<li><a href="/about/processingthecollection" role="menuitem"
+									 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Processing the Collection</a></li>
+						<li><a href="/about/ai" role="menuitem" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Using
+							AI</a></li>
+					</ul>
+				</div>
 			</li>
+
 			<li><a href="/search"
 						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Search</a>
 			</li>
@@ -75,9 +127,34 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Subcollections</a>
 			</li>
 			<li><a href="/help"
-						 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Help</a>
+						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Help</a>
 			</li>
-
 		</ul>
 	</div>
+
+	<!-- Scripts -->
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			const mobileMenu = document.getElementById("mobile-menu");
+			const hamburger = document.getElementById("hamburger");
+			const aboutMenu = document.getElementById("dropdownNavbarMobile");
+			const aboutButton = document.getElementById("dropdownNavbarLinkMobile");
+
+			if (hamburger && mobileMenu) {
+				hamburger.addEventListener("click", () => {
+					const isHidden = mobileMenu.classList.contains("hidden");
+					mobileMenu.classList.toggle("hidden");
+					hamburger.setAttribute("aria-expanded", String(isHidden));
+				});
+			}
+
+			if (aboutButton && aboutMenu) {
+				aboutButton.addEventListener("click", () => {
+					const isHidden = aboutMenu.classList.contains("hidden");
+					aboutMenu.classList.toggle("hidden");
+					aboutButton.setAttribute("aria-expanded", String(isHidden));
+				});
+			}
+		});
+	</script>
 </nav>
