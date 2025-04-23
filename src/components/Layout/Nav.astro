@@ -1,6 +1,6 @@
 ---
 // src/components/Nav.astro
-import KaplanLogo from '../../../src/images/Asset 6.svg'
+import KaplanLogo from "../../../src/images/Asset 6.svg";
 import FavoritesIcon from "../Misc/FavoritesIcon";
 ---
 <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" role="navigation"
@@ -16,46 +16,55 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 		<div class="flex items-center space-x-6">
 			<!-- Desktop Nav -->
 			<ul class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-800 dark:text-gray-100">
-				<li><a href="/"
-							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Home</a>
+				<li>
+					<a href="/"
+						 class="text-gray-800 dark:text-gray-100 hover:underline hover:decoration-indigo-500 hover:underline-offset-4 transition-colors duration-200 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Home</a>
 				</li>
+				<li class="relative">
+					<div class="group inline-block relative">
+						<button
+							id="dropdownNavbarLink"
+							aria-haspopup="true"
+							aria-expanded="false"
+							class="flex items-center gap-1 py-2 hover:underline hover:decoration-indigo-500 hover:underline-offset-4 transition-colors focus:outline-none focus-visible:ring"
+						>
+							About
+							<svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+								<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="m1 1 4 4 4-4" />
+							</svg>
+						</button>
 
-				<li class="relative group">
-					<button
-						id="dropdownNavbarLink"
-						aria-haspopup="true"
-						aria-expanded="false"
-						class="flex items-center gap-1 py-2 hover:text-teal-700 dark:hover:text-teal-400 focus:outline-none focus-visible:ring"
-					>
-						About
-						<svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
-							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-										d="m1 1 4 4 4-4" />
-						</svg>
-					</button>
-					<!-- Dropdown -->
-					<div id="dropdownNavbar"
-							 class="absolute z-50 top-full mt-2 hidden group-hover:block bg-white divide-y divide-gray-100 rounded-lg shadow w-56 dark:bg-gray-700 dark:divide-gray-600"
-							 role="menu"
-							 aria-label="About links">
-						<ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
-							<li><a href="/about/aboutthecollection" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">About
-								the Kaplan Collection</a></li>
-							<li><a href="/about/processingthecollection"
-										 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Processing the Collection</a></li>
-							<li><a href="/about/ai" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Using AI</a></li>
-						</ul>
+						<div
+							id="dropdownNavbar"
+							class="absolute left-0 z-50 hidden group-hover:block bg-white divide-y divide-gray-100 rounded-lg shadow w-56 dark:bg-gray-700 dark:divide-gray-600"
+							role="menu"
+							aria-label="About links"
+						>
+							<ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
+								<li>
+									<a href="/about/aboutthecollection" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">About
+										the Kaplan Collection</a>
+								</li>
+								<li>
+									<a href="/about/processingthecollection"
+										 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Processing the Collection</a>
+								</li>
+								<li>
+									<a href="/about/ai" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Using AI</a>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</li>
-
 				<li><a href="/search"
-							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Search</a>
+							 class="text-gray-800 dark:text-gray-100 hover:underline hover:decoration-indigo-500 hover:underline-offset-4 transition-colors duration-200 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Search</a>
 				</li>
 				<li><a href="/subcollections"
-							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Subcollections</a>
+							 class="text-gray-800 dark:text-gray-100 hover:underline hover:decoration-indigo-500 hover:underline-offset-4 transition-colors duration-200 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Subcollections</a>
 				</li>
 				<li><a href="/help"
-							 class="hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Help</a>
+							 class="text-gray-800 dark:text-gray-100 hover:underline hover:decoration-indigo-500 hover:underline-offset-4 transition-colors duration-200 focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">Help</a>
 				</li>
 			</ul>
 
@@ -88,9 +97,7 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 			<li><a href="/"
 						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Home</a>
 			</li>
-
 			<li>
-				<!-- About Mobile Toggle -->
 				<button
 					id="dropdownNavbarLinkMobile"
 					aria-haspopup="true"
@@ -104,11 +111,9 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 									d="m1 1 4 4 4-4" />
 					</svg>
 				</button>
-
 				<div id="dropdownNavbarMobile"
 						 class="mt-2 hidden bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-lg shadow w-56"
-						 role="menu"
-						 aria-label="About links">
+						 role="menu" aria-label="About links">
 					<ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
 						<li><a href="/about/aboutthecollection" role="menuitem"
 									 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">About the Kaplan Collection</a></li>
@@ -119,7 +124,6 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 					</ul>
 				</div>
 			</li>
-
 			<li><a href="/search"
 						 class="block py-2 hover:text-indigo-700 dark:hover:text-indigo-400 focus:outline-none focus-visible:ring">Search</a>
 			</li>
