@@ -94,12 +94,12 @@ function getCategoryName(slug: string) {
 
 function slugify(str: string): string {
 	return str
-		.normalize("NFD")              // separate accents
-		.replace(/[\u0300-\u036f]/g, "") // remove diacritics
+		.normalize("NFD")              // separates accents
+		.replace(/[\u0300-\u036f]/g, "") // removes diacritics
 		.toLowerCase()
 		.trim()
 		.replace(/\s+/g, "-")
-		.replace(/[^\w\-]+/g, "")
+		.replace(/[^\w-]+/g, "")
 		.replace(/\-\-+/g, "-")
 		.replace(/^-+/, "")
 		.replace(/-+$/, "");
@@ -111,6 +111,23 @@ function deslugify(slug: string): string {
 		.replace(/-/g, " ")
 		.replace(/\b\w/g, (l) => l.toUpperCase());
 }
+
+const subcollectionSlugMap: Record<string, string> = {
+	"gouvea-brandao-and-pantoja-archive": "Gouvea, Brandão, and Pantoja Archive",
+	"isaac-leeser-archive": "Isaac Leeser Archive",
+	"tobias-family-archive": "Tobias Family Archive",
+	"aaron-hart-estate-archive": "Aaron Hart Estate Archive",
+	"kaufman-oppenheimer-co-archive": "Kaufman Oppenheimer & Co. Archive",
+	"willy-lindwer-suriname-collection": "Willy Lindwer Suriname Collection",
+	"jacob-steinheimer-family-archive": "Jacob Steinheimer Family Archive",
+	"cohen-oil-archive": "Cohen Oil Archive",
+	"lord-john-simon-archive": "Lord John Son Archive"
+
+	// Add other known slugs and labels as needed
+};
+const subcollectionLabelMap: Record<string, string> = Object.fromEntries(
+	Object.entries(subcollectionSlugMap).map(([slug, label]) => [label, slug])
+);
 // Normalizes query param values into arrays
 function normalizeToArray(value: any) {
 	if (Array.isArray(value)) return value;
@@ -221,7 +238,9 @@ const routing = {
 			const allTopics = normalizeToArray(topic).map(decodeURIComponent).map(deslugify);
 			const allCollections = normalizeToArray(collection).map(decodeURIComponent).map(deslugify);
 			const allLanguages = normalizeToArray(language).map(decodeURIComponent).map(deslugify);
-			const allSubcollections = normalizeToArray(subcollection).map(decodeURIComponent).map(deslugify);
+			const allSubcollections = normalizeToArray(subcollection)
+				.map(decodeURIComponent)
+				.map(slug => subcollectionSlugMap[slug] || deslugify(slug));
 			const allNames = normalizeToArray(name).map(decodeURIComponent).map(deslugify);
 			const allGeography = normalizeToArray(geography).map(decodeURIComponent).map(deslugify);
 
@@ -231,10 +250,10 @@ const routing = {
 				topic: allTopics.map(decodeURIComponent),
 				collection: allCollections.map(decodeURIComponent),
 				language: allLanguages.map(decodeURIComponent),
-				subcollection: allSubcollections.map(decodeURIComponent),
+				subcollection: allSubcollections,
 				name: allNames.map(decodeURIComponent),
 				// Map the URL key "geography" to the internal attribute "geography.name"
-				"geography.name": allGeography.map(decodeURIComponent),
+				geography: allGeography.map(decodeURIComponent).map(deslugify),
 				hierarchicalCategories
 			};
 		},
@@ -254,7 +273,9 @@ const routing = {
 				topic: indexUiState.refinementList?.topic || [],
 				language: indexUiState.refinementList?.language || [],
 				collection: indexUiState.refinementList?.collection || [],
-				subcollection: indexUiState.refinementList?.subcollection || [],
+				subcollection: (indexUiState.refinementList?.subcollection || []).map(
+					label => slugifyFilterValue(subcollectionLabelMap[label] || label)
+				),
 				name: indexUiState.refinementList?.name || [],
 				// Map the internal "geography.name" to the URL key "geography".
 				geography: indexUiState.refinementList?.["geography.name"] || []
@@ -272,7 +293,7 @@ const routing = {
 				!routeState.geography?.length &&
 				!routeState.collection?.length &&
 				!routeState.hierarchicalCategories?.length;
-
+			console.log("Refining subcollection:", routeState.subcollection);
 			const defaultCollection = ["Arnold and Deanne Kaplan Collection of Early American Judaica"];
 
 			return {

@@ -3,7 +3,7 @@ import Nav from '../components/Layout/Nav.astro';
 import Footer from '../components/Layout/Footer.astro';
 import Header from "../components/Layout/Header.astro";
 
-
+import "../styles/global.css";
 const { title, description } = Astro.props;
 ---
 
@@ -18,7 +18,7 @@ const { title, description } = Astro.props;
 	<meta name="description" content={description} />
 	<meta name="theme-color" content="#ffffff" />
 	<link rel="canonical" href={`${Astro.site}${Astro.url.pathname}`} />
-	<link rel="sitemap" href={`${Astro.site}/sitemap.xml`} />
+	<link rel="sitemap" href={`${Astro.site}/sitemap-index.xml`} />
 
 	<!-- Optional: Astro-specific SEO header component -->
 	<Header title={title} description={description} />
