@@ -65,8 +65,8 @@ module.exports = withMT({
 				}
       },
 			fontFamily: {
-				serif: ['Merriweather', 'Georgia', 'serif'], // Primary font for body text
-				sans: ['Source Sans Pro', 'Arial', 'sans-serif'], // Secondary font for headings/navigation
+				serif: ["Playfair Display", "serif"], // Primary font for body text
+				sans: ["Frank Ruhl Libre", "Arial", "sans-serif"], // Secondary font for headings/navigation
 				slab: ['Roboto Slab', 'serif'], // Complementary font for emphasis/quotes
 				mono: ['Fira Code', 'Courier New', 'monospace'] // Monospace for code blocks
 			}

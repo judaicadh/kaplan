@@ -1,14 +1,14 @@
 ---
 // src/components/Nav.astro
-import KaplanLogo from "../../../src/images/Asset 6.svg";
+import KaplanLogo from "../../../src/images/Asset 3.svg";
 import FavoritesIcon from "../Misc/FavoritesIcon";
 ---
-<nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" role="navigation"
+<nav class="z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" role="navigation"
 		 aria-label="Main navigation">
 	<div class="max-w-screen-xl mx-auto px-4 py-4 flex items-center justify-between">
 		<!-- Logo -->
 		<a href="/" class="flex items-center space-x-3">
-			<img src={KaplanLogo.src} class="h-16" alt="Kaplan Collection Logo" />
+			<img src={KaplanLogo.src} class="h-20" alt="Kaplan Collection Logo" />
 			<span class="sr-only">Kaplan Collection Home</span>
 		</a>
 
@@ -35,13 +35,11 @@ import FavoritesIcon from "../Misc/FavoritesIcon";
 							</svg>
 						</button>
 
-						<div
-							id="dropdownNavbar"
-							class="absolute left-0 z-50 hidden group-hover:block bg-white divide-y divide-gray-100 rounded-lg shadow w-56 dark:bg-gray-700 dark:divide-gray-600"
-							role="menu"
+						<div id="dropdownNavbar" class="absolute ... hidden group-hover:block group-focus-within:block ..."
+								 role="menu"
 							aria-label="About links"
 						>
-							<ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
+							<ul class="bg-white dark:bg-gray-900 py-2 text-sm text-gray-700 dark:text-gray-400">
 								<li>
 									<a href="/about/aboutthecollection" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">About
 										the Kaplan Collection</a>
