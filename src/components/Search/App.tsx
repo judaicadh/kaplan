@@ -94,24 +94,42 @@ function getCategoryName(slug: string) {
 
 function slugify(str: string): string {
 	return str
-		.normalize("NFD")              // separates accents
-		.replace(/[\u0300-\u036f]/g, "") // removes diacritics
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "") // strip accents
+		.replace(/[^\w\s-]/g, "") // remove punctuation
 		.toLowerCase()
 		.trim()
 		.replace(/\s+/g, "-")
-		.replace(/[^\w-]+/g, "")
-		.replace(/\-\-+/g, "-")
-		.replace(/^-+/, "")
-		.replace(/-+$/, "");
+		.replace(/--+/g, "-")
+		.replace(/^-+|-+$/g, "");
 }
 
 function deslugify(slug: string): string {
-	// Convert 'mercantile-news' to 'Mercantile News'
 	return slug
+		.replace(/-/g, " ")
+		.replace(/\band\b/g, "&")
+		.replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function slugifyName(str: string): string {
+	return str
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "") // remove diacritics
+		.replace(/&/g, "__amp__")
+		.toLowerCase()
+		.trim()
+		.replace(/\s+/g, "-")
+		.replace(/[^a-z0-9.-]+/g, "") // strip anything not a-z, 0-9, dot, or dash
+		.replace(/--+/g, "-")
+		.replace(/^-+|-+$/g, "");
+}
+
+function deslugifyName(slug: string): string {
+	return slug
+		.replace(/\bamp\b/g, "&")
 		.replace(/-/g, " ")
 		.replace(/\b\w/g, (l) => l.toUpperCase());
 }
-
 const subcollectionSlugMap: Record<string, string> = {
 	"gouvea-brandao-and-pantoja-archive": "Gouvea, Brandão, and Pantoja Archive",
 	"isaac-leeser-archive": "Isaac Leeser Archive",
@@ -194,12 +212,12 @@ const routing = {
 				queryParameters.subcollection = routeState.subcollection.map(slugify);
 			}
 			if (routeState.name && routeState.name.length) {
-				queryParameters.name = routeState.name.map(slugify);
+				queryParameters.name = routeState.name.map(slugifyName); // ✅ already slugified, don't double-encode
 			}
 			if (routeState.geography && routeState.geography.length) {
 				queryParameters.geography = routeState.geography.map(slugify);
 			}
-
+			console.log("Routing to Algolia with name:", routeState.name);
 			const queryString = qsModule.stringify(queryParameters, {
 				addQueryPrefix: true,
 				arrayFormat: "repeat"
@@ -241,9 +259,11 @@ const routing = {
 			const allSubcollections = normalizeToArray(subcollection)
 				.map(decodeURIComponent)
 				.map(slug => subcollectionSlugMap[slug] || deslugify(slug));
-			const allNames = normalizeToArray(name).map(decodeURIComponent).map(deslugify);
+			const allNames = normalizeToArray(name)
+				.map(decodeURIComponent)
+				.map(deslugifyName);
 			const allGeography = normalizeToArray(geography).map(decodeURIComponent).map(deslugify);
-
+			console.log("Parsed name refinements:", allNames);
 			return {
 				query: decodeURIComponent(query),
 				page,
@@ -251,8 +271,7 @@ const routing = {
 				collection: allCollections.map(decodeURIComponent),
 				language: allLanguages.map(decodeURIComponent),
 				subcollection: allSubcollections,
-				name: allNames.map(decodeURIComponent),
-				// Map the URL key "geography" to the internal attribute "geography.name"
+				name: allNames.map(decodeURIComponent),				// Map the URL key "geography" to the internal attribute "geography.name"
 				geography: allGeography.map(decodeURIComponent).map(deslugify),
 				hierarchicalCategories
 			};
@@ -277,7 +296,6 @@ const routing = {
 					label => slugifyFilterValue(subcollectionLabelMap[label] || label)
 				),
 				name: indexUiState.refinementList?.name || [],
-				// Map the internal "geography.name" to the URL key "geography".
 				geography: indexUiState.refinementList?.["geography.name"] || []
 			};
 		},
