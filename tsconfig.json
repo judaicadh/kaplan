@@ -10,8 +10,8 @@
       "@components/*": [
         "src/components/*"
       ],
-      "@samvera/clover-iiif/*": [
-        "node_modules/@samvera/clover-iiif/dist/*"
+      "@samvera/clover-iiif": [
+        "node_modules/@samvera/clover-iiif"
       ]
     },
     "jsx": "preserve",
