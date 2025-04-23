@@ -130,6 +130,19 @@ function deslugifyName(slug: string): string {
 		.replace(/-/g, " ")
 		.replace(/\b\w/g, (l) => l.toUpperCase());
 }
+
+function deslugifyCollection(slug: string): string {
+	if (slug === "arnold-and-deanne-kaplan-collection-of-early-american-judaica") {
+		return "Arnold and Deanne Kaplan Collection of Early American Judaica";
+	}
+	if (slug === "arnold-and-deanne-kaplan-collection-of-modern-american-judaica") {
+		return "Arnold and Deanne Kaplan Collection of Modern American Judaica";
+	}
+	if (slug === "out-of-scope-collection") {
+		return "Out of Scope Collection";
+	}
+	return deslugify(slug); // fallback
+}
 const subcollectionSlugMap: Record<string, string> = {
 	"gouvea-brandao-and-pantoja-archive": "Gouvea, Brandão, and Pantoja Archive",
 	"isaac-leeser-archive": "Isaac Leeser Archive",
@@ -250,11 +263,13 @@ const routing = {
 				name = [],
 				geography = [],
 				collection = []
-			} = qsModule.parse(location.search.slice(1));
+			} = qsModule.parse(location.search.slice(1), { ignoreQueryPrefix: true });
 
 			// Ensure we have arrays.
 			const allTopics = normalizeToArray(topic).map(decodeURIComponent).map(deslugify);
-			const allCollections = normalizeToArray(collection).map(decodeURIComponent).map(deslugify);
+			const allCollections = normalizeToArray(collection)
+				.map(decodeURIComponent)
+				.map(deslugifyCollection);
 			const allLanguages = normalizeToArray(language).map(decodeURIComponent).map(deslugify);
 			const allSubcollections = normalizeToArray(subcollection)
 				.map(decodeURIComponent)
@@ -268,7 +283,7 @@ const routing = {
 				query: decodeURIComponent(query),
 				page,
 				topic: allTopics.map(decodeURIComponent),
-				collection: allCollections.map(decodeURIComponent),
+				collection: allCollections,
 				language: allLanguages.map(decodeURIComponent),
 				subcollection: allSubcollections,
 				name: allNames.map(decodeURIComponent),				// Map the URL key "geography" to the internal attribute "geography.name"
