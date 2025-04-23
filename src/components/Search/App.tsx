@@ -68,6 +68,8 @@ type RouteState = {
 // A simple slugify function that replaces spaces with dashes and removes non-word characters.
 const slugifyFilterValue = (str: string): string => {
 	return str
+		.normalize("NFD")              // separate accents
+		.replace(/[\u0300-\u036f]/g, "") // remove diacritics
 		.toLowerCase()
 		.trim()
 		.replace(/\s+/g, "-")
@@ -92,6 +94,8 @@ function getCategoryName(slug: string) {
 
 function slugify(str: string): string {
 	return str
+		.normalize("NFD")              // separate accents
+		.replace(/[\u0300-\u036f]/g, "") // remove diacritics
 		.toLowerCase()
 		.trim()
 		.replace(/\s+/g, "-")
