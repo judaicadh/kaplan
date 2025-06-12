@@ -6,7 +6,7 @@
 
 * Click the Search bar at the top of the page and type your term(s).
 * Results update automatically as you type.
-  ![Search.gif](../../public/assets/Search.gif)
+  ![Search](/assets/Search.gif)
 
 **2. Refine with Filters**
 
@@ -17,13 +17,13 @@
 
 * Click the Sort button (top‑right of the results) to reorder by relevance, title, date, or ID.
 
-![Sort.gif](../../public/assets/Sort.gif)
+![Sort.gif](/assets/Sort.gif)
 
 **4. Change Number of Results Shown on a Page**
 
 * Use the dropdown next to the Sort button to select how many items display on each page (e.g., 20, 40, 80).
 
-![Hits.gif](../../public/assets/Hits.gif)
+![Hits.gif](/assets/Hits.gif)
 
 **5. Favorite an Item**
 
@@ -31,7 +31,7 @@
   the heart turns red. Click the red heart again to remove the item from your favorites. The number in the favorites
   icon at the top of the page will update accordingly.
 
-![favoritessearch.gif](../../public/assets/favoritessearch.gif)
+![favoritessearch.gif](/assets/favoritessearch.gif)
 
 **5. Clear Filters**
 
