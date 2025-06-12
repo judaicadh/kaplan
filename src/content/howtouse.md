@@ -1,4 +1,4 @@
-# Help
+# User Guide
 
 ### Search Page Basics
 
@@ -6,8 +6,7 @@
 
 * Click the Search bar at the top of the page and type your term(s).
 * Results update automatically as you type.
-
-![searching.gif](../../public/assets/searching.gif)
+  ![Search.gif](../../public/assets/Search.gif)
 
 **2. Refine with Filters**
 
@@ -18,13 +17,13 @@
 
 * Click the Sort button (top‑right of the results) to reorder by relevance, title, date, or ID.
 
-![sorting.gif](../../public/assets/sorting.gif)
+![Sort.gif](../../public/assets/Sort.gif)
 
 **4. Change Number of Results Shown on a Page**
 
 * Use the dropdown next to the Sort button to select how many items display on each page (e.g., 20, 40, 80).
 
-![hitsperpage.gif](../../public/assets/hitsperpage.gif)
+![Hits.gif](../../public/assets/Hits.gif)
 
 **5. Favorite an Item**
 
