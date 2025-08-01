@@ -36,19 +36,25 @@ const { title, description, schemaData } = Astro.props
 			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
 			crossorigin=""
 		/>
+		<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-QL528RZ3BB">
 
+</script>
+		<script is:inline>
+			window.dataLayer = window.dataLayer || [];
+
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+
+			gtag("js", new Date());
+
+			gtag("config", "G-QL528RZ3BB");
+			</script>
 		<!-- Render JSON-LD schema data -->
 	{schemaData && (
 		<script type="application/ld+json">
 			{JSON.stringify(schemaData)}
 		</script>
 	)}
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-QL528RZ3BB"></script>
-		<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag(){dataLayer.push(arguments);}
-		gtag('js', new Date());
 
-		gtag('config', 'G-QL528RZ3BB');
-		</script>
 </head>
