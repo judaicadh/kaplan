@@ -1,0 +1,18 @@
+# netlify.toml — CLEAN VERSION
+
+[build]
+  command = "npm ci && npm run build"
+  publish = "dist"
+  functions = "netlify/functions" # if you have any functions; remove if not used
+
+# Single-page app fallback (keep this)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Long-cache Astro assets (optional; keep if you ship _astro/)
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
