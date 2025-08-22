@@ -66,19 +66,31 @@ function NavAutocomplete() {
 	useEffect(() => {
 		if (!containerRef.current) return;
 
-		const search = autocomplete({
-			container: containerRef.current,
-			placeholder: 'Search',
+		const search = autocomplete<BaseItem>({
+			container: containerRef.current!,
+			placeholder: 'Search…',
 			detachedMediaQuery: '',
-			openOnFocus: true,
 			insights: true,
 
 			classNames: {
-				panel: "max-h-[400px] flex flex-col overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900",
-				list: "overflow-y-auto grow",
-				input: "text-base text-gray-800"
+
+ 				input: "text-base text-gray-800 dark:text-white-900",
+				sourceFooter: "sticky",
+
 			},
 			plugins: [recentSearchesPlugin],
+			renderer: {
+				createElement: React.createElement,
+				Fragment,
+				render(vdom, node) {
+					if (!panelRootRef.current || rootRef.current !== node) {
+						rootRef.current = node;
+						panelRootRef.current?.unmount();
+						panelRootRef.current = createRoot(node);
+					}
+					panelRootRef.current.render(vdom);
+				},
+			},
 			getSources({ query }) {
 				if (!query) {
 					return []
@@ -115,7 +127,7 @@ function NavAutocomplete() {
 								return (
 									<a
 										href={`/geography/${encodeURIComponent(slugify(item.label))}`}
-										className="text-blue-500 hover:underline"
+										className="block py-1 hover:underline"
 									>
 
 										{item.label}
@@ -143,25 +155,21 @@ function NavAutocomplete() {
 							});
 						},
 						templates: {
-							header() {
-								return (
-									<Fragment>
-										<span className="aa-SourceHeaderTitle">Subject</span>
-										<div className="aa-SourceHeaderLine" />
-									</Fragment>
-								);
-							},
-							item({ item }) {
-								return (
-									<a
-										href={`/subject/${encodeURIComponent(slugify(item.label))}`}
-										className="text-blue-500 hover:underline"
-									>
-										{item.label}
-									</a>
-								);
-							}
-						}
+							header: () => (
+								<Fragment>
+									<div className="aa-SourceHeaderTitle">Subject</div>
+									<div className="aa-SourceHeaderLine" />
+								</Fragment>
+							),
+							item: ({ item }) => (
+								<a
+									href={`/subject/${slugify(item.label)}`}
+									className="block py-1 hover:underline"
+								>
+									{item.label}
+								</a>
+							),
+						},
 					},
 					/*{
 						sourceId: 'FormCategories',

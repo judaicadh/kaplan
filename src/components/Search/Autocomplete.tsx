@@ -1,81 +1,423 @@
-/** @jsxRuntime classic */
-/** @jsx h */
-import { type AutocompletePlugin, getAlgoliaFacets } from '@algolia/autocomplete-js'
-import type { SearchClient } from 'algoliasearch'
-import { h, Fragment } from 'preact'
+import {  algoliasearch } from "algoliasearch";
+import type { BaseItem } from '@algolia/autocomplete-core';
+import { type AutocompleteOptions, getAlgoliaFacets } from "@algolia/autocomplete-js";
+import { useRefinementList } from 'react-instantsearch';
 
-type CategoryItem = {
+import {
+	createElement,
+	Fragment,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+
+import {
+	useHierarchicalMenu,
+	usePagination,
+	useSearchBox,
+} from 'react-instantsearch';
+import { autocomplete } from '@algolia/autocomplete-js';
+import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
+import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
+import { debounce } from '@algolia/autocomplete-shared';
+const searchClient = algoliasearch(
+	'ZLPYTBTZ4R',
+	'be46d26dfdb299f9bee9146b63c99c77'
+);
+import {
+	INSTANT_SEARCH_HIERARCHICAL_ATTRIBUTES,
+	INSTANT_SEARCH_INDEX_NAME,
+	INSTANT_SEARCH_QUERY_SUGGESTIONS,
+} from '../../constants.ts';
+
+import '@algolia/autocomplete-theme-classic';
+
+type AutocompleteProps = Partial<AutocompleteOptions<BaseItem>> & {
+	searchClient: any,
+	className?: string;
+};
+
+type SetInstantSearchUiStateOptions = {
+	query: string;
+	category?: string;
+	geography?: string;
+	name?: string;
+	subject?: string;
+};
+
+type MyRecentSearchItem = {
+	id: string; // ✅ required
 	label: string;
-	count: number;
+	category?: string;
+	geography?: string;
+	name?: string;
+	subject?: string;
 };
+export function Autocomplete({
+															 searchClient,
+															 className,
+															 ...autocompleteProps
+														 }: AutocompleteProps) {
+	const autocompleteContainer = useRef<HTMLDivElement>(null);
+	const panelRootRef = useRef<Root | null>(null);
+	const rootRef = useRef<HTMLElement | null>(null);
 
-type CreateCategoriesPluginProps = {
-	searchClient: SearchClient;
-};
+	const { query, refine: setQuery } = useSearchBox();
+	const { items: categories, refine: setCategory } = useHierarchicalMenu({
+		attributes: INSTANT_SEARCH_HIERARCHICAL_ATTRIBUTES,
+	});
+	function slugify(str: string): string {
+		return str
+			.toLowerCase()
+			.trim()
+			.replace(/\s+/g, "-")
+			.replace(/[^\w\-]+/g, "")
+			.replace(/\-\-+/g, "-")
+			.replace(/^-+/, "")
+			.replace(/-+$/, "");
+	}
 
-export function createCategoriesPlugin({
-																				 searchClient
-																			 }: CreateCategoriesPluginProps): AutocompletePlugin<CategoryItem, undefined> {
-	return {
-		getSources({ query }) {
-			return [
-				{
-					sourceId: 'categoriesPlugin',
-					getItems() {
-						return getAlgoliaFacets({
-							searchClient,
-							queries: [
-								{
-									indexName: 'Dev_Kaplan',
-									facet: 'categories',
-									params: {
-										facetQuery: query,
-										maxFacetHits: 5
-									}
-								}
-							]
-						})
+	function getSearchUrl(params: Record<string, string | string[]>) {
+		const searchParams = new URLSearchParams();
+		const paramMap: Record<string, string> = {
+			"name": "name",
+			"collection": "collection",
+			"subject": "subject",
+			"geography.name": "geography",
+			"hierarchicalCategories.lvl0": "hierarchicalCategories"
+		};
+
+		for (const [key, value] of Object.entries(params)) {
+			const urlKey = paramMap[key] || key;
+			if (Array.isArray(value)) {
+				value.forEach((v) => searchParams.append(urlKey, slugify(v)));
+			} else {
+				searchParams.append(urlKey, slugify(value));
+			}
+		}
+
+		return `/search/?${searchParams.toString()}`;
+	}
+	const { items: name,  refine: setName } = useRefinementList({ attribute: 'name' });
+	const { refine: setGeography } = useRefinementList({ attribute: 'geography.name' });
+	const { refine: setSubject } = useRefinementList({ attribute: 'subject' });
+	const { refine: setPage } = usePagination();
+
+	const [instantSearchUiState, setInstantSearchUiState] =
+		useState<SetInstantSearchUiStateOptions>({ query });
+	const debouncedSetInstantSearchUiState = debounce(
+		setInstantSearchUiState,
+		500
+	);
+
+	useEffect(() => {
+		setQuery(instantSearchUiState.query);
+		if (instantSearchUiState.category) {
+			setCategory(instantSearchUiState.category);
+		}
+
+		if (instantSearchUiState.geography) {
+			setGeography(instantSearchUiState.geography);
+		}
+		if (instantSearchUiState.name) {
+			setName(instantSearchUiState.name);
+		}
+		if (instantSearchUiState.subject) {
+			setSubject(instantSearchUiState.subject);
+		}
+		setPage(0);
+	}, [instantSearchUiState]);
+	const currentCategory = useMemo(
+		() => categories.find(({ isRefined }) => isRefined)?.value,
+		[categories]
+	);
+
+	const plugins = useMemo(() => {
+		const recentSearches = createLocalStorageRecentSearchesPlugin<MyRecentSearchItem>({
+			key: 'instantsearch',
+			limit: 3,
+			transformSource({ source }) {
+				return {
+					...source,
+					onSelect({ item }) {
+						setInstantSearchUiState({
+							query: item.label,
+							category: item.category,
+							geography: item.geography,
+							name: item.name,
+							subject: item.subject,
+						});
+					},
+				};
+			},
+		});
+		const querySuggestionsInCategory = createQuerySuggestionsPlugin({
+			searchClient,
+			indexName: INSTANT_SEARCH_QUERY_SUGGESTIONS,
+			getSearchParams() {
+				return recentSearches.data!.getAlgoliaSearchParams({
+					hitsPerPage: 3,
+					facetFilters: [
+						`${INSTANT_SEARCH_INDEX_NAME}.facets.exact_matches.${INSTANT_SEARCH_HIERARCHICAL_ATTRIBUTES[0]}.value:${currentCategory}`,
+					],
+				});
+			},
+			transformSource({ source }) {
+				return {
+					...source,
+					sourceId: 'querySuggestionsInCategoryPlugin',
+					onSelect({ item }) {
+						setInstantSearchUiState({
+							query: item.query,
+							category: item.__autocomplete_qsCategory,
+
+						});
+					},
+					getItems(params) {
+						if (!currentCategory) {
+							return [];
+						}
+
+						return source.getItems(params);
 					},
 					templates: {
-						header() {
+						...source.templates,
+						header({ items }) {
+							if (items.length === 0) {
+								return <Fragment />;
+							}
+
 							return (
 								<Fragment>
-									<span className="aa-SourceHeaderTitle">Categories</span>
-									<div className="aa-SourceHeaderLine" />
+                  <span className="aa-SourceHeaderTitle">
+                    In {currentCategory}
+                  </span>
+									<span className="aa-SourceHeaderLine" />
 								</Fragment>
-							)
+							);
 						},
-						item({ item, components }) {
-							return (
-								<div className="aa-ItemWrapper">
-									<div className="aa-ItemContent">
-										<div className="aa-ItemIcon aa-ItemIcon--noBorder">
-											<svg
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												strokeWidth="2"
-												strokeLinecap="round"
-												strokeLinejoin="round"
-											>
-												<path
-													d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-												<polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-												<line x1="12" y1="22.08" x2="12" y2="12" />
-											</svg>
-										</div>
-										<div className="aa-ItemContentBody">
-											<div className="aa-ItemContentTitle">
-												<components.Highlight hit={item} attribute="label" />
-											</div>
-										</div>
-									</div>
-								</div>
-							)
-						}
-					}
+					},
+				};
+			},
+		});
+
+		const querySuggestions = createQuerySuggestionsPlugin({
+			searchClient,
+			indexName: INSTANT_SEARCH_QUERY_SUGGESTIONS,
+			getSearchParams() {
+				if (!currentCategory) {
+					return recentSearches.data!.getAlgoliaSearchParams({
+						hitsPerPage: 6,
+					});
 				}
-			]
+
+				return recentSearches.data!.getAlgoliaSearchParams({
+					hitsPerPage: 3,
+					facetFilters: [
+						`${INSTANT_SEARCH_INDEX_NAME}.facets.exact_matches.${INSTANT_SEARCH_HIERARCHICAL_ATTRIBUTES[0]}.value:-${currentCategory}`,
+					],
+				});
+			},
+			categoryAttribute: [
+				INSTANT_SEARCH_INDEX_NAME,
+				'facets',
+				'exact_matches',
+				INSTANT_SEARCH_HIERARCHICAL_ATTRIBUTES[0],
+			],
+			transformSource({ source }) {
+				return {
+					...source,
+					sourceId: 'querySuggestionsPlugin',
+					onSelect({ item }) {
+						setInstantSearchUiState({
+							query: item.query,
+							category: item.__autocomplete_qsCategory || '',
+
+						});
+					},
+					getItems(params) {
+						if (!params.state.query) {
+							return [];
+						}
+
+						return source.getItems(params);
+					},
+					templates: {
+						...source.templates,
+						header({ items }) {
+							if (!currentCategory || items.length === 0) {
+								return <Fragment />;
+							}
+
+							return (
+								<Fragment>
+                  <span className="aa-SourceHeaderTitle">
+                    In other categories
+                  </span>
+									<span className="aa-SourceHeaderLine" />
+								</Fragment>
+							);
+						},
+					},
+				};
+			},
+		});
+
+		return [recentSearches, querySuggestionsInCategory, querySuggestions];
+	}, [currentCategory]);
+
+	useEffect(() => {
+		if (!autocompleteContainer.current) {
+			return;
 		}
-	}
+
+		const autocompleteInstance = autocomplete({
+			...autocompleteProps,
+			container: autocompleteContainer.current,
+			initialState: { query },
+			insights: true,
+			plugins,
+			getSources({ query }) {
+				if (!query) return [];
+
+				return [
+					{
+						sourceId: 'geographyCategories',
+						getItems() {
+							return getAlgoliaFacets({
+								searchClient,
+								queries: [
+									{
+										indexName: 'Dev_Kaplan',
+										facet: 'geography.name',
+										params: { facetQuery: query, maxFacetHits: 5 },
+									},
+								],
+							});
+						},
+						templates: {
+							header() {
+								return (
+									<Fragment>
+										<span className="aa-SourceHeaderTitle">Geography</span>
+										<div className="aa-SourceHeaderLine" />
+									</Fragment>
+								);
+							},
+							item({ item }) {
+								return (
+									<a
+										href={`/geography/${slugify(item.label)}`}
+										className="block py-1 hover:underline"
+									>
+										{item.label}
+									</a>
+								);
+							},
+						},
+					},
+					{
+						sourceId: 'subjectCategories',
+						getItems() {
+							return getAlgoliaFacets({
+								searchClient,
+								queries: [
+									{
+										indexName: 'Dev_Kaplan',
+										facet: 'subject',
+										params: { facetQuery: query, maxFacetHits: 5 },
+									},
+								],
+							});
+						},
+						templates: {
+							header() {
+								return (
+									<Fragment>
+										<span className="aa-SourceHeaderTitle">Subject</span>
+										<div className="aa-SourceHeaderLine" />
+									</Fragment>
+								);
+							},
+							item({ item }) {
+								return (
+									<a
+										href={`/subject/${slugify(item.label)}`}
+										className="block py-1 hover:underline"
+									>
+										{item.label}
+									</a>
+								);
+							},
+						},
+					},
+					{
+						sourceId: 'nameCategories',
+						getItems() {
+							return getAlgoliaFacets({
+								searchClient,
+								queries: [
+									{
+										indexName: 'Dev_Kaplan',
+										facet: 'name',
+										params: { facetQuery: query, maxFacetHits: 5 },
+									},
+								],
+							});
+						},
+						templates: {
+							header() {
+								return (
+									<Fragment>
+										<span className="aa-SourceHeaderTitle">Name</span>
+										<div className="aa-SourceHeaderLine" />
+									</Fragment>
+								);
+							},
+							item({ item }) {
+								return (
+									<a
+										href={`/name/${slugify(item.label)}`}
+										className="block py-1 hover:underline"
+									>
+										{item.label}
+									</a>
+								);
+							},
+						},
+					},
+				];
+			},
+			onReset() {
+				setInstantSearchUiState({ query: '', category: currentCategory });
+			},
+			onSubmit({ state }) {
+				setInstantSearchUiState({ query: state.query });
+			},
+			onStateChange({ prevState, state }) {
+				if (prevState.query !== state.query) {
+					debouncedSetInstantSearchUiState({
+						query: state.query,
+					});
+				}
+			},
+			renderer: { createElement, Fragment, render: () => {} },
+			render({ children }, root) {
+				if (!panelRootRef.current || rootRef.current !== root) {
+					rootRef.current = root;
+
+					panelRootRef.current?.unmount();
+					panelRootRef.current = createRoot(root);
+				}
+
+				panelRootRef.current.render(children);
+			},
+		});
+
+		return () => autocompleteInstance.destroy();
+	}, [plugins]);
+
+	return <div className={className} ref={autocompleteContainer} />;
 }
