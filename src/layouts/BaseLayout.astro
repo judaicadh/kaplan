@@ -1,58 +1,13 @@
 ---
+import "../styles/global.css";
 import Nav from '../components/Layout/Nav.astro';
 import Footer from '../components/Layout/Footer.astro';
 import Header from "../components/Layout/Header.astro";
-
-import "../styles/global.css";
 const { title, description } = Astro.props;
 ---
 
 <html lang="en">
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="google-site-verification" content="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
-
-	<!-- SEO -->
-	<title>{title}</title>
-	<meta name="description" content={description} />
-	<meta name="theme-color" content="#ffffff" />
-	<link rel="canonical" href={`${Astro.site}${Astro.url.pathname}`} />
-	<link rel="sitemap" href={`${Astro.site}/sitemap-index.xml`} />
-
-	<!-- Optional: Astro-specific SEO header component -->
-	<Header title={title} description={description} />
-
-	<!-- Per-page structured data injection -->
-	<slot name="headContent" />
-
-	<!-- Cookie Consent -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css" />
-
-	<!-- Google Tag Manager -->
-	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag() {
-			dataLayer.push(arguments);
-		}
-		gtag("consent", "default", {
-			ad_storage: "denied",
-			analytics_storage: "denied"
-		});
-	</script>
-	<script>
-		(function(w, d, s, l, i) {
-			w[l] = w[l] || [];
-			w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-			var f = d.getElementsByTagName(s)[0],
-				j = d.createElement(s),
-				dl = l != "dataLayer" ? "&l=" + l : "";
-			j.async = true;
-			j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-			f.parentNode.insertBefore(j, f);
-		})(window, document, "script", "dataLayer", "GTM-PQRJQQNM");
-	</script>
-</head>
+<Header />
 
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-merriweather">
 <noscript>
@@ -81,9 +36,6 @@ const { title, description } = Astro.props;
 <script type="module" src="/scripts/cookieconsent-config.js"></script>
 
 <!-- Optional vendor JS (only load if needed) -->
-<script is:inline src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script is:inline src="https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/js/pagedone.js"></script>
+
 </body>
 </html>

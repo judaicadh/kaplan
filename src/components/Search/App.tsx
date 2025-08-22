@@ -29,7 +29,6 @@ import { history } from 'instantsearch.js/es/lib/routers'
 import { useMemo, useState, useEffect } from "react";
 import VirtualFilters from '@components/Search/VirtualFilters.tsx'
 import DefaultCollectionBanner from "@components/Misc/DefaultCollectionBanner.tsx";
-import NavAutocomplete from "@components/Search/NavAutocomplete.tsx";
 import { Autocomplete } from "@components/Search/Autocomplete.tsx";
 
 const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
