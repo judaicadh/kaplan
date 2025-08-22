@@ -91,6 +91,7 @@ const Favorites = () => {
 							<CardActions disableSpacing>
 								<Tooltip title="Favorite Item">
 								<FavoritesButton
+									client:only="react"
 									objectID={favorite.objectID}
 									title={favorite.title}
 									slug={favorite.slug}
