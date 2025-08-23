@@ -5,17 +5,19 @@ import Footer from '../components/Layout/Footer.astro';
 import { SEO } from "astro-seo";
 import { GoogleTagmanagerPartytown, SiteVerification } from "@digi4care/astro-google-tagmanager";
 
+// ⚠️ Make sure these match the real deployment
 const SITE = {
-	baseUrl: "https://judaicadhpenn.org",
-	sectionBase: "/kaplan", // change if your base path differs
+	baseUrl: "https://kaplancollection.org",   // or https://www.kaplancollection.org — pick one and use everywhere
+	sectionBase: "/",
 	name: "Arnold & Deanne Kaplan Collection of Early American Judaica",
-	org: "University of Pennsylvania Libraries",
+	org: "Judaica Digital Humanities at the University of Pennsylvania Libraries",
 	defaultDescription:
-		"Discover prints, manuscripts, ephemera, newspapers, and artifacts documenting early American Jewish life.",
+		"Discover prints, manuscripts, ephemera, newspapers, and artifacts documenting early American and Atlantic Jewish life.",
 	defaultOgImage: "/images/kaplan_logo.png",
-	twitterCreator: "@upennlib" // update if needed
+	twitterCreator: "@upennlib"
 };
 
+// Props + computed URLs (needed by <SEO />)
 const {
 	title = SITE.name,
 	description = SITE.defaultDescription,
@@ -28,6 +30,47 @@ const baseUrl = Astro.site?.href ?? SITE.baseUrl;
 const pathname = Astro.url.pathname;
 const url = new URL(pathname, baseUrl).toString();
 const absoluteOg = ogImage.startsWith("http") ? ogImage : new URL(ogImage, baseUrl).toString();
+
+// Site graph JSON-LD
+const BASE = SITE.baseUrl.replace(/\/+$/, '');
+const websiteId = `${BASE}#website`;
+const orgId = `${BASE}#org`;
+const collectionId = `${BASE}${SITE.sectionBase.endsWith('/') ? SITE.sectionBase : SITE.sectionBase + '/'}#collection`;
+const siteUrl = new URL(SITE.sectionBase, SITE.baseUrl).toString().replace(/\/+$/, '/');
+const searchUrl = `${BASE}${SITE.sectionBase}/search?q={query}`.replace(/([^:]\/)\/+/g, '$1');
+
+const ld = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "WebSite",
+			"@id": websiteId,
+			"name": SITE.name,
+			"url": siteUrl,
+			"publisher": { "@id": orgId },
+			"potentialAction": {
+				"@type": "SearchAction",
+				"target": searchUrl,
+				"query-input": "required name=query"
+			}
+		},
+		{
+			"@type": "Organization",
+			"@id": orgId,
+			"name": SITE.org,
+			"url": BASE
+		},
+		{
+			"@type": "Collection",
+			"@id": collectionId,
+			"name": SITE.name,
+			"url": siteUrl,
+			"description": SITE.defaultDescription,
+			"isPartOf": { "@id": websiteId },
+			"publisher": { "@id": orgId }
+		}
+	]
+};
 ---
 
 <html lang="en">
@@ -35,7 +78,8 @@ const absoluteOg = ogImage.startsWith("http") ? ogImage : new URL(ogImage, baseU
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="sitemap" href="/sitemap-index.xml" />
-	<link rel="icon" href="/assets/favicon.ico">
+	<!-- favicon handled by SEO.extend -->
+
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">
 
 	<SiteVerification id="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
@@ -60,46 +104,24 @@ const absoluteOg = ogImage.startsWith("http") ? ogImage : new URL(ogImage, baseU
 		}}
 	/>
 
-	<!-- JSON-LD: WebSite + Collection landing -->
-	<script type="application/ld+json" is:inline>
-		{JSON.stringify({
-			"@context": "https://schema.org",
-			"@graph": [
-				{
-					"@type": "WebSite",
-					"name": SITE.name,
-					"url": new URL(SITE.sectionBase, SITE.baseUrl).toString(),
-					"publisher": { "@type": "Organization", "name": SITE.org, "url": SITE.baseUrl },
-					"potentialAction": {
-						"@type": "SearchAction",
-						"target": `${SITE.baseUrl}${SITE.sectionBase}/search?q={query}`,
-						"query-input": "required name=query"
-					}
-				},
-				{
-					"@type": "Collection",
-					"name": SITE.name,
-					"url": new URL(SITE.sectionBase, SITE.baseUrl).toString(),
-					"description": SITE.defaultDescription
-				}
-			]
-		})}
-	</script>
-</head>
+	<!-- JSON-LD: WebSite + Collection -->
+	<script type="application/ld+json" is:inline>{JSON.stringify(ld)}</script>
+	<slot name="headContent" />
+	</head>
 
-<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-merriweather">
-<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:ring">
+	<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-merriweather">
+	<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:ring">
 	Skip to content
-</a>
+	</a>
 
-<div class="flex flex-col min-h-screen">
+	<div class="flex flex-col min-h-screen">
 	<Nav />
 	<main id="main" class="flex-grow">
-		<slot />
+	<slot />
 	</main>
 	<Footer />
-</div>
+	</div>
 
-<script type="module" src="/scripts/cookieconsent-config.js"></script>
-</body>
-</html>
+	<script type="module" src="/scripts/cookieconsent-config.js"></script>
+	</body>
+	</html>

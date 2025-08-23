@@ -1,117 +1,186 @@
 ---
-import FavoritesButton from "../../components/Misc/FavoritesButton";
-export const prerender = true;
-
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import items from '../../data/items.json'
 import { slugify } from '../../utils/slugify.js'
+import FavoritesButton from '../../components/Misc/FavoritesButton'
+import BackToSearch from "../../components/Misc/BackToSearch";
 
-// Build unique paths
+// Build unique paths from geography names on items
+export const prerender = true;
+const nameOf = (g) => (typeof g === 'string' ? g : g?.name || '');
+
 export async function getStaticPaths() {
-	const geographySlugs = items.flatMap((item) =>
-		(item.geography || []).map((geo) => ({ params: { slug: slugify(geo.name) } }))
-	);
-	const uniquePaths = Array.from(new Set(geographySlugs.map((p) => JSON.stringify(p)))).map(JSON.parse);
-	return uniquePaths;
+	const seen = new Set();
+	for (const item of items) {
+		const geos = Array.isArray(item.geography) ? item.geography : [];
+		for (const g of geos) {
+			const nm = typeof g === 'string' ? g : (g && g.name) ? g.name : '';
+			const s = nm ? slugify(nm) : '';
+			if (s) seen.add(JSON.stringify({ params: { slug: s } }));
+		}
+	}
+	return Array.from(seen).map((s) => JSON.parse(s));
 }
+
 
 const { slug } = Astro.params;
 
-// Find the geography by slug
-const geographyData = items
-	.flatMap((item) => item.geography || [])
-	.find((geo) => slugify(geo.name) === slug);
+// Find the canonical geography object (first match wins)
+// Prefer an entry with a URI if duplicates exist
+const allGeos = items.flatMap((item) => item.geography || []);
+const candidates = allGeos.filter((geo) => slugify(nameOf(geo)) === slug);
+const geographyData = candidates.find((g) => typeof g === 'object' && g?.uri) || candidates[0];
 
 if (!geographyData) {
-	throw new Error(`Geography with slug "${slug}" not found.`);
+	return new Response('Not Found', { status: 404 });
 }
 
-const { name: geographyName, uri } = geographyData;
-if (!uri) {
-	throw new Error(`No URI found for geography: ${geographyName}`);
-}
+const geographyName = nameOf(geographyData);
+const uri = typeof geographyData === 'object' ? geographyData?.uri : undefined;
 
-// Items that include this geography
-const associatedItems = items.filter((item) =>
-	(item.geography || []).some((geo) => slugify(geo.name) === slug)
+// Gather all items that include this geography (by slugged name)
+const geoItems = items.filter((item) =>
+	(item.geography || []).some((g) => slugify(nameOf(g)) === slug)
 );
+const authorityHref = uri
+	? (uri.startsWith('http')
+		? uri
+		: `https://www.wikidata.org/wiki/${encodeURIComponent(uri)}`)
+	: null;
+// Basic SEO bits
+const count = geoItems.length;
+const description = count
+	? `Explore ${count} item${count === 1 ? '' : 's'} related to ${geographyName} in the Kaplan Collection.`
+	: `No items currently linked to ${geographyName}.`;
 
-// URL + SEO text (set to your canonical host)
-const CANON = 'https://www.kaplancollection.org';
-const url = `${CANON}/geography/${slug}`;
-const title = `Geography: ${geographyName} - Kaplan Collection of Early American Judaica`;
-const metaDescription = `Explore resources related to ${geographyName} in the Kaplan Collection of Early American Judaica.`;
+// Build a simple list of item URLs for JSON-LD ItemList
+const CANON = 'https://www.kaplancollection.org'; // keep this consistent sitewide
+const listUrls = geoItems.map((it) => {
+	const s = it.slug || slugify(it.title);
+	return `${CANON}/item/${encodeURIComponent(s)}`;
+});
 
-// JSON-LD
-const jsonLdData = {
+// ✅ Link to site graph + stable Place @id
+const websiteId = `${CANON}#website`;
+const orgId = `${CANON}#org`;
+const placeId = `${CANON}/geography/${slug}#place`;
+
+// JSON-LD: Place + ItemList
+const jsonLd = {
 	"@context": "https://schema.org",
-	"@type": "Place",
-	name: geographyName,
-	url,
-	identifier: uri,
-	description: metaDescription,
-	mainEntityOfPage: url,
-	publisher: {
-		"@type": "Organization",
-		name: "Judaica Digital Humanities at Penn Libraries and Kislak Center",
-		url: "https://www.library.upenn.edu/kislak/judaicadh"
-	}
+	"@graph": [
+		{
+			"@type": "Place",
+			"@id": placeId,
+			"name": geographyName,
+			...(authorityHref ? { "sameAs": authorityHref } : {}),
+			"url": `${CANON}/geography/${slug}`,
+			"isPartOf": { "@id": websiteId },
+			"publisher": { "@id": orgId }
+		},
+		{
+			"@type": "ItemList",
+			"name": `Items related to ${geographyName}`,
+			"numberOfItems": listUrls.length,
+			"itemListElement": listUrls.map((u, i) => ({
+				"@type": "ListItem",
+				"position": i + 1,
+				"url": u
+			})),
+			"isPartOf": { "@id": websiteId },
+			"publisher": { "@id": orgId }
+		}
+	]
 };
 ---
 
-<BaseLayout title={title} description={metaDescription}>
+<BaseLayout title={`${geographyName} — Geography`} description={description} ogImage={geoItems[0]?.thumbnail}>
 	<Fragment slot="headContent">
-		<script type="application/ld+json" is:inline>{JSON.stringify(jsonLdData)}</script>
+		<script type="application/ld+json" is:inline>
+			{JSON.stringify(jsonLd)}
+		</script>
 	</Fragment>
 
-	<section class="py-6 sm:py-8 md:py-12 lg:py-16 bg-white dark:bg-gray-900 antialiased">
-	<div class="max-w-screen-xl px-4 sm:px-6 lg:px-8 mx-auto">
-	<h1 class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
-	Geography: {geographyName}
-	</h1>
+	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
+		<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
 
-	<hr class="my-6 border-gray-200 dark:border-gray-800" />
+			<BackToSearch client:only="react" />
 
-	<h2 class="text-xl font-bold mt-8">Associated Items</h2>
-	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
-	{associatedItems.map((item) => (
-		<div
-		key={item.slug || item.objectID || item.title}
-		class="p-4 border border-gray-200 rounded-lg shadow hover:shadow-lg transition"
-			>
-			<a href={`/item/${item.slug}`} class="block">
-		{item.thumbnail ? (
-				<img
-				src={item.thumbnail}
-			alt={item.title}
-			class="w-full h-48 object-contain rounded-lg mb-4"
-			/>
-		) : (
-		<div class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500">
-		No Image
-		</div>
-		)}
-		</a>
-		<FavoritesButton
-		client:only="react"
-		objectID={item.objectID || item.slug || slug}
-	title={item.title}
-	slug={item.slug}  // link favorites back to the item, not the geography page
-	thumbnail={item.thumbnail || '/default-thumbnail.jpg'}
-	/>
-		<a
-		href={`/item/${item.slug}`}
-	class="block text-blue-600 hover:underline text-lg font-semibold"
-	>
-	{item.title}
-	</a>
+			<nav aria-label="Breadcrumb" class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+				<ol class="flex items-center gap-2">
+					<li><a href="/" class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:text-blue-400">Home</a></li>
+					<li aria-hidden="true">›</li>
+					<li><a href="/search" class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:text-blue-400">Search</a></li>
+					<li aria-hidden="true">›</li>
+					<li class="text-gray-700 dark:text-gray-300" aria-current="page">{geographyName}</li>
+				</ol>
+			</nav>
 
+			<header class="mb-6">
+				<h1 class="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-white flex items-center gap-3">
+					{geographyName}
+					{authorityHref && (
+						<a
+							href={authorityHref}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-sm font-medium text-blue-700 hover:underline dark:text-blue-400"
+						>
+							Authority record ↗
+						</a>
+					)}
+				</h1>
+				<p class="mt-2 text-gray-700 dark:text-gray-300">{description}</p>
+			</header>
 
+			{count === 0 ? (
+				<p class="text-gray-600 dark:text-gray-400">No items available yet.</p>
+			) : (
+				<div
+					class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+					role="list"
+					aria-label={`Items related to ${geographyName}`}
+				>
+					{geoItems.map((it) => {
+						const s = it.slug || slugify(it.title);
+						return (
+							<article key={s} class="group border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition" role="listitem">
+								<a href={`/item/${s}`} class="block relative">
+									<img
+										src={it.thumbnail || '/default-thumbnail.jpg'}
+										alt={it.title}
+										class="w-full h-48 object-cover"
+										loading="lazy"
+										decoding="async"
+									/>
+								</a>
+								<div class="p-4">
+									<h2 class="text-base font-semibold text-gray-900 dark:text-white line-clamp-2">
+										<a href={`/item/${s}`} class="hover:underline">{it.title}</a>
+									</h2>
 
+									{it.description && (
+										<p class="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-3">{it.description}</p>
+									)}
 
-	</div>
-	))}
-	</div>
-	</div>
-	</section>
-	</BaseLayout>
+									<!-- Favorites inline (not on its own line) -->
+									<div class="mt-3 flex items-center justify-between">
+										<a href={`/item/${s}`} class="text-sm text-blue-700 hover:underline dark:text-blue-400">View item</a>
+										<FavoritesButton
+											client:only="react"
+											objectID={it.objectID || it.slug || s}
+											title={it.title}
+											slug={s}
+											thumbnail={it.thumbnail || '/default-thumbnail.jpg'}
+											className="inline-flex items-center"
+										/>
+									</div>
+								</div>
+							</article>
+						);
+					})}
+					</div>
+					)}
+					</div>
+					</section>
+					</BaseLayout>
