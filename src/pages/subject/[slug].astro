@@ -1,118 +1,217 @@
 ---
 export const prerender = true;
+import FavoritesButton from "../../components/Misc/FavoritesButton";
 
-const { slug } = Astro.params;
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import items from '../../data/items.json'
 import { slugify } from '../../utils/slugify.js'
 import SubjectInfo from '../../utils/loc.jsx'
 
+const { slug } = Astro.params
+
+// Helpers so we handle strings or { name, uri }
+const subjectNameOf = (s) => (typeof s === 'string' ? s : s?.name || '')
+const subjectUriOf  = (s) => (typeof s === 'object' ? s?.uri || null : null)
+
 // Generate dynamic paths using slugs
 export async function getStaticPaths() {
 	const slugs = items.flatMap((item) =>
-		(item.subjectAI || [])
-			.filter((subject) => subject?.name)
-			.map((subject) => slugify(subject.name))
-	);
-
-	const uniqueSlugs = Array.from(new Set(slugs));
-	return uniqueSlugs.map((slug) => ({ params: { slug } }));
-}
-const url = `https://www.kaplancollection.org/subject/${slug}`;
-
-// Get the dynamic slug from the URL
-
-
-// Find all items with the matching subject
-const subjectItems = items
-	.filter((item) =>
-		item.subjectAI.some((subject) => slugify(subject.name) === slug)
+			(item.subjectAI || [])
+			  .map((subject) => (typeof subject === 'string' ? subject : subject?.name || ''))
+		   .filter(Boolean)
+	 .map((name) => slugify(name))
 	)
-	.sort((a, b) => a.title.localeCompare(b.title));
+	const uniqueSlugs = Array.from(new Set(slugs))
+	return uniqueSlugs.map((slug) => ({ params: { slug } }))
+}
+
+// Find items for this subject
+const subjectItems = items
+	.filter((item) => (item.subjectAI || [])
+		.some((subject) => slugify(subjectNameOf(subject)) === slug)
+	)
+	.sort((a, b) => a.title.localeCompare(b.title))
 
 if (!subjectItems.length) {
-	throw new Error(`No items found for subject ${slug}`)
+	return new Response('Not Found', { status: 404 })
 }
 
-// Extract subject details
-const subjectName = subjectItems[0].subjectAI.find(
-	(subject) => slugify(subject.name) === slug
-)?.name || 'Unknown Subject';
-const subjectUri = subjectItems[0].subjectAI.find(
-	(subject) => slugify(subject.name) === slug
-)?.uri || null
+// Canonical subject (prefer one with a URI)
+const allSubjects = subjectItems.flatMap((it) => it.subjectAI || [])
+const candidates  = allSubjects.filter((s) => slugify(subjectNameOf(s)) === slug)
+const canonical   = candidates.find((s) => subjectUriOf(s)) || candidates[0]
 
-if (!subjectUri) {
-	console.warn(`No URI found for subject: ${subjectName}`)
+const CANON       = 'https://www.kaplancollection.org'
+const subjectName = subjectNameOf(canonical) || 'Unknown Subject'
+const rawUri      = subjectUriOf(canonical)
+
+// Normalize authority link (Wikidata/LOC)
+let authorityHref = null
+if (rawUri) {
+	if (rawUri.startsWith('http')) {
+		authorityHref = rawUri
+	} else if (/^Q\d+$/i.test(rawUri)) {
+		authorityHref = `https://www.wikidata.org/wiki/${encodeURIComponent(rawUri)}`
+	} else if (/^(sh|sj|sp)\d+/.test(rawUri)) {
+		authorityHref = `https://id.loc.gov/authorities/subjects/${rawUri}`
+	}
 }
 
-console.log('Subject URI:', subjectUri)
-const jsonLdData = {
-	"@context": "https://schema.org",
-	"@type": "Thing",
-	"name": subjectName,
-	"url": `https://www.kaplancollection.org/subject/${slug}`,
-	"identifier": subjectUri
-};
-const title = `Subject: ${subjectName} - Kaplan Collection of Early American Judaica`
+// Use this instead of undefined `url`
+const pageUrl = `${CANON}/subject/${slug}`
+
+// JSON-LD
+const websiteId = `${CANON}#website`
+const orgId     = `${CANON}#org`
+const subjectId = `${pageUrl}#subject`
+
+const itemUrls = subjectItems.map((it) =>
+	`${CANON}/item/${encodeURIComponent(it.slug || slugify(it.title))}`
+)
+
+const extractUris = (entry) => {
+	const u = typeof entry === 'object' ? entry?.uri : null
+	if (!u) return []
+	return Array.isArray(u) ? u.filter(Boolean) : [u]
+}
+
+// Gather from all matching candidates (you already have `candidates`)
+const rawUris = Array.from(new Set(
+	candidates.flatMap(extractUris)
+))
+
+// Normalize each to a full URL; support QIDs and LoC IDs mixed in
+const normalized = rawUris.map((u) => {
+	if (u.startsWith('http')) return u
+	if (/^Q\d+$/i.test(u)) return `https://www.wikidata.org/wiki/${encodeURIComponent(u)}`
+	if (/^(sh|sj|sp)\d+$/i.test(u)) return `https://id.loc.gov/authorities/subjects/${u}`
+	return null
+}).filter(Boolean)
+
+// sameAs array (both WKD + LoC as needed)
+const sameAs = Array.from(new Set(normalized))
+
+// inDefinedTermSet: include LoC scheme if present (can be an array if multiple schemes)
+const termSets = []
+if (sameAs.some((u) => u.startsWith('https://id.loc.gov/authorities/subjects/'))) {
+	termSets.push('https://id.loc.gov/authorities/subjects')
+}
+// If you also use other controlled vocabularies with known scheme URLs, push them here.
+// e.g. termSets.push('https://www.wikidata.org')  // optional; usually not needed
+
+// For UI: show both authority links (optional)
+const authorityLinks = sameAs
+	.map((u) => ({ href: u, label: u.includes('wikidata.org') ? 'Wikidata' : u.includes('id.loc.gov') ? 'LoC' : 'Authority' }))
+	.sort((a, b) => a.label.localeCompare(b.label))
+
+// JSON-LD (DefinedTerm + ItemList; now with both `sameAs` and `inDefinedTermSet`)
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'DefinedTerm',
+			'@id': `${pageUrl}#subject`,
+			name: subjectName,
+			url: pageUrl,
+			...(sameAs.length ? { sameAs } : {}),
+			...(termSets.length ? { inDefinedTermSet: termSets.length === 1 ? termSets[0] : termSets } : {}),
+			isPartOf: { '@id': `${CANON}#website` },
+			publisher: { '@id': `${CANON}#org` }
+		},
+		{
+			'@type': 'ItemList',
+			'@id': `${pageUrl}#list`,
+			name: `Items related to ${subjectName}`,
+			numberOfItems: itemUrls.length,
+			itemListElement: itemUrls.map((u, i) => ({ '@type': 'ListItem', position: i + 1, url: u })),
+			isPartOf: { '@id': `${CANON}#website` }
+		}
+	]
+}
+
+const title           = `Subject: ${subjectName} | Kaplan Collection of Early American Judaica`
 const metaDescription = `Explore items related to the subject ${subjectName}. See items related to ${subjectName} from the Kaplan Collection of Early American Judaica .`
 ---
 
 <BaseLayout title={title} description={metaDescription}>
 	<Fragment slot="headContent">
-		<meta name="title" content={title} />
-		<meta name="description" content={metaDescription} />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={metaDescription} />
-		<meta property="og:url" content={url} />
-		<meta property="og:type" content="Place" />
-		<meta property="og:site_name" content="The Arnold and Deanne Kaplan Collection of Early American Judaica" />
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content={title} />
-		<meta name="twitter:description" content={metaDescription} />
-		<script type="application/ld+json">{JSON.stringify(jsonLdData)}</script>
-
-
+		<!-- Remove undefined url/jsonLdData; inject only JSON-LD (BaseLayout handles OG/Twitter) -->
+		<script type="application/ld+json" is:inline>{JSON.stringify(jsonLd)}</script>
 	</Fragment>
-	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
-		<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
-			<h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
-				Subject: {subjectName}
-			</h1>
-			{subjectUri ? (
-				<SubjectInfo client:load="react" subjectUri={`${subjectUri}.json`} />
-			) : (
-				<p class="text-gray-600 dark:text-gray-300">
-					No additional information available for {subjectName}.
-				</p>
-			)}
-			<hr class="my-6 border-gray-200 dark:border-gray-800" />
 
-			<div class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 gap-6 mt-6">
-				{subjectItems.map((item) => (
-					<div key={item.id} class="p-4 border border-gray-200 rounded-lg shadow hover:shadow-lg transition">
-						<a href={`/item/${item.slug}`} class="block">
-							{item.thumbnail ? (
-								<img
-									src={item.thumbnail}
-									alt={item.title}
-									class="w-full h-48 object-contain rounded-lg mb-4"
-								/>
-							) : (
-								<div
-									class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500">
-									No Image
-								</div>
-							)}
-						</a>
-						<a href={`/item/${item.slug}`} class="block text-blue-600 hover:underline text-lg font-semibold">
-							{item.title}
-						</a>
-						<p
-							class=" truncate text-gray-600 mt-2 dark:text-gray-400">{item.description || 'No description available.'}</p>
-					</div>
-				))}
-			</div>
+	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
+	<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
+	<h1 class="text-2xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
+	Subject: {subjectName}
+	</h1>
+
+	{authorityHref?.startsWith('https://id.loc.gov/authorities/subjects/')
+		? (
+		<SubjectInfo client:only="react" subjectUri={`${authorityHref}.json`} />
+		)
+		: authorityHref
+		? (
+		<p class="text-gray-600 dark:text-gray-300 mt-2">
+			Additional details available at the{' '}
+		<a href={authorityHref} target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:underline dark:text-blue-400">
+		authority record ↗
+		</a>.
+		</p>
+		)
+		: (
+		<p class="text-gray-600 dark:text-gray-300 mt-2">
+		No additional authority information available for {subjectName}.
+	</p>
+	)
+	}
+
+	<hr class="my-6 border-gray-200 dark:border-gray-800" />
+
+	<div class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 gap-6 mt-6">
+	{subjectItems.map((item) => {
+		const s = item.slug || slugify(item.title)
+		return (
+			<article key={s} class="p-4 border border-gray-200 rounded-lg shadow hover:shadow-lg transition dark:border-gray-800">
+			<a href={`/item/${s}`} class="block">
+		{item.thumbnail ? (
+				<img
+				src={item.thumbnail}
+			alt={item.title}
+			class="w-full h-48 object-contain rounded-lg mb-4"
+			loading="lazy"
+			decoding="async"
+			/>
+		) : (
+		<div class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500">
+		No Image
 		</div>
+		)}
+		</a>
+
+		<a href={`/item/${s}`} class="block text-blue-600 hover:underline text-lg font-semibold dark:text-blue-400">
+	{item.title}
+	</a>
+
+	<p class="truncate text-gray-600 mt-2 dark:text-gray-400">
+	{item.description || 'No description available.'}
+	</p>
+
+	<div class="mt-3 flex items-center justify-between">
+	<a href={`/item/${s}`} class="text-sm text-blue-700 hover:underline dark:text-blue-400">View item</a>
+	<FavoritesButton
+	client:only="react"
+	objectID={item.objectID || item.slug || s}
+	title={item.title}
+	slug={s}
+	thumbnail={item.thumbnail || '/default-thumbnail.jpg'}
+	className="inline-flex items-center"
+	/>
+	</div>
+	</article>
+	)
+	})}
+	</div>
+	</div>
+
 	</section>
-</BaseLayout>
+	</BaseLayout>
