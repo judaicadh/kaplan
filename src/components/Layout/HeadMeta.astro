@@ -1,0 +1,71 @@
+---
+/** HeadMeta.astro
+  * Renders one JSON-LD <script> that always includes the site-wide graph
+  * and optionally appends a page-specific graph you pass in via `graph`.
+  */
+
+interface Props {
+  // Optional extra nodes for the current page (@type: Place, ItemList, CreativeWork, etc.)
+  graph?: any[];
+  // Canonical base URL to build stable @ids
+  baseUrl: string;                 // e.g. "https://www.kaplancollection.org"
+  sectionBase?: string;            // e.g. "/"
+  siteName: string;                // "Arnold & Deanne Kaplan Collection…"
+  orgName: string;                 // "Judaica Digital Humanities at the University of Pennsylvania Libraries"
+  siteDescription: string;
+}
+
+const {
+  graph = [],
+  baseUrl,
+  sectionBase = "/",
+  siteName,
+  orgName,
+  siteDescription,
+} = Astro.props;
+
+// Stable IDs
+const BASE = baseUrl.replace(/\/+$/, "");
+const websiteId   = `${BASE}#website`;
+const orgId       = `${BASE}#org`;
+const collectionId = `${BASE}${sectionBase.endsWith("/") ? sectionBase : sectionBase + "/"}#collection`;
+const siteUrl     = new URL(sectionBase, baseUrl).toString().replace(/\/+$/, "/");
+
+// The site-wide graph (WebSite, Organization, Collection)
+const siteGraph = [
+  {
+    "@type": "WebSite",
+    "@id": websiteId,
+    name: siteName,
+    url: siteUrl,
+    publisher: { "@id": orgId },
+    potentialAction: {
+      "@type": "SearchAction",
+      "target": `${BASE}${sectionBase}/search?q={query}`.replace(/([^:]\/)\/+/g, "$1"),
+      "query-input": "required name=query"
+    }
+  },
+  {
+    "@type": "Organization",
+    "@id": orgId,
+    name: orgName,
+    url: BASE
+  },
+  {
+    "@type": "Collection",
+    "@id": collectionId,
+    name: siteName,
+    url: siteUrl,
+    description: siteDescription,
+    isPartOf: { "@id": websiteId },
+    publisher: { "@id": orgId }
+  }
+];
+
+// One JSON-LD blob, site graph + page graph
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [...siteGraph, ...graph]
+};
+---
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />

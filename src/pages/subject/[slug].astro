@@ -56,14 +56,13 @@ if (rawUri) {
 		authorityHref = `https://id.loc.gov/authorities/subjects/${rawUri}`
 	}
 }
+const subjectNameFrom = (s) => (typeof s === 'string' ? s : s?.name || s?.label || '');
 
 // Use this instead of undefined `url`
 const pageUrl = `${CANON}/subject/${slug}`
+const name = subjectNameFrom(allSubjects.find((s) => slugify(subjectNameFrom(s)) === slug)) || slug;
 
 // JSON-LD
-const websiteId = `${CANON}#website`
-const orgId     = `${CANON}#org`
-const subjectId = `${pageUrl}#subject`
 
 const itemUrls = subjectItems.map((it) =>
 	`${CANON}/item/${encodeURIComponent(it.slug || slugify(it.title))}`
@@ -103,38 +102,51 @@ if (sameAs.some((u) => u.startsWith('https://id.loc.gov/authorities/subjects/'))
 const authorityLinks = sameAs
 	.map((u) => ({ href: u, label: u.includes('wikidata.org') ? 'Wikidata' : u.includes('id.loc.gov') ? 'LoC' : 'Authority' }))
 	.sort((a, b) => a.label.localeCompare(b.label))
+const websiteId   = `${CANON}#website`;
+const termSetId   = `${CANON}/subject#definedTermSet`;
+const definedTermId = `${CANON}/subject/${slug}#term`;
+const listUrls = subjectItems.map((it) => `${CANON}/item/${encodeURIComponent(it.slug || slugify(it.title))}`);
 
-// JSON-LD (DefinedTerm + ItemList; now with both `sameAs` and `inDefinedTermSet`)
-const jsonLd = {
-	'@context': 'https://schema.org',
-	'@graph': [
-		{
-			'@type': 'DefinedTerm',
-			'@id': `${pageUrl}#subject`,
-			name: subjectName,
-			url: pageUrl,
-			...(sameAs.length ? { sameAs } : {}),
-			...(termSets.length ? { inDefinedTermSet: termSets.length === 1 ? termSets[0] : termSets } : {}),
-			isPartOf: { '@id': `${CANON}#website` },
-			publisher: { '@id': `${CANON}#org` }
-		},
-		{
-			'@type': 'ItemList',
-			'@id': `${pageUrl}#list`,
-			name: `Items related to ${subjectName}`,
-			numberOfItems: itemUrls.length,
-			itemListElement: itemUrls.map((u, i) => ({ '@type': 'ListItem', position: i + 1, url: u })),
-			isPartOf: { '@id': `${CANON}#website` }
-		}
-	]
-}
+const pageGraph = [
+	{
+		"@type": "DefinedTermSet",
+		"@id": termSetId,
+		name: "Kaplan Collection Subject Vocabulary",
+		url: `${CANON}/subject`,
+		isPartOf: { "@id": websiteId }
+	},
+	{
+		"@type": "DefinedTerm",
+		"@id": definedTermId,
+		name,
+		termCode: slug,
+		url: `${CANON}/subject/${slug}`,
+		inDefinedTermSet: { "@id": termSetId },
+		isPartOf: { "@id": websiteId },
+		...(sameAs ? { sameAs } : {})
+	},
+	{
+		"@type": "ItemList",
+		name: `Items with subject: ${name}`,
+		numberOfItems: listUrls.length,
+		itemListElement: listUrls.map((url, i) => ({ "@type": "ListItem", position: i + 1, url })),
+		isPartOf: { "@id": websiteId }
+	}
+];
 
-const title           = `Subject: ${subjectName} | Kaplan Collection of Early American Judaica`
-const metaDescription = `Explore items related to the subject ${subjectName}. See items related to ${subjectName} from the Kaplan Collection of Early American Judaica .`
+const description = listUrls.length
+	? `Explore ${listUrls.length} item${listUrls.length===1?'':'s'} tagged with “${name}”.`
+	: `No items currently tagged with “${name}”.`;
+
 ---
 
-<BaseLayout title={title} description={metaDescription}>
-	<script type="application/ld+json" is:inline>{JSON.stringify(jsonLdData)}</script>
+<BaseLayout
+	title={`${name} — Subject`}
+	description={description}
+	ogImage={subjectItems[0]?.thumbnail}
+	headGraph={pageGraph}
+>
+	<Fragment slot="headContent" />
 
 
 	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">

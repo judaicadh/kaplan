@@ -24,6 +24,7 @@ export async function getStaticPaths() {
 
 
 const { slug } = Astro.params;
+const uriOf  = (g) => (typeof g === 'object' ? g?.uri : undefined);
 
 // Find the canonical geography object (first match wins)
 // Prefer an entry with a URI if duplicates exist
@@ -37,6 +38,9 @@ if (!geographyData) {
 
 const geographyName = nameOf(geographyData);
 const uri = typeof geographyData === 'object' ? geographyData?.uri : undefined;
+// resolve canonical geography
+const geography = candidates.find((g) => typeof g === 'object' && g?.uri) || candidates[0];
+if (!geography) return new Response('Not Found', { status: 404 });
 
 // Gather all items that include this geography (by slugged name)
 const geoItems = items.filter((item) =>
@@ -49,12 +53,13 @@ const authorityHref = uri
 	: null;
 // Basic SEO bits
 const count = geoItems.length;
-const description = count
-	? `Explore ${count} item${count === 1 ? '' : 's'} related to ${geographyName} in the Kaplan Collection.`
-	: `No items currently linked to ${geographyName}.`;
 
+const geoName = nameOf(geography);
+const sameAs  = uriOf(geography)
+	? (uriOf(geography).startsWith('http') ? uriOf(geography) : `https://www.wikidata.org/wiki/${encodeURIComponent(uriOf(geography))}`)
+	: undefined;
 // Build a simple list of item URLs for JSON-LD ItemList
-const CANON = 'https://www.kaplancollection.org'; // keep this consistent sitewide
+const CANON = 'https://kaplancollection.org'; // keep this consistent sitewide
 const listUrls = geoItems.map((it) => {
 	const s = it.slug || slugify(it.title);
 	return `${CANON}/item/${encodeURIComponent(s)}`;
@@ -64,41 +69,36 @@ const listUrls = geoItems.map((it) => {
 const websiteId = `${CANON}#website`;
 const orgId = `${CANON}#org`;
 const placeId = `${CANON}/geography/${slug}#place`;
+const pageGraph = [
+	{
+		"@type": "Place",
+		"@id": placeId,
+		name: geoName,
+		url: `${CANON}/geography/${slug}`,
+		isPartOf: { "@id": websiteId },
+		...(sameAs ? { sameAs } : {})
+	},
+	{
+		"@type": "ItemList",
+		name: `Items related to ${geoName}`,
+		numberOfItems: listUrls.length,
+		itemListElement: listUrls.map((url, i) => ({ "@type": "ListItem", position: i + 1, url })),
+		isPartOf: { "@id": websiteId }
+	}
+];
 
-// JSON-LD: Place + ItemList
-const jsonLd = {
-	"@context": "https://schema.org",
-	"@graph": [
-		{
-			"@type": "Place",
-			"@id": placeId,
-			"name": geographyName,
-			...(authorityHref ? { "sameAs": authorityHref } : {}),
-			"url": `${CANON}/geography/${slug}`,
-			"isPartOf": { "@id": websiteId },
-			"publisher": { "@id": orgId }
-		},
-		{
-			"@type": "ItemList",
-			"name": `Items related to ${geographyName}`,
-			"numberOfItems": listUrls.length,
-			"itemListElement": listUrls.map((u, i) => ({
-				"@type": "ListItem",
-				"position": i + 1,
-				"url": u
-			})),
-			"isPartOf": { "@id": websiteId },
-			"publisher": { "@id": orgId }
-		}
-	]
-};
+const description = listUrls.length
+	? `Explore ${listUrls.length} item${listUrls.length===1?'':'s'} related to ${geoName}.`
+	: `No items currently linked to ${geoName}.`;
 ---
 
-<BaseLayout title={`${geographyName} — Geography`} description={description} ogImage={geoItems[0]?.thumbnail}>
-	<Fragment slot="headContent">
-		<script type="application/ld+json" is:inline>{JSON.stringify(jsonLdData)}</script>
-
-	</Fragment>
+<BaseLayout
+	title={`${geoName} — Geography`}
+	description={description}
+	ogImage={geoItems[0]?.thumbnail}
+	headGraph={pageGraph}
+>
+	<Fragment slot="headContent" />
 
 	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
 		<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">

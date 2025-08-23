@@ -4,73 +4,35 @@ import Nav from '../components/Layout/Nav.astro';
 import Footer from '../components/Layout/Footer.astro';
 import { SEO } from "astro-seo";
 import { GoogleTagmanagerPartytown, SiteVerification } from "@digi4care/astro-google-tagmanager";
+import HeadMeta from "../components/Layout/HeadMeta.astro";
 
-// ⚠️ Make sure these match the real deployment
+// Single source of truth for site constants
 const SITE = {
-	baseUrl: "https://kaplancollection.org",   // or https://www.kaplancollection.org — pick one and use everywhere
+	baseUrl: "https://www.kaplancollection.org",
 	sectionBase: "/",
 	name: "Arnold & Deanne Kaplan Collection of Early American Judaica",
 	org: "Judaica Digital Humanities at the University of Pennsylvania Libraries",
 	defaultDescription:
 		"Discover prints, manuscripts, ephemera, newspapers, and artifacts documenting early American and Atlantic Jewish life.",
 	defaultOgImage: "/images/kaplan_logo.png",
-	twitterCreator: "@upennlib"
+	twitterCreator: "@upennlib",
 };
 
-// Props + computed URLs (needed by <SEO />)
+// Props + computed URLs (for <SEO />)
 const {
 	title = SITE.name,
 	description = SITE.defaultDescription,
 	ogImage = SITE.defaultOgImage,
 	ogType = "website",
-	noindex = false
+	noindex = false,
+	// NEW: allow pages to pass additional JSON-LD nodes
+	headGraph = []   // <- pages provide an array of nodes, not a whole object
 } = Astro.props;
 
 const baseUrl = Astro.site?.href ?? SITE.baseUrl;
 const pathname = Astro.url.pathname;
 const url = new URL(pathname, baseUrl).toString();
 const absoluteOg = ogImage.startsWith("http") ? ogImage : new URL(ogImage, baseUrl).toString();
-
-// Site graph JSON-LD
-const BASE = SITE.baseUrl.replace(/\/+$/, '');
-const websiteId = `${BASE}#website`;
-const orgId = `${BASE}#org`;
-const collectionId = `${BASE}${SITE.sectionBase.endsWith('/') ? SITE.sectionBase : SITE.sectionBase + '/'}#collection`;
-const siteUrl = new URL(SITE.sectionBase, SITE.baseUrl).toString().replace(/\/+$/, '/');
-const searchUrl = `${BASE}${SITE.sectionBase}/search?q={query}`.replace(/([^:]\/)\/+/g, '$1');
-
-const ld = {
-	"@context": "https://schema.org",
-	"@graph": [
-		{
-			"@type": "WebSite",
-			"@id": websiteId,
-			"name": SITE.name,
-			"url": siteUrl,
-			"publisher": { "@id": orgId },
-			"potentialAction": {
-				"@type": "SearchAction",
-				"target": searchUrl,
-				"query-input": "required name=query"
-			}
-		},
-		{
-			"@type": "Organization",
-			"@id": orgId,
-			"name": SITE.org,
-			"url": BASE
-		},
-		{
-			"@type": "Collection",
-			"@id": collectionId,
-			"name": SITE.name,
-			"url": siteUrl,
-			"description": SITE.defaultDescription,
-			"isPartOf": { "@id": websiteId },
-			"publisher": { "@id": orgId }
-		}
-	]
-};
 ---
 
 <html lang="en">
@@ -78,50 +40,47 @@ const ld = {
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="sitemap" href="/sitemap-index.xml" />
-	<!-- favicon handled by SEO.extend -->
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">
 
 	<SiteVerification id="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
 	<GoogleTagmanagerPartytown id="GTM-PQRJQQNM" />
 
+	<!-- ONE place where JSON-LD is rendered -->
+	<HeadMeta
+		baseUrl={SITE.baseUrl}
+		sectionBase={SITE.sectionBase}
+		siteName={SITE.name}
+		orgName={SITE.org}
+		siteDescription={SITE.defaultDescription}
+		graph={headGraph}
+	/>
+
 	<SEO
 		title={title}
 		description={description}
 		noindex={noindex}
-		openGraph={{
-			basic: { title, type: ogType, image: absoluteOg, url },
-			optional: { siteName: SITE.name },
-		}}
-		twitter={{
-			creator: SITE.twitterCreator,
-			card: "summary_large_image",
-			title, description, image: absoluteOg, imageAlt: "Kaplan Collection preview image"
-		}}
-		extend={{
-			link: [{ rel: "canonical", href: url }, { rel: "icon", href: "/favicon.ico" }],
-			meta: [{ name: "theme-color", content: "#ffffff" }]
-		}}
+		openGraph={{ basic: { title, type: ogType, image: absoluteOg, url }, optional: { siteName: SITE.name } }}
+		twitter={{ creator: SITE.twitterCreator, card: "summary_large_image", title, description, image: absoluteOg, imageAlt: "Kaplan Collection preview image" }}
+		extend={{ link: [{ rel: "canonical", href: url }, { rel: "icon", href: "/favicon.ico" }], meta: [{ name: "theme-color", content: "#ffffff" }] }}
 	/>
 
-	<!-- JSON-LD: WebSite + Collection -->
-	<script type="application/ld+json" is:inline>{JSON.stringify(ld)}</script>
+	<!-- still allow pages to add extra <head> tags if needed -->
 	<slot name="headContent" />
-	</head>
-
-	<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-merriweather">
-	<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:ring">
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-merriweather">
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:ring">
 	Skip to content
-	</a>
+</a>
 
-	<div class="flex flex-col min-h-screen">
+<div class="flex flex-col min-h-screen">
 	<Nav />
 	<main id="main" class="flex-grow">
-	<slot />
+		<slot />
 	</main>
 	<Footer />
-	</div>
+</div>
 
-	<script type="module" src="/scripts/cookieconsent-config.js"></script>
-	</body>
-	</html>
+<script type="module" src="/scripts/cookieconsent-config.js"></script>
+</body>
+</html>
