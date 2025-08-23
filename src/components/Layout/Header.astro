@@ -1,6 +1,7 @@
 ---
 import { Schema } from 'astro-seo-schema'
 import "../../styles/global.css";
+import { GoogleTagmanagerPartytown, SiteVerification } from '@digi4care/astro-google-tagmanager';
 
 const { title, description, schemaData } = Astro.props
 ---
@@ -12,35 +13,11 @@ const { title, description, schemaData } = Astro.props
 		/>
 		<meta charset="UTF-8" />
 		<link rel="sitemap" href="/sitemap-index.xml" />
-
-		<meta name="google-site-verification" content="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
-
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" href="/assets/favicon.ico">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">
 
-		<!-- Stylesheets -->
-
-
-		<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-QL528RZ3BB">
-
-</script>
-		<script is:inline>
-			window.dataLayer = window.dataLayer || [];
-
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-
-			gtag("js", new Date());
-
-			gtag("config", "G-QL528RZ3BB");
-			</script>
-		<!-- Render JSON-LD schema data -->
-	{schemaData && (
-		<script type="application/ld+json">
-			{JSON.stringify(schemaData)}
-		</script>
-	)}
+		<SiteVerification id="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
+		<GoogleTagmanagerPartytown id="G-PQRJQQNM" />
 
 </head>
