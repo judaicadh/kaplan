@@ -96,9 +96,8 @@ const jsonLd = {
 
 <BaseLayout title={`${geographyName} — Geography`} description={description} ogImage={geoItems[0]?.thumbnail}>
 	<Fragment slot="headContent">
-		<script type="application/ld+json" is:inline>
-			{JSON.stringify(jsonLd)}
-		</script>
+		<script type="application/ld+json" is:inline>{JSON.stringify(jsonLdData)}</script>
+
 	</Fragment>
 
 	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">

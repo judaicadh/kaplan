@@ -134,10 +134,8 @@ const metaDescription = `Explore items related to the subject ${subjectName}. Se
 ---
 
 <BaseLayout title={title} description={metaDescription}>
-	<Fragment slot="headContent">
-		<!-- Remove undefined url/jsonLdData; inject only JSON-LD (BaseLayout handles OG/Twitter) -->
-		<script type="application/ld+json" is:inline>{JSON.stringify(jsonLd)}</script>
-	</Fragment>
+	<script type="application/ld+json" is:inline>{JSON.stringify(jsonLdData)}</script>
+
 
 	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
 	<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
