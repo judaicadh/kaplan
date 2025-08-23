@@ -2,40 +2,104 @@
 import "../styles/global.css";
 import Nav from '../components/Layout/Nav.astro';
 import Footer from '../components/Layout/Footer.astro';
-import Header from "../components/Layout/Header.astro";
-const { title, description } = Astro.props;
+import { SEO } from "astro-seo";
+import { GoogleTagmanagerPartytown, SiteVerification } from "@digi4care/astro-google-tagmanager";
+
+const SITE = {
+	baseUrl: "https://judaicadhpenn.org",
+	sectionBase: "/kaplan", // change if your base path differs
+	name: "Arnold & Deanne Kaplan Collection of Early American Judaica",
+	org: "University of Pennsylvania Libraries",
+	defaultDescription:
+		"Discover prints, manuscripts, ephemera, newspapers, and artifacts documenting early American Jewish life.",
+	defaultOgImage: "/images/kaplan_logo.png",
+	twitterCreator: "@upennlib" // update if needed
+};
+
+const {
+	title = SITE.name,
+	description = SITE.defaultDescription,
+	ogImage = SITE.defaultOgImage,
+	ogType = "website",
+	noindex = false
+} = Astro.props;
+
+const baseUrl = Astro.site?.href ?? SITE.baseUrl;
+const pathname = Astro.url.pathname;
+const url = new URL(pathname, baseUrl).toString();
+const absoluteOg = ogImage.startsWith("http") ? ogImage : new URL(ogImage, baseUrl).toString();
 ---
 
 <html lang="en">
-<Header />
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="sitemap" href="/sitemap-index.xml" />
+	<link rel="icon" href="/assets/favicon.ico">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">
+
+	<SiteVerification id="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
+	<GoogleTagmanagerPartytown id="GTM-PQRJQQNM" />
+
+	<SEO
+		title={title}
+		description={description}
+		noindex={noindex}
+		openGraph={{
+			basic: { title, type: ogType, image: absoluteOg, url },
+			optional: { siteName: SITE.name },
+		}}
+		twitter={{
+			creator: SITE.twitterCreator,
+			card: "summary_large_image",
+			title, description, image: absoluteOg, imageAlt: "Kaplan Collection preview image"
+		}}
+		extend={{
+			link: [{ rel: "canonical", href: url }, { rel: "icon", href: "/favicon.ico" }],
+			meta: [{ name: "theme-color", content: "#ffffff" }]
+		}}
+	/>
+
+	<!-- JSON-LD: WebSite + Collection landing -->
+	<script type="application/ld+json" is:inline>
+		{JSON.stringify({
+			"@context": "https://schema.org",
+			"@graph": [
+				{
+					"@type": "WebSite",
+					"name": SITE.name,
+					"url": new URL(SITE.sectionBase, SITE.baseUrl).toString(),
+					"publisher": { "@type": "Organization", "name": SITE.org, "url": SITE.baseUrl },
+					"potentialAction": {
+						"@type": "SearchAction",
+						"target": `${SITE.baseUrl}${SITE.sectionBase}/search?q={query}`,
+						"query-input": "required name=query"
+					}
+				},
+				{
+					"@type": "Collection",
+					"name": SITE.name,
+					"url": new URL(SITE.sectionBase, SITE.baseUrl).toString(),
+					"description": SITE.defaultDescription
+				}
+			]
+		})}
+	</script>
+</head>
 
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-merriweather">
-<noscript>
-	<iframe
-		src="https://www.googletagmanager.com/ns.html?id=GTM-PQRJQQNM"
-		height="0"
-		width="0"
-		style="display:none;visibility:hidden"
-	></iframe>
-</noscript>
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:ring">
+	Skip to content
+</a>
 
 <div class="flex flex-col min-h-screen">
-	<!-- Navigation -->
 	<Nav />
-
-	<!-- Main Content -->
-	<main class="flex-grow">
-		<slot /> <!-- Page content will be injected here -->
+	<main id="main" class="flex-grow">
+		<slot />
 	</main>
-
-	<!-- Footer -->
 	<Footer />
 </div>
 
-<!-- Scripts -->
 <script type="module" src="/scripts/cookieconsent-config.js"></script>
-
-<!-- Optional vendor JS (only load if needed) -->
-
 </body>
 </html>

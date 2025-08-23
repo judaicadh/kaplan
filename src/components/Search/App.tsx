@@ -420,7 +420,7 @@ const App = () => {
 					<section aria-labelledby="products-heading" className="bg-white pt-6">
 						<h2 id="products-heading" className="sr-only">Filters</h2>
 						<div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-							<aside className="col-span-1 bg-white lg:block hidden md:visible top-3 space-y-6 border-r border-b">
+							<aside className="col-span-1 bg-white lg:block hidden md:visible top-3 space-y-6 ">
 								{/*<CustomClearRefinements />*/}
 								<CustomHierarchicalMenu
 									showMore={false}
