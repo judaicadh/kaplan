@@ -1,169 +1,117 @@
 ---
+import FavoritesButton from "../../components/Misc/FavoritesButton";
 export const prerender = true;
 
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import items from '../../data/items.json'
 import { slugify } from '../../utils/slugify.js'
 
-// Generate dynamic paths based on geography names
+// Build unique paths
 export async function getStaticPaths() {
 	const geographySlugs = items.flatMap((item) =>
-		(item.geography || []).map((geo) => ({
-			params: { slug: slugify(geo.name) }
-		}))
+		(item.geography || []).map((geo) => ({ params: { slug: slugify(geo.name) } }))
 	);
-
-	const uniquePaths = Array.from(new Set(geographySlugs.map((path) => JSON.stringify(path))))
-		.map((path) => JSON.parse(path));
-
+	const uniquePaths = Array.from(new Set(geographySlugs.map((p) => JSON.stringify(p)))).map(JSON.parse);
 	return uniquePaths;
 }
 
 const { slug } = Astro.params;
 
+// Find the geography by slug
 const geographyData = items
 	.flatMap((item) => item.geography || [])
-	.find((geo) => slugify(geo.name) === slug)
+	.find((geo) => slugify(geo.name) === slug);
 
 if (!geographyData) {
-	throw new Error(`Geography with slug "${slug}" not found.`)
+	throw new Error(`Geography with slug "${slug}" not found.`);
 }
 
 const { name: geographyName, uri } = geographyData;
-const wikidataId = uri?.split("/").pop();
 if (!uri) {
-	throw new Error(`No URI found for geography: ${geographyName}`)
+	throw new Error(`No URI found for geography: ${geographyName}`);
 }
 
-let sparqlData = null
-try {
-	const sparqlQuery = `
-  SELECT ?property ?propertyLabel ?value ?valueLabel WHERE {
-    wd:${wikidataId} ?property ?value .
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-  }
-  LIMIT 100
-  `
-
-	const response = await fetch('https://query.wikidata.org/sparql', {
-		method: 'POST',
-		headers: {
-			"Content-Type": "application/x-www-form-urlencoded",
-			"Accept": "application/sparql-results+json",
-			"User-Agent": "KaplanCollectionBot/1.0 (contact: judaicadh@gmail.com)"
-		},
-		body: `query=${encodeURIComponent(sparqlQuery)}`
-	})
-
-	const results = await response.json()
-	sparqlData = results.results.bindings.map((binding) => ({
-		property: binding.propertyLabel?.value || 'Unknown Property',
-		value: binding.valueLabel?.value || 'Unknown Value'
-	}))
-} catch (error) {
-	console.error('Error fetching SPARQL data:', error)
-}
-
+// Items that include this geography
 const associatedItems = items.filter((item) =>
 	(item.geography || []).some((geo) => slugify(geo.name) === slug)
-)
+);
 
+// URL + SEO text (set to your canonical host)
+const CANON = 'https://www.kaplancollection.org';
+const url = `${CANON}/geography/${slug}`;
+const title = `Geography: ${geographyName} - Kaplan Collection of Early American Judaica`;
+const metaDescription = `Explore resources related to ${geographyName} in the Kaplan Collection of Early American Judaica.`;
 
-const title = `Geography: ${geographyName} - Kaplan Collection of Early American Judaica`
-const metaDescription = `Explore resources related to ${geographyName} in the Kaplan Collection of Early American Judaica. Access digitized materials, images, and metadata.`;
-const url = `https://www.kaplancollection.org/geography/${slug}`;
-
+// JSON-LD
 const jsonLdData = {
 	"@context": "https://schema.org",
 	"@type": "Place",
-	"name": geographyName,
-	"url": url,
-	"identifier": uri,
-	"description": metaDescription,
-	"mainEntityOfPage": url,
-	"publisher": {
+	name: geographyName,
+	url,
+	identifier: uri,
+	description: metaDescription,
+	mainEntityOfPage: url,
+	publisher: {
 		"@type": "Organization",
-		"name": "Judaica Digital Humanities at Penn Libraries and Kislak Center",
-		"url": "https://www.library.upenn.edu/kislak/judaicadh"
+		name: "Judaica Digital Humanities at Penn Libraries and Kislak Center",
+		url: "https://www.library.upenn.edu/kislak/judaicadh"
 	}
 };
 ---
 
 <BaseLayout title={title} description={metaDescription}>
 	<Fragment slot="headContent">
-		<meta name="title" content={title} />
-		<meta name="description" content={metaDescription} />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={metaDescription} />
-		<meta property="og:url" content={url} />
-		<meta property="og:type" content="Place" />
-		<meta property="og:site_name" content="The Arnold and Deanne Kaplan Collection of Early American Judaica" />
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content={title} />
-		<meta name="twitter:description" content={metaDescription} />
-		<script type="application/ld+json">{JSON.stringify(jsonLdData)}</script>
+		<script type="application/ld+json" is:inline>{JSON.stringify(jsonLdData)}</script>
 	</Fragment>
 
 	<section class="py-6 sm:py-8 md:py-12 lg:py-16 bg-white dark:bg-gray-900 antialiased">
-		<div class="max-w-screen-xl px-4 sm:px-6 lg:px-8 mx-auto">
-			<h1 class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">Geography: {geographyName}</h1>
+	<div class="max-w-screen-xl px-4 sm:px-6 lg:px-8 mx-auto">
+	<h1 class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+	Geography: {geographyName}
+	</h1>
 
-			<!--	{sparqlData ? (
-          <div class="mt-6">
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">
-              Details from Wikidata
-            </h2>
-            /*
-            <ul class="mt-4 space-y-3">
-              {sparqlData.map((item, index) => (
-                <li key={index} class="text-sm sm:text-base text-gray-700 dark:text-gray-300 break-words">
-                  <strong>{item.property}:</strong> {item.value}
-                </li>
-              ))}
-            </ul>
-            */
-          </div>
-        ) : (
-          <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-6">
-            No additional information available from Wikidata for {geographyName}.
-          </p>
-        )}-->
+	<hr class="my-6 border-gray-200 dark:border-gray-800" />
 
-			<hr class="my-6 border-gray-200 dark:border-gray-800" />
-
-			<h2 class="text-xl font-bold mt-8">Associated Items</h2>
-			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
-				{associatedItems.map((item) => (
-					<div
-						key={item.id}
-						class="p-4 border border-gray-200 rounded-lg shadow hover:shadow-lg transition"
-					>
-						<a href={`/item/${item.slug}`} class="block">
-							{item.thumbnail ? (
-								<img
-									src={item.thumbnail}
-									alt={item.title}
-									class="w-full h-48 object-contain rounded-lg mb-4"
-								/>
-							) : (
-								<div
-									class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500">
-									No Image
-								</div>
-							)}
-						</a>
-						<a
-							href={`/item/${item.slug}`}
-							class="block text-blue-600 hover:underline text-lg font-semibold"
-						>
-							{item.title}
-						</a>
-						<p class="truncate text-gray-600 mt-2 dark:text-gray-400">
-							{item.description || 'No description available.'}
-						</p>
-					</div>
-				))}
-			</div>
+	<h2 class="text-xl font-bold mt-8">Associated Items</h2>
+	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+	{associatedItems.map((item) => (
+		<div
+		key={item.slug || item.objectID || item.title}
+		class="p-4 border border-gray-200 rounded-lg shadow hover:shadow-lg transition"
+			>
+			<a href={`/item/${item.slug}`} class="block">
+		{item.thumbnail ? (
+				<img
+				src={item.thumbnail}
+			alt={item.title}
+			class="w-full h-48 object-contain rounded-lg mb-4"
+			/>
+		) : (
+		<div class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-500">
+		No Image
 		</div>
+		)}
+		</a>
+		<FavoritesButton
+		client:only="react"
+		objectID={item.objectID || item.slug || slug}
+	title={item.title}
+	slug={item.slug}  // link favorites back to the item, not the geography page
+	thumbnail={item.thumbnail || '/default-thumbnail.jpg'}
+	/>
+		<a
+		href={`/item/${item.slug}`}
+	class="block text-blue-600 hover:underline text-lg font-semibold"
+	>
+	{item.title}
+	</a>
+
+
+
+
+	</div>
+	))}
+	</div>
+	</div>
 	</section>
-</BaseLayout>
+	</BaseLayout>
