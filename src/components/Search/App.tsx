@@ -1,5 +1,5 @@
 import { algoliasearch } from 'algoliasearch'
-
+import aa from 'search-insights';
 import {
 	Configure,
 	InstantSearch,
@@ -27,9 +27,7 @@ import CustomBreadcrumb from '@components/Search/CustomBreadcrumb.tsx'
 import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { useMemo, useState, useEffect } from "react";
-import VirtualFilters from '@components/Search/VirtualFilters.tsx'
 import DefaultCollectionBanner from "@components/Misc/DefaultCollectionBanner.tsx";
-import { Autocomplete } from "@components/Search/Autocomplete.tsx";
 
 const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
 const indexName = 'Dev_Kaplan'
@@ -63,7 +61,20 @@ type RouteState = {
 		max: number;
 	};
 };
+declare global { interface Window { dataLayer?: any[] } }
+window.dataLayer = window.dataLayer || [];
 
+// Create/get a persistent anonymous user token
+function getUserToken() {
+	const KEY = 'algolia_user_token';
+	let t = localStorage.getItem(KEY);
+	if (!t) {
+		t = (crypto?.randomUUID?.() ?? `u_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+		localStorage.setItem(KEY, t);
+	}
+	return t;
+}
+const userToken = getUserToken();
 // A simple slugify function that replaces spaces with dashes and removes non-word characters.
 const slugifyFilterValue = (str: string): string => {
 	return str
@@ -164,9 +175,13 @@ function normalizeToArray(value: any) {
 	if (value == null) return [];
 	return [value];
 }
+aa('onUserTokenChange', (token) => {
+	window.dataLayer?.push({ algoliaUserToken: token });
+}, { immediate: true });
 
 const defaultCollection = "Arnold and Deanne Kaplan Collection of Early American Judaica";
 
+// Routing configuration with dateRange support
 const routing = {
 	router: history({
 		// Customize the window title using hierarchicalCategories.
@@ -229,6 +244,8 @@ const routing = {
 			if (routeState.geography && routeState.geography.length) {
 				queryParameters.geography = routeState.geography.map(slugify);
 			}
+			if (routeState.start) queryParameters.start = routeState.start;
+			if (routeState.end) queryParameters.end = routeState.end;
 			console.log("Routing to Algolia with name:", routeState.name);
 			const queryString = qsModule.stringify(queryParameters, {
 				addQueryPrefix: true,
@@ -278,6 +295,20 @@ const routing = {
 				.map(deslugifyName);
 			const allGeography = normalizeToArray(geography).map(decodeURIComponent).map(deslugify);
 			console.log("Parsed name refinements:", allNames);
+			const { start, end } = qsModule.parse(location.search.slice(1), { ignoreQueryPrefix: true });
+
+			let parsedDateRange: { min?: number; max?: number } | undefined = undefined;
+
+			if (start || end) {
+				parsedDateRange = {};
+				if (start) {
+					parsedDateRange.min = Date.UTC(Number(start), 0, 1) / 1000;
+				}
+				if (end) {
+					parsedDateRange.max = Date.UTC(Number(end), 11, 31, 23, 59, 59) / 1000;
+				}
+			}
+
 			return {
 				query: decodeURIComponent(query),
 				page,
@@ -287,7 +318,8 @@ const routing = {
 				subcollection: allSubcollections,
 				name: allNames.map(decodeURIComponent),				// Map the URL key "geography" to the internal attribute "geography.name"
 				geography: allGeography.map(decodeURIComponent).map(deslugify),
-				hierarchicalCategories
+				hierarchicalCategories,
+				dateRange: parsedDateRange,
 			};
 		},
 	}),
@@ -310,27 +342,29 @@ const routing = {
 					label => slugifyFilterValue(subcollectionLabelMap[label] || label)
 				),
 				name: indexUiState.refinementList?.name || [],
-				geography: indexUiState.refinementList?.["geography.name"] || []
+				geography: indexUiState.refinementList?.["geography.name"] || [],
+				start: indexUiState.dateRange?.[0] ? new Date(indexUiState.dateRange[0] * 1000).getUTCFullYear() : undefined,
+				end: indexUiState.dateRange?.[1] ? new Date(indexUiState.dateRange[1] * 1000).getUTCFullYear() : undefined,
 			};
 		},
 
 		// Converts the simple route state into InstantSearch's uiState.
 		routeToState(routeState: any): any {
-			const hasNoFilters =
-				!routeState.query &&
-				!routeState.topic?.length &&
-				!routeState.language?.length &&
-				!routeState.subcollection?.length &&
-				!routeState.name?.length &&
-				!routeState.geography?.length &&
-				!routeState.collection?.length &&
-				!routeState.hierarchicalCategories?.length;
+			const hasNoFilters = !routeState.query &&
+				!(routeState.topic && routeState.topic.length) &&
+				!(routeState.language && routeState.language.length) &&
+				!(routeState.subcollection && routeState.subcollection.length) &&
+				!(routeState.name && routeState.name.length) &&
+				!(routeState.geography && routeState.geography.length) &&
+				!(routeState.collection && routeState.collection.length) &&
+				!(routeState.hierarchicalCategories && routeState.hierarchicalCategories.length) &&
+				!routeState.dateRange;
 			console.log("Refining subcollection:", routeState.subcollection);
 			const defaultCollection = ["Arnold and Deanne Kaplan Collection of Early American Judaica"];
 
 			return {
 				[indexName]: {
-					query: routeState.query,
+					query: routeState.query || '',
 					page: routeState.page,
 					hierarchicalMenu: {
 						"hierarchicalCategories.lvl0": routeState.hierarchicalCategories || []
@@ -341,15 +375,17 @@ const routing = {
 						language: routeState.language || [],
 						subcollection: routeState.subcollection || [],
 						name: routeState.name || [],
-						// Map the URL key "geography" to the internal attribute "geography.name"
 						"geography.name": routeState.geography || [],
 					},
-				},
+					dateRange: [
+						routeState.dateRange?.min ? parseInt(routeState.dateRange.min) : undefined,
+						routeState.dateRange?.max ? parseInt(routeState.dateRange.max) : undefined,
+					],// ✅ pass dateRange into uiState
+				}
 			};
 		},
 	},
 };
-
 function isEmptySearch(): boolean {
 	if (typeof window === "undefined") return false;
 
@@ -381,11 +417,20 @@ const App = () => {
 			searchClient={searchClient}
 			indexName={indexName}
 			routing={routing}
-			insights
-
+			insights={{
+				insightsClient: aa,
+				onEvent({ widgetType, eventType, payload }) {
+					if (widgetType === 'ais.hits' && eventType === 'view') {
+						// Tell GTM new results were rendered
+						window.dataLayer?.push({ event: 'Hits Viewed' });
+					}
+				}
+			}}
 			future={{ preserveSharedStateOnUnmount: true }}
+
 		>
-			<div className="bg-white dark:bg-gray-900 min-h-screen mb-[100px]">
+			<Configure clickAnalytics={true} userToken={userToken} />
+			<div className="bg-white dark:bg-gray-900 min-h-screen mb-[100px]" id="ais-container" data-insights-index={indexName}>
 				<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 overflow-x-hidden">
 					<div
 						className="bg-gradent-to-r from-gray-100 via-white to-gray-100 dark:from-gray-800 dark:to-gray-900 py-6 px-4 md:px-6 lg:px-8 border-b border-gray-200 dark:border-gray-700 rounded-b-2xl shadow-sm grid grid-cols-1 md:grid-cols-4 items-center gap-4">
@@ -402,7 +447,7 @@ const App = () => {
 									dateFilterActive={dateFilterActive}
 									setDateFilterActive={setDateFilterActive}
 									dateRange={dateRange}
-									setDateRange={setDateRange}
+ 									setDateRange={setDateRange}
 								/>
 							</div>
 						</div>
@@ -440,6 +485,7 @@ const App = () => {
 									label="Topic"
 									attribute="topic"
 								/>
+
 								<DateRangeSlider
 									key={resetKey}
 									title="Date"
@@ -489,10 +535,10 @@ const App = () => {
 										<Stats />
 										<CustomClearRefinements
 											onResetDateSlider={handleReset}
-											dateFilterActive={dateFilterActive}
-											dateRange={dateRange}
 											setDateRange={setDateRange}
-											defaultDateRange={{ min: -15135361438, max: -631151999 }} // 👈 must match your slider
+											defaultDateRange={{ min: -15135361438, max: -631151999 }}
+											gtmEventName="algolia_clear_all"
+											dateStorageKey="algolia_date_range"
 										/>
 									</div>
 
@@ -512,7 +558,7 @@ const App = () => {
 									<div className="sm:grid-cols-1 lg:grid-cols-3">
 										<CustomHits />
 									</div>
-									<CustomPagination />
+									<CustomPagination gtmEventName="algolia_page_changed" />
 								</NoResultsBoundary>
 							</div>
 						</div>

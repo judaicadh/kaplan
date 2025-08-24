@@ -10,11 +10,16 @@ export type CustomRecord = AlgoliaHit<{
 	dateC: string;
 	description: string;
 	title: string;
+	hierarchicalCategories?: {
+		lvl0?: string;
+		lvl1?: string;
+		lvl2?: string;
+	};
 	geographic_subject: string[];
 	thumbnail: string;
 	slug: string;
 	url?: string;
-	hierarchicalCategories: string[];
+
 	hasRealThumbnail: boolean;
 	subject: string[];
 	_geoloc: {

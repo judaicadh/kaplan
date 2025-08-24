@@ -2,11 +2,38 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import App from "../../components/Search/App";
 
-const description = "Search the Arnold and Deanne Kaplan collection of Early American Judaica";
+const CANON = "https://www.kaplancollection.org";
+const description =
+	"Search the Arnold and Deanne Kaplan Collection of Early American Judaica";
+
+const jsonLdSearch = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "WebPage",
+			"@id": `${CANON}/search#webpage`,
+			url: `${CANON}/search`,
+			name: "Search the Kaplan Collection",
+			description,
+			isPartOf: { "@id": `${CANON}#website` },
+			about: { "@id": `${CANON}/#collection` }
+		},
+		{
+			"@type": "SearchAction",
+			"@id": `${CANON}/#search-action`,
+			target: `${CANON}/search?q={search_term_string}`,
+			"query-input": "required name=search_term_string"
+		}
+	]
+};
 ---
 
 <BaseLayout title="Search" description={description}>
+	<Fragment slot="headContent">
+		<script type="application/ld+json" is:inline>
+			{JSON.stringify(jsonLdSearch)}
+		</script>
+	</Fragment>
 
-<!-- Injected content for the slot -->
 	<App client:only="react" />
 </BaseLayout>

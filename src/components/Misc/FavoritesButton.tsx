@@ -7,53 +7,78 @@ import { Tooltip } from '@mui/material'
 type FavoritesButtonProps = {
 	slug: string;
 	title: string;
-	thumbnail: string;
+	thumbnail?: string;
+	/** Optional: Algolia objectID for analytics */
+	objectID?: string;
+	/** Optional: notify parent/UI/analytics */
+	onToggle?: (nextIsFavorite: boolean, payload: {
+		slug: string; title: string; thumbnail?: string; objectID?: string;
+	}) => void;
 };
 
-const FavoritesButton: React.FC<FavoritesButtonProps> = ({ slug, title, thumbnail }) => {
-	const [isFavorite, setIsFavorite] = useState(false)
+const FavoritesButton: React.FC<FavoritesButtonProps> = ({
+																													 slug, title, thumbnail, objectID, onToggle
+																												 }) => {
+	const [isFavorite, setIsFavorite] = useState(false);
 
 	useEffect(() => {
-		const updateFavoriteState = () => {
-			const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-			setIsFavorite(favorites.some((fav: { slug: string }) => fav.slug === slug));
+		// guard for SSR just in case
+		if (typeof window === 'undefined') return;
+		const update = () => {
+			const raw = localStorage.getItem('favorites') || '[]';
+			const favorites: Array<{ slug: string }> = JSON.parse(raw);
+			setIsFavorite(favorites.some(f => f.slug === slug));
 		};
-
-		updateFavoriteState()
-		window.addEventListener("favoritesUpdated", updateFavoriteState);
-
-		return () => window.removeEventListener("favoritesUpdated", updateFavoriteState);
-	}, [slug])
+		update();
+		window.addEventListener('favoritesUpdated', update);
+		return () => window.removeEventListener('favoritesUpdated', update);
+	}, [slug]);
 
 	const toggleFavorite = (e: React.MouseEvent) => {
+		e.preventDefault();
 		e.stopPropagation();
-		let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
+		const raw = localStorage.getItem('favorites') || '[]';
+		let favorites: Array<{ slug: string; title: string; thumbnail?: string; objectID?: string }> = JSON.parse(raw);
+
+		let next = false;
 		if (isFavorite) {
-			favorites = favorites.filter((fav: { slug: string }) => fav.slug !== slug);
-			setIsFavorite(false)
+			favorites = favorites.filter(f => f.slug !== slug);
+			next = false;
 		} else {
-			favorites.push({ slug, title, thumbnail });
-			setIsFavorite(true);
+			favorites.push({ slug, title, thumbnail, objectID });
+			next = true;
 		}
 
-		localStorage.setItem("favorites", JSON.stringify(favorites));
-		window.dispatchEvent(new Event("favoritesUpdated"));
-	}
+		localStorage.setItem('favorites', JSON.stringify(favorites));
+		setIsFavorite(next);
+
+		// notify UI
+		window.dispatchEvent(new Event('favoritesUpdated'));
+		onToggle?.(next, { slug, title, thumbnail, objectID });
+
+		// optional: push to GTM
+		if ((window as any).dataLayer) {
+			(window as any).dataLayer.push({
+				event: next ? 'favorite_add' : 'favorite_remove',
+				favorite: { slug, title, objectID }
+			});
+		}
+	};
 
 	return (
-		<Tooltip title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}>
+		<Tooltip title={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}>
 			<IconButton
 				color="primary"
 				onClick={toggleFavorite}
-				aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+				aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
 				aria-pressed={isFavorite}
 				size="small"
 			>
 				{isFavorite ? <FavoriteRoundedIcon color="error" /> : <FavoriteBorderRoundedIcon />}
 			</IconButton>
 		</Tooltip>
-	)
-}
+	);
+};
 
-export default FavoritesButton
+export default FavoritesButton;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useInstantSearch } from 'react-instantsearch';
 
-import { ClearFilters } from './ClearFilters';
+import  ClearFilters  from './ClearFilters';
 
 export function NoResults() {
 	const { results } = useInstantSearch();

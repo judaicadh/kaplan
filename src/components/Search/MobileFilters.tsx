@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
-import DateRangeSlider from '@components/Search/DateRangeSlider.tsx'
-import CustomRefinementList from '@components/Search/CustomRefinementList.tsx'
-import CustomHierarchicalMenu from "@components/Search/CustomHierarchicalMenu.tsx";
-import { ClearFiltersMobile } from '@components/Search/ClearFiltersMobile.tsx'
-import { ClearFilters } from '@components/Search/ClearFilters.tsx'
-import CustomClearRefinements from '@components/Search/CustomClearRefinements.tsx'
+// @components/Search/MobileFilters.tsx
+import { useState, useEffect, useRef, useMemo } from 'react';
+import DateRangeSlider from '@components/Search/DateRangeSlider.tsx';
+import CustomRefinementList from '@components/Search/CustomRefinementList.tsx';
+import CustomHierarchicalMenu from '@components/Search/CustomHierarchicalMenu.tsx';
+import CustomClearRefinements from '@components/Search/CustomClearRefinements.tsx';
 
 type MobileFiltersProps = {
 	resetKey: number;
@@ -21,30 +20,30 @@ function MobileFilters({
 												 onResetDateSlider,
 												 setDateFilterActive,
 												 dateRange,
-												 setDateRange
+												 setDateRange,
 											 }: MobileFiltersProps) {
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-	const [isFilterOpen, setIsFilterOpen] = useState(false)
+	// Refs
+	const filterPanelRef = useRef<HTMLDivElement | null>(null);
+	const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
 
-	// Correctly type the refs
-	const filterPanelRef = useRef<HTMLDivElement | null>(null)
-	const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
+	// Stable date field list
+	const dateFields = useMemo(
+		() => ['startDate1', 'endDate1', 'startDate2', 'endDate2'],
+		[]
+	);
 
-	const toggleFilterMenu = () => {
-		setIsFilterOpen((prev) => !prev)
-	};
+	const toggleFilterMenu = () => setIsFilterOpen((prev) => !prev);
 
-	// Close panel on outside click
+	// Close on Escape + outside click
 	useEffect(() => {
 		const handleEsc = (event: KeyboardEvent) => {
-			if (event.key === "Escape") {
-				setIsFilterOpen(false);
-			}
+			if (event.key === 'Escape') setIsFilterOpen(false);
 		};
 
 		const handleOutsideClick = (event: MouseEvent) => {
 			const target = event.target as Node | null;
-
 			if (
 				filterPanelRef.current &&
 				!filterPanelRef.current.contains(target) &&
@@ -55,24 +54,33 @@ function MobileFilters({
 			}
 		};
 
-		document.addEventListener("keydown", handleEsc);
-		document.addEventListener("mousedown", handleOutsideClick);
-
-		// ✅ Combined cleanup
+		document.addEventListener('keydown', handleEsc);
+		document.addEventListener('mousedown', handleOutsideClick);
 		return () => {
-			document.removeEventListener("keydown", handleEsc);
-			document.removeEventListener("mousedown", handleOutsideClick);
+			document.removeEventListener('keydown', handleEsc);
+			document.removeEventListener('mousedown', handleOutsideClick);
 		};
 	}, []);
 
+	// Lock body scroll when open
+	useEffect(() => {
+		if (!isFilterOpen) return;
+		const { body } = document;
+		const prev = body.style.overflow;
+		body.style.overflow = 'hidden';
+		return () => {
+			body.style.overflow = prev;
+		};
+	}, [isFilterOpen]);
 
-	const dateFields = [
-		'startDate1',
-		'endDate1',
-		'startDate2',
-		'endDate2'
-		// Additional date fields
-	]
+	// (Optional) GTM event on open
+	useEffect(() => {
+		if (isFilterOpen) {
+			(window as any)?.dataLayer?.push({ event: 'filters_panel_opened', source: 'mobile' });
+		}
+	}, [isFilterOpen]);
+
+	const dialogTitleId = 'mobile-filter-title';
 
 	return (
 		<>
@@ -102,24 +110,29 @@ function MobileFilters({
 					/>
 				</svg>
 				<p className="sr-only">Filter</p>
-
 			</button>
 
-			{/* Filter Panel */}
+			{/* Panel */}
 			{isFilterOpen && (
-				<div className="relative z-40 lg:hidden" role="dialog" aria-modal="true">
+				<div
+					className="relative z-40 lg:hidden"
+					role="dialog"
+					aria-modal="true"
+					aria-labelledby={dialogTitleId}
+				>
 					{/* Overlay */}
 					<div className="fixed inset-0 bg-black/25 backdrop-blur-sm transition-opacity" aria-hidden="true" />
 
-
-					{/* Panel */}
+					{/* Drawer */}
 					<div
 						id="mobile-filter-panel"
 						ref={filterPanelRef}
-						className="fixed inset-y-0 right-0 z-50 flex w-full max-w-xs flex-col bg-white dark:bg-gray-800 shadow-xl overflow-y-auto transform transition-transform duration-300 ease-in-out translate-x-0"
+						className="fixed inset-y-0 right-0 z-50 flex w-full max-w-xs flex-col bg-white dark:bg-gray-800 shadow-xl overflow-y-auto"
 					>
 						<div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-							<h2 className="text-lg font-medium text-gray-900 dark:text-white">Filters</h2>
+							<h2 id={dialogTitleId} className="text-lg font-medium text-gray-900 dark:text-white">
+								Filters
+							</h2>
 							<button
 								type="button"
 								onClick={toggleFilterMenu}
@@ -127,36 +140,24 @@ function MobileFilters({
 								className="rounded-md p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:hover:bg-gray-700"
 							>
 								<span className="sr-only">Close menu</span>
-								<svg
-									className="h-6 w-6"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									aria-hidden="true"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M6 18L18 6M6 6l12 12"
-									/>
+								<svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 								</svg>
 							</button>
 						</div>
 
-						<form
-							className="flex-1 border-t border-gray-200 dark:border-gray-700 space-y-6 px-2 pt-4 pb-24 overflow-y-auto">
-
-
+						{/* Filters */}
+						<form className="flex-1 border-t border-gray-200 dark:border-gray-700 space-y-6 px-2 pt-4 pb-24 overflow-y-auto">
 							<CustomHierarchicalMenu
 								showMore={true}
 								title="Categories"
 								attributes={[
 									'hierarchicalCategories.lvl0',
 									'hierarchicalCategories.lvl1',
-									'hierarchicalCategories.lvl2'
+									'hierarchicalCategories.lvl2',
 								]}
 							/>
+
 							<CustomRefinementList label="Topic" attribute="topic" showMore />
 
 							<DateRangeSlider
@@ -165,34 +166,34 @@ function MobileFilters({
 								dateFields={dateFields}
 								minTimestamp={-15135361438}
 								maxTimestamp={-631151999}
-								value={dateRange} // <- controlled value
+								value={dateRange}
 								onChange={(newValue) => {
 									setDateRange(newValue);
 									setDateFilterActive(true);
 								}}
 							/>
 
-
 							<CustomRefinementList label="Name" attribute="name" showMore />
+							<CustomRefinementList label="Geography" attribute="geography.name" showMore />
 							<CustomRefinementList label="Collection" attribute="collection" />
 							<CustomRefinementList label="Language" attribute="language" showMore />
 							<CustomRefinementList label="Archival Collection" attribute="subcollection" />
 						</form>
-						<div
-							className="fixed bottom-0 w-full max-w-xs bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-4">
+
+						{/* Footer actions */}
+						<div className="fixed bottom-0 w-full max-w-xs bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-4">
 							<div className="w-full text-center">
 								<CustomClearRefinements
 									onResetDateSlider={onResetDateSlider}
-									dateFilterActive={dateFilterActive}
+
 								/>
 							</div>
 						</div>
 					</div>
 				</div>
-
 			)}
 		</>
 	);
 }
 
-export default MobileFilters
+export default MobileFilters;
