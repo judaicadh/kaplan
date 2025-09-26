@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import Viewer from '@samvera/clover-iiif/viewer'
+import { Viewer } from "@samvera/clover-iiif";
 
 interface CloverProps {
 	manifestUrls: string[]; // Array of IIIF manifest URLs

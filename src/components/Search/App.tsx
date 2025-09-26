@@ -28,6 +28,7 @@ import MobileFilters from '@components/Search/MobileFilters.tsx'
 import { history } from 'instantsearch.js/es/lib/routers'
 import { useMemo, useState, useEffect } from "react";
 import DefaultCollectionBanner from "@components/Misc/DefaultCollectionBanner.tsx";
+import { PoweredBy } from "react-instantsearch";
 
 const searchClient = algoliasearch('ZLPYTBTZ4R', 'be46d26dfdb299f9bee9146b63c99c77')
 const indexName = 'Dev_Kaplan'
@@ -559,6 +560,13 @@ const App = () => {
 										<CustomHits />
 									</div>
 									<CustomPagination gtmEventName="algolia_page_changed" />
+									<PoweredBy
+										classNames={{
+											root: "flex  px-4",
+											link: "flex   no-underline",
+											logo: "h-3 w-auto bg-transparent  dark:bg-transparent",
+										}}
+									/>
 								</NoResultsBoundary>
 							</div>
 						</div>
