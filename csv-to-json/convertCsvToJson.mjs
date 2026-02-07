@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvFilePath = path.join(__dirname, "./Kaplan-Master-3 (1).csv");
+const csvFilePath = path.join(__dirname, "./Kaplan-Master-3 (3).csv");
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 
 /*
@@ -475,7 +475,7 @@ const parseGeographyField = (geographyField) => {
 				}
 			}
 
-			console.log(`Processing Item ID: ${item.id}`)
+			console.log(`Processing Item ID: ${item.THING_UUID}`)
 			console.log(`genre Field: ${item.genre}`)
 			console.log(`Generated Hierarchical Categories:`, JSON.stringify(hierarchicalCategories, null, 2))
 
@@ -485,7 +485,7 @@ const parseGeographyField = (geographyField) => {
 
 
 			return {
-				id: item.id?.toString() || '',
+				id: item.THING_UUID?.toString() || '',
 				wikibaseid: item.wikibaseid?.toString() || "",
 				link: item["Colenda Link"]?.toString() || "",
 				date1: item.date?.toString() || '',
@@ -508,7 +508,7 @@ const parseGeographyField = (geographyField) => {
 				personAI: item.PersonName_AI ? item.PersonName_AI.split('|').map((sub) => sub.trim()) : [],
 				businessAI: item.BusinessName_AI ? item.BusinessName_AI.split('|').map((sub) => sub.trim()) : [],
 				topic: item.Topic ? item.Topic.split('|').map((sub) => sub.trim()) : [],
-				type: item.genre ? item.genre.split('|').map((sub) => sub.trim()) : [],
+				type: item.genre ? item.genre.split(' | ').map((sub) => sub.trim()) : [],
 				subjectAI: parsedTestField,
 				geography: parsedGeographyField,
 				hierarchicalCategories,
