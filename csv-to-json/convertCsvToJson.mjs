@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvFilePath = path.join(__dirname, "./Kaplan20240808 (45).csv");
+const csvFilePath = path.join(__dirname, "./Kaplan-Master-3 (2).csv");
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 
 /*
@@ -237,6 +237,7 @@ const genreToHierarchy = {
 			'Program',
 			'Ticket',
 			'Billhead',
+			"Broadside",
 			'Bond',
 			'Report',
 			'Receipt',
@@ -430,7 +431,7 @@ const parseGeographyField = (geographyField) => {
 			const hierarchicalCategories = generateHierarchicalCategories(item.genre);
 
 			// Update the field name to match the CSV header
-			const parsedTestField = parseNameUriField(item.test); // Use the same parser for `test`
+			const parsedTestField = parseNameUriField(item.subjectURI);
 			const parsedGeographyField = parseNameUriField(item.geographyField); // Use the same parser for `test`
 
 			// Process start and end dates
@@ -486,7 +487,7 @@ const parseGeographyField = (geographyField) => {
 			return {
 				id: item.id?.toString() || '',
 				wikibaseid: item.wikibaseid?.toString() || "",
-				link: item.colendalink?.toString() || '',
+				link: item["Colenda Link"]?.toString() || "",
 				date1: item.date?.toString() || '',
 				collection: item.Collection?.toString() || '',
 				peopleURI: item.peopleuri?.toString() || '',
