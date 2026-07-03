@@ -72,7 +72,7 @@
     "astro-icon": "^1.1.4",
     "astro-navbar": "^2.3.9",
     "astro-seo": "^0.8.4",
-    "astro-seo-schema": "^6.0.0",
+    "astro-seo-schema": "^7.0.0",
     "autoprefixer": "^10.4.20",
     "d3": "^7.9.0",
     "date-fns": "^4.1.0",
