@@ -36,7 +36,7 @@
     "@astrojs/vue": "^6.0.1",
     "@atlas-viewer/iiif-image-api": "^2.2.1",
     "@babel/core": "^7.26.0",
-    "@digi4care/astro-google-tagmanager": "^1.6.0",
+    "@digi4care/astro-google-tagmanager": "^2.0.0",
     "@duetds/date-picker": "^1.4.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
