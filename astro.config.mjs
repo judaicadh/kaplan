@@ -24,6 +24,13 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      // @samvera/clover-iiif ships ESM with extensionless directory imports
+      // (e.g. `import Image from "./image"`) that esbuild's dependency
+      // pre-bundler can't resolve. Excluding it lets Vite's own resolver
+      // handle those imports at request time.
+      exclude: ["@samvera/clover-iiif"],
+    },
   },
 
   markdown: {
