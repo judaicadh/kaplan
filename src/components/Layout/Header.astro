@@ -1,9 +1,20 @@
 ---
 import { Schema } from 'astro-seo-schema'
 import "../../styles/global.css";
-import { GoogleTagmanagerPartytown, SiteVerification } from '@digi4care/astro-google-tagmanager';
 
 const { title, description, schemaData } = Astro.props
+
+// Google Analytics (gtag.js) loaded via Partytown (offloaded to a web worker).
+const GA_ID = "G-PQRJQQNM";
+const gtagSnippet = `
+	<script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+	<script type="text/partytown">
+		window.dataLayer = window.dataLayer || [];
+		window.gtag = function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', '${GA_ID}');
+	</script>
+`;
 ---
 <head>
 	<title>{title ? title : 'Default Title'}</title>
@@ -17,7 +28,7 @@ const { title, description, schemaData } = Astro.props
 		<link rel="icon" href="/assets/favicon.ico">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">
 
-		<SiteVerification id="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
-		<GoogleTagmanagerPartytown id="G-PQRJQQNM" />
+		<meta name="google-site-verification" content="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
+		<Fragment set:html={gtagSnippet} />
 
 </head>

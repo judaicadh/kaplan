@@ -3,8 +3,19 @@ import "../styles/global.css";
 import Nav from '../components/Layout/Nav.astro';
 import Footer from '../components/Layout/Footer.astro';
 import { SEO } from "astro-seo";
-import { GoogleTagmanagerPartytown, SiteVerification } from "@digi4care/astro-google-tagmanager";
 import HeadMeta from "../components/Layout/HeadMeta.astro";
+
+// Google Analytics (gtag.js) loaded via Partytown (offloaded to a web worker).
+const GTM_ID = "GTM-PQRJQQNM";
+const gtagSnippet = `
+	<script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=${GTM_ID}"></script>
+	<script type="text/partytown">
+		window.dataLayer = window.dataLayer || [];
+		window.gtag = function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', '${GTM_ID}');
+	</script>
+`;
 
 // Single source of truth for site constants
 const SITE = {
@@ -43,8 +54,8 @@ const absoluteOg = ogImage.startsWith("http") ? ogImage : new URL(ogImage, baseU
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">
 
-	<SiteVerification id="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
-	<GoogleTagmanagerPartytown id="GTM-PQRJQQNM" />
+	<meta name="google-site-verification" content="EtZcuOhLAz4SNqrZtPY9nRSHvzTE_xXlc45DQDYP8QQ" />
+	<Fragment set:html={gtagSnippet} />
 
 	<!-- ONE place where JSON-LD is rendered -->
 	<HeadMeta
