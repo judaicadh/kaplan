@@ -69,36 +69,31 @@ function CustomRefinementList({
 							)}
 
 							{/* Items */}
-							<ul className="space-y-2">
+							<ul className="space-y-0.5">
 								{items.map((item) => (
 									<li
 										key={item.label}
-										className="flex items-center"
 										// ↓↓↓ This is what GTM reads
 										data-insights-filter={`${attribute}:${item.value}`}
 									>
-										<input
-											id={`${attribute}-${item.value}`}
-											type="checkbox"
-											checked={item.isRefined}
-											onChange={() => {
-												refine(item.value);
-												// ❌ sendEvent('click', item, 'Filter Clicked')
-												sendEvent('click', item.value, 'Filter Clicked'); // ✅ expects a string
-
-											}}
-											className="w-4 h-4 text-blue-600 border-gray-300 rounded  dark:bg-gray-700 dark:border-gray-600"
-										/>
 										<label
 											htmlFor={`${attribute}-${item.value}`}
-											onClick={(e) => {
-												// we let the checkbox handle the refine; label click just mirrors analytics if needed
-												e.preventDefault();
-												refine(item.value);
-												sendEvent('click', item.value, 'Filter Clicked');											}}
-											className="ml-2 cursor-pointer text-gray-700 dark:text-gray-300 text-sm"
+											className="flex min-h-[44px] cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
 										>
-											{item.label} <span className="text-gray-500">({item.count})</span>
+											<input
+												id={`${attribute}-${item.value}`}
+												type="checkbox"
+												checked={item.isRefined}
+												onChange={() => {
+													refine(item.value);
+													// ❌ sendEvent('click', item, 'Filter Clicked')
+													sendEvent('click', item.value, 'Filter Clicked'); // ✅ expects a string
+												}}
+												className="h-5 w-5 shrink-0 rounded border-gray-300 text-blue-600 dark:border-gray-600 dark:bg-gray-700"
+											/>
+											<span className="flex-1">
+												{item.label} <span className="text-gray-500">({item.count})</span>
+											</span>
 										</label>
 									</li>
 								))}

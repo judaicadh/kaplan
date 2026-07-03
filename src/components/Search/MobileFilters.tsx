@@ -1,9 +1,18 @@
 // @components/Search/MobileFilters.tsx
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import {
+	Dialog,
+	DialogBackdrop,
+	DialogPanel,
+	DialogTitle,
+} from '@headlessui/react';
+import { XMarkIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { useInstantSearch, useCurrentRefinements } from 'react-instantsearch';
 import DateRangeSlider from '@components/Search/DateRangeSlider.tsx';
 import CustomRefinementList from '@components/Search/CustomRefinementList.tsx';
 import CustomHierarchicalMenu from '@components/Search/CustomHierarchicalMenu.tsx';
 import CustomClearRefinements from '@components/Search/CustomClearRefinements.tsx';
+import { formatNumber } from '../../utils';
 
 type MobileFiltersProps = {
 	resetKey: number;
@@ -13,6 +22,11 @@ type MobileFiltersProps = {
 	dateRange: { min: number; max: number } | undefined;
 	setDateRange: React.Dispatch<React.SetStateAction<{ min: number; max: number } | undefined>>;
 };
+
+// The default collection is applied automatically when the user hasn't
+// chosen any filters, so it shouldn't be counted as an "active" filter.
+const DEFAULT_COLLECTION =
+	'Arnold and Deanne Kaplan Collection of Early American Judaica';
 
 function MobileFilters({
 												 resetKey,
@@ -24,9 +38,24 @@ function MobileFilters({
 											 }: MobileFiltersProps) {
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-	// Refs
-	const filterPanelRef = useRef<HTMLDivElement | null>(null);
-	const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
+	// Live result count so users can see the impact of their filters
+	// without leaving the drawer.
+	const {
+		results: { nbHits },
+	} = useInstantSearch();
+
+	// Count the active refinements (excluding the auto-applied default
+	// collection) plus the date range, to badge the trigger button.
+	const { items: currentRefinements } = useCurrentRefinements();
+	const activeFilterCount = useMemo(() => {
+		const refinementCount = currentRefinements.reduce((total, item) => {
+			const refs = item.refinements.filter(
+				(r) => !(item.attribute === 'collection' && r.label === DEFAULT_COLLECTION)
+			);
+			return total + refs.length;
+		}, 0);
+		return refinementCount + (dateFilterActive ? 1 : 0);
+	}, [currentRefinements, dateFilterActive]);
 
 	// Stable date field list
 	const dateFields = useMemo(
@@ -34,46 +63,10 @@ function MobileFilters({
 		[]
 	);
 
-	const toggleFilterMenu = () => setIsFilterOpen((prev) => !prev);
+	const openFilterMenu = () => setIsFilterOpen(true);
+	const closeFilterMenu = () => setIsFilterOpen(false);
 
-	// Close on Escape + outside click
-	useEffect(() => {
-		const handleEsc = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') setIsFilterOpen(false);
-		};
-
-		const handleOutsideClick = (event: MouseEvent) => {
-			const target = event.target as Node | null;
-			if (
-				filterPanelRef.current &&
-				!filterPanelRef.current.contains(target) &&
-				toggleButtonRef.current &&
-				!toggleButtonRef.current.contains(target)
-			) {
-				setIsFilterOpen(false);
-			}
-		};
-
-		document.addEventListener('keydown', handleEsc);
-		document.addEventListener('mousedown', handleOutsideClick);
-		return () => {
-			document.removeEventListener('keydown', handleEsc);
-			document.removeEventListener('mousedown', handleOutsideClick);
-		};
-	}, []);
-
-	// Lock body scroll when open
-	useEffect(() => {
-		if (!isFilterOpen) return;
-		const { body } = document;
-		const prev = body.style.overflow;
-		body.style.overflow = 'hidden';
-		return () => {
-			body.style.overflow = prev;
-		};
-	}, [isFilterOpen]);
-
-	// (Optional) GTM event on open
+	// GTM event on open
 	useEffect(() => {
 		if (isFilterOpen) {
 			(window as any)?.dataLayer?.push({ event: 'filters_panel_opened', source: 'mobile' });
@@ -86,68 +79,69 @@ function MobileFilters({
 		<>
 			{/* Toggle Button */}
 			<button
-				ref={toggleButtonRef}
-				onClick={toggleFilterMenu}
+				onClick={openFilterMenu}
 				type="button"
+				aria-haspopup="dialog"
 				aria-expanded={isFilterOpen}
-				aria-controls="mobile-filter-panel"
-				aria-label="Toggle filter menu"
-				className="md:hidden flex items-center justify-end gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:hover:text-indigo-400"
+				aria-label={
+					activeFilterCount > 0
+						? `Open filters, ${activeFilterCount} active`
+						: 'Open filters'
+				}
+				className="md:hidden relative flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:hover:text-indigo-400"
 			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					aria-label="filter menu"
-					viewBox="0 0 24 24"
-					strokeWidth={1.5}
-					stroke="currentColor"
-					className="h-6 w-6"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
-					/>
-				</svg>
-				<p className="sr-only">Filter</p>
+				<AdjustmentsHorizontalIcon className="h-5 w-5" aria-hidden="true" />
+				<span>Filters</span>
+				{activeFilterCount > 0 && (
+					<span
+						className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-indigo-600 px-1.5 text-xs font-semibold text-white"
+						aria-hidden="true"
+					>
+						{activeFilterCount}
+					</span>
+				)}
 			</button>
 
-			{/* Panel */}
-			{isFilterOpen && (
-				<div
-					className="relative z-40 lg:hidden"
-					role="dialog"
-					aria-modal="true"
-					aria-labelledby={dialogTitleId}
-				>
-					{/* Overlay */}
-					<div className="fixed inset-0 bg-black/25 backdrop-blur-sm transition-opacity" aria-hidden="true" />
+			{/* Drawer */}
+			<Dialog
+				open={isFilterOpen}
+				onClose={closeFilterMenu}
+				className="relative z-50 lg:hidden"
+				aria-labelledby={dialogTitleId}
+			>
+				{/* Overlay */}
+				<DialogBackdrop
+					transition
+					className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ease-out data-[closed]:opacity-0"
+				/>
 
-					{/* Drawer */}
-					<div
-						id="mobile-filter-panel"
-						ref={filterPanelRef}
-						className="fixed inset-y-0 right-0 z-50 flex w-full max-w-xs flex-col bg-white dark:bg-gray-800 shadow-xl overflow-y-auto"
+				{/* Panel container */}
+				<div className="fixed inset-0 overflow-hidden">
+					<DialogPanel
+						transition
+						className="fixed inset-y-0 right-0 flex w-screen max-w-sm flex-col bg-white shadow-xl transition-transform duration-300 ease-out data-[closed]:translate-x-full dark:bg-gray-900"
 					>
+						{/* Header */}
 						<div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-							<h2 id={dialogTitleId} className="text-lg font-medium text-gray-900 dark:text-white">
+							<DialogTitle
+								id={dialogTitleId}
+								className="text-lg font-semibold text-gray-900 dark:text-white"
+							>
 								Filters
-							</h2>
+							</DialogTitle>
 							<button
 								type="button"
-								onClick={toggleFilterMenu}
-								aria-label="Close filter menu"
-								className="rounded-md p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:hover:bg-gray-700"
+								onClick={closeFilterMenu}
+								aria-label="Close filters"
+								className="-mr-2 rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
 							>
-								<span className="sr-only">Close menu</span>
-								<svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-								</svg>
+								<span className="sr-only">Close filters</span>
+								<XMarkIcon className="h-6 w-6" aria-hidden="true" />
 							</button>
 						</div>
 
-						{/* Filters */}
-						<form className="flex-1 border-t border-gray-200 dark:border-gray-700 space-y-6 px-2 pt-4 pb-24 overflow-y-auto">
+						{/* Filters (scrollable) */}
+						<div className="flex-1 space-y-6 overflow-y-auto overscroll-contain px-2 pt-4 pb-6">
 							<CustomHierarchicalMenu
 								showMore={true}
 								title="Categories"
@@ -173,25 +167,32 @@ function MobileFilters({
 								}}
 							/>
 
-							<CustomRefinementList label="Name" attribute="name" showMore />
-							<CustomRefinementList label="Geography" attribute="geography.name" showMore />
+							<CustomRefinementList label="Name" attribute="name" showSearch showMore />
+							<CustomRefinementList label="Geography" attribute="geography.name" showSearch showMore />
 							<CustomRefinementList label="Collection" attribute="collection" />
 							<CustomRefinementList label="Language" attribute="language" showMore />
 							<CustomRefinementList label="Archival Collection" attribute="subcollection" />
-						</form>
-
-						{/* Footer actions */}
-						<div className="fixed bottom-0 w-full max-w-xs bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-4">
-							<div className="w-full text-center">
-								<CustomClearRefinements
-									onResetDateSlider={onResetDateSlider}
-
-								/>
-							</div>
 						</div>
-					</div>
+
+						{/* Sticky footer actions */}
+						<div className="sticky bottom-0 flex items-center gap-3 border-t border-gray-200 bg-white px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] dark:border-gray-700 dark:bg-gray-900">
+							<CustomClearRefinements
+								onResetDateSlider={onResetDateSlider}
+								setDateRange={setDateRange}
+								defaultDateRange={{ min: -15135361438, max: -631151999 }}
+								className="shrink-0"
+							/>
+							<button
+								type="button"
+								onClick={closeFilterMenu}
+								className="flex-1 rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+							>
+								See {formatNumber(nbHits)} {nbHits === 1 ? 'result' : 'results'}
+							</button>
+						</div>
+					</DialogPanel>
 				</div>
-			)}
+			</Dialog>
 		</>
 	);
 }
