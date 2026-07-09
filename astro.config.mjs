@@ -11,7 +11,7 @@ import partytown from "@astrojs/partytown";
 import markdoc from "@astrojs/markdoc";
 
 export default defineConfig({
-  site: "https://www.kaplancollection.org",
+  site: "https://kaplancollection.org",
   base: "/",
 
   // If you want SSR on Netlify (Functions/Edge):

@@ -2,12 +2,57 @@ import csv from 'csvtojson'
 import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { slugify } from '../src/utils/slugify.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvFilePath = path.join(__dirname, "./Kaplan-Master-3 (3).csv");
+const csvFilePath = path.join(__dirname, "./Collectify-07-06-2026-XLS (5).csv");
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
+
+// The AI enrichment writes the literal string "NOT ENOUGH INFO" (sometimes with a
+// trailing period) when it can't fill a field. Treat those as empty everywhere.
+const NOT_ENOUGH_INFO = /^not enough info\.?$/i;
+const cleanScalar = (value) => {
+	const s = (value ?? '').toString().trim();
+	return NOT_ENOUGH_INFO.test(s) ? '' : s;
+};
+const cleanArray = (values) =>
+	values.filter((v) => v != null && v.toString().trim() !== '' && !NOT_ENOUGH_INFO.test(v.toString().trim()));
+
+// The `genre` column contains some values where the same label was fused with
+// itself, e.g. "LetterLetter", "MapMap", "Stereoscopic PhotographsStereoscopic Photographs".
+// Collapse an exact "XX" duplication back down to a single "X".
+const collapseDoubledGenre = (token) => {
+	const s = token.trim().replace(/\s+/g, ' ');
+	const match = s.match(/^(.+)\1$/i);
+	return match ? match[1].trim() : s;
+};
+
+// Map genre variants (plurals, punctuation, alternate spellings) onto the
+// canonical label that exists in genreToHierarchy. Keyed by lowercased token.
+const GENRE_ALIASES = {
+	'tickets': 'Ticket',
+	'dance cards': 'Dance Card',
+	'legal documents': 'Legal Document',
+	'manuscripts': 'Manuscript',
+	'broadsides': 'Broadside',
+	'receipts': 'Receipt',
+	'carte de visite (cdv)': 'Cartes-de-visite',
+	'cartes de visite': 'Cartes-de-visite',
+};
+
+const normalizeGenreToken = (token) => {
+	const collapsed = collapseDoubledGenre(token);
+	return GENRE_ALIASES[collapsed.toLowerCase()] || collapsed;
+};
+
+// Split a genre field on '|' and normalize each token.
+const parseGenres = (genreField) =>
+	(genreField || '')
+		.split('|')
+		.map((t) => normalizeGenreToken(t))
+		.filter(Boolean);
 
 /*
 const genreToHierarchy = {
@@ -189,7 +234,13 @@ const genreToHierarchy = {
 			'Advertising Mirror',
 			'Advertising Pin',
 			'Brush',
-
+			'Mirror',
+			'Timepiece',
+			'Spoon',
+			'Pin',
+			'Button',
+			'Buckle Discs',
+			'Seal'
 		],
 		'Containers': [
 			'Wood Crate',
@@ -199,18 +250,25 @@ const genreToHierarchy = {
 			'Match Safe',
 			'Jug',
 			'Glassware',
-			'Tzedakah Box'
+			'Tzedakah Box',
+			'Box',
+			'Pencil Case'
+		],
+		'Tokens': [
+			'Token'
 		]
-
 	},
 	'Manuscript/Mixed Material': {
 		'Cards': [
 			'Calling Cards',
 			'Dance Card',
 			'Postcard',
+			'Postal Card',
 			'Trade Card',
 			'Trade Cards',
-			'Greeting Cards'
+			'Greeting Cards',
+			'Business Cards',
+			'Playing Cards'
 		],
 		'Correspondence': [
 			'Letters',
@@ -251,7 +309,31 @@ const genreToHierarchy = {
 			'Stock Certificate',
 			'Stock Or Bond Certificate',
 			'Currency',
-			'Check'
+			'Check',
+			'Government Record',
+			'Military Records',
+			'Lottery Ticket',
+			'Resolution',
+			'Archival Collection',
+			'License',
+			'Patent Application',
+			'Court Document',
+			'Statement of account',
+			'Deposition',
+			'Summons',
+			'Testimony',
+			'Sales Record',
+			'Insurance Record',
+			'Deposit Slip',
+			'Pay Voucher'
+		],
+		'Certificates': [
+			'Certificate',
+			'Baptismal Certificate',
+			'Membership Certificate',
+			'Marriage Certificate',
+			'Citizenship Certificate',
+			'Naturalization Certificate'
 		]
 	},
 	'Visual Arts': {
@@ -287,7 +369,8 @@ const genreToHierarchy = {
 			'Print',
 			'Woodcuts',
 			'Chromolithograph',
-			'Visual Works'
+			'Visual Works',
+			'Poster'
 		],
 		'Metalwork': [
 			'Plaque',
@@ -310,7 +393,11 @@ const genreToHierarchy = {
 			'Ketubah',
 			'Donation Recorder',
 			'Prayer Book',
-			'Torah Scroll'
+			'Torah Scroll',
+			'Congressional Record',
+			'Calendar',
+			'Advertising Booklet',
+			'Blotter'
 		]
 	},
 	'Notated Music': [
@@ -323,8 +410,8 @@ const genreToHierarchy = {
 		'Periodicals': [
 			'Newspaper',
 			'Periodical',
-			'Newspaper',
-			'Serial'
+			'Serial',
+			'Magazine'
 		]
 	}
 };
@@ -336,25 +423,30 @@ const generateHierarchicalCategories = (genreField) => {
 		return hierarchicalCategories;
 	}
 
-	// Split the `genreField` into individual genres
-	const genres = genreField.split("|").map((t) => t.trim());
+	// Split the `genreField` into individual normalized genres
+	const genres = parseGenres(genreField);
 
 	genres.forEach((genre) => {
 		let foundMatch = false;
+		const target = genre.toLowerCase();
 
-		// Loop through the genreToHierarchy object to map the genreField values
+		// Loop through the genreToHierarchy object to map the genreField values (case-insensitive)
 		for (const [lvl0, subcategories] of Object.entries(genreToHierarchy)) {
-			if (Array.isArray(subcategories) && subcategories.includes(genre)) {
+			if (Array.isArray(subcategories)) {
 				// Handle flat top-level categories
-				hierarchicalCategories.lvl0.push(lvl0);
-				foundMatch = true;
+				const canonical = subcategories.find((g) => g.toLowerCase() === target);
+				if (canonical) {
+					hierarchicalCategories.lvl0.push(lvl0);
+					foundMatch = true;
+				}
 			} else if (typeof subcategories === 'object') {
 				// Handle hierarchical subcategories
 				for (const [lvl1, items] of Object.entries(subcategories)) {
-					if (items.includes(genre)) {
+					const canonical = items.find((g) => g.toLowerCase() === target);
+					if (canonical) {
 						hierarchicalCategories.lvl0.push(lvl0);
 						hierarchicalCategories.lvl1.push(`${lvl0} > ${lvl1}`);
-						hierarchicalCategories.lvl2.push(`${lvl0} > ${lvl1} > ${genre}`);
+						hierarchicalCategories.lvl2.push(`${lvl0} > ${lvl1} > ${canonical}`);
 						foundMatch = true;
 					}
 				}
@@ -430,9 +522,9 @@ const parseGeographyField = (geographyField) => {
 		const formattedData = jsonArray.map((item, index) => {
 			const hierarchicalCategories = generateHierarchicalCategories(item.genre);
 
-			// Update the field name to match the CSV header
-			const parsedTestField = parseNameUriField(item.subjectURI);
-			const parsedGeographyField = parseNameUriField(item.geographyField); // Use the same parser for `test`
+			// This CSV has no name:/uri: subject or geography columns, so these stay empty.
+			const parsedTestField = [];
+			const parsedGeographyField = [];
 
 			// Process start and end dates
 			const startDates = item.start_date?.split("|").map((s) => s.trim()).filter(Boolean) || [];
@@ -487,28 +579,33 @@ const parseGeographyField = (geographyField) => {
 			return {
 				id: item.THING_UUID?.toString() || '',
 				wikibaseid: item.wikibaseid?.toString() || "",
-				link: item["Colenda Link"]?.toString() || "",
+				link: item.link?.toString() || "",
 				date1: item.date?.toString() || '',
 				collection: item.Collection?.toString() || '',
 				peopleURI: item.peopleuri?.toString() || '',
-				slug: item.slug,
-				title: item.TitleAI?.toString().trim() || item['title from colenda']?.toString() || 'Untitled',
-				PhysicalLocation: item['Updated Location']?.toString() || '',
-				description: item.AIDescription?.toString().trim() || item.description?.toString().trim() || '',
+				// A slug is valid only if it's non-empty and doesn't start with '-'
+				// (a leading dash means an earlier pass slugified an empty title, e.g. "-feb8bf4e").
+				// Otherwise regenerate from the AI title plus a short UUID suffix for uniqueness.
+				slug: (item.slug && item.slug.trim() && !item.slug.trim().startsWith('-'))
+					? item.slug.trim()
+					: `${slugify(cleanScalar(item.TitleAI)) || 'untitled'}-${(item.THING_UUID || `${index}`).replace(/[{}]/g, '').slice(0, 8).toLowerCase()}`,
+				title: cleanScalar(item.TitleAI) || cleanScalar(item.colenda_title) || 'Untitled',
+				PhysicalLocation: item.Updated_Location?.toString() || '',
+				description: cleanScalar(item.AIDescription) || cleanScalar(item.colenda_description) || '',
 				thumbnail: item.thumbnail?.toString() || 'https://placehold.co/600x600.jpg?text=Image+Coming+Soon',
 				manifestUrl: item.manifestUrl ? item.manifestUrl.split('|').map((sub) => sub.trim()) : [],
 				franklinLink: item['Franklin Link']?.toString() || '',
 				subcollection: item.collectionname?.toString() || '',
-				cross: item.OBJECTS_CUSTOMFIELD_2?.toString() || '',
+				cross: item.OBJECTS_CUSTOMFIELD_2l?.toString() || '',
 				dateC: item.OBJECTS_DATE?.toString() || '',
-				subject: item.subject ? item.subject.split('|').map((sub) => sub.trim()) : [],
-				language: item.language ? item.language.split('|').map((sub) => sub.trim()) : [],
-				name: item.name ? item.name.split('|').map((sub) => sub.trim()) : [],
-				people: item.OBJECTS_CUSTOMFIELD_5 ? item.OBJECTS_CUSTOMFIELD_5.split('|').map((sub) => sub.trim()) : [],
-				personAI: item.PersonName_AI ? item.PersonName_AI.split('|').map((sub) => sub.trim()) : [],
-				businessAI: item.BusinessName_AI ? item.BusinessName_AI.split('|').map((sub) => sub.trim()) : [],
-				topic: item.Topic ? item.Topic.split('|').map((sub) => sub.trim()) : [],
-				type: item.genre ? item.genre.split(' | ').map((sub) => sub.trim()) : [],
+				subject: cleanArray(item.SubjectAI ? item.SubjectAI.split('|').map((sub) => sub.trim()) : []),
+				language: cleanArray(item.language ? item.language.split('|').map((sub) => sub.trim()) : []),
+				name: cleanArray(item.name ? item.name.split('|').map((sub) => sub.trim()) : []),
+				people: cleanArray(item.OBJECTS_CUSTOMFIELD_5l ? item.OBJECTS_CUSTOMFIELD_5l.split('/').map((sub) => sub.trim()) : []),
+				personAI: cleanArray(item.PersonAI ? item.PersonAI.split('|').map((sub) => sub.trim()) : []),
+				businessAI: cleanArray(item.BusinessName_AI ? item.BusinessName_AI.split('|').map((sub) => sub.trim()) : []),
+				topic: cleanArray(item.Topic ? item.Topic.split('|').map((sub) => sub.trim()) : []),
+				type: parseGenres(item.genre),
 				subjectAI: parsedTestField,
 				geography: parsedGeographyField,
 				hierarchicalCategories,
