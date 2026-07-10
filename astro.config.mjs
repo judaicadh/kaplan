@@ -7,6 +7,7 @@ import react from "@astrojs/react";
 import icon from "astro-icon";
 import { rehypeHeadingIds } from "@astrojs/markdown-remark";
 import partytown from "@astrojs/partytown";
+import { unified } from '@astrojs/markdown-remark';
 
 import markdoc from "@astrojs/markdoc";
 
@@ -34,6 +35,7 @@ export default defineConfig({
   },
 
   markdown: {
+    processor: unified(),
     rehypePlugins: [rehypeHeadingIds],
     // Or the simpler built-in option:
     // headingIds: true,
@@ -45,6 +47,6 @@ export default defineConfig({
     sitemap(),
     // ❌ Do NOT put netlify() here
     partytown(),
-    markdoc(),
+
   ],
 });
