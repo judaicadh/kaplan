@@ -7,7 +7,7 @@ import { slugify } from '../src/utils/slugify.js'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvFilePath = path.join(__dirname, "./Collectify-07-06-2026-XLS (5).csv");
+const csvFilePath = path.join(__dirname, "./Collectify-07-06-2026-XLS (6).csv");
 const jsonFilePath = path.join(__dirname, '../src/data/items.json')
 
 // The AI enrichment writes the literal string "NOT ENOUGH INFO" (sometimes with a
