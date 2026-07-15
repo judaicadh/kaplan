@@ -526,7 +526,7 @@ const parseGeographyField = (geographyField) => {
 			// The UI reads `subjectAI` on item pages and /subject/ browse pages, so populate that.
 			const parsedTestField = cleanArray(item.SubjectAI ? item.SubjectAI.split('|').map((sub) => sub.trim()) : []);
 			// This CSV has no geography place-name/URI or coordinate columns, so geography stays empty.
-			const parsedGeographyField = [];
+			const parsedGeographyField = parseNameUriField(item.geographyField);
 
 			// Process start and end dates
 			const startDates = item.start_date?.split("|").map((s) => s.trim()).filter(Boolean) || [];
