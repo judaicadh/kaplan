@@ -592,8 +592,10 @@ const parseGeographyField = (geographyField) => {
 				title: cleanScalar(item.TitleAI) || cleanScalar(item.colenda_title) || 'Untitled',
 				PhysicalLocation: item.Updated_Location?.toString() || '',
 				description: cleanScalar(item.AIDescription) || cleanScalar(item.colenda_description) || '',
-				thumbnail: item.thumbnail?.toString() || 'https://placehold.co/600x600.jpg?text=Image+Coming+Soon',
-				manifestUrl: item.manifestUrl ? item.manifestUrl.split('|').map((sub) => sub.trim()) : [],
+				thumbnail: (item.thumbnail?.toString().trim().replace(/^http:\/\//i, 'https://')) || 'https://placehold.co/600x600.jpg?text=Image+Coming+Soon',
+				manifestUrl: item.manifestUrl
+					? item.manifestUrl.split('|').map((sub) => sub.trim().replace(/^http:\/\//i, 'https://')).filter(Boolean)
+					: [],
 				franklinLink: item['Franklin Link']?.toString() || '',
 				subcollection: item.collectionname?.toString() || '',
 				cross: item.OBJECTS_CUSTOMFIELD_2l?.toString() || '',
