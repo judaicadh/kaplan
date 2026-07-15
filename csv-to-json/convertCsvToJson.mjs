@@ -522,8 +522,10 @@ const parseGeographyField = (geographyField) => {
 		const formattedData = jsonArray.map((item, index) => {
 			const hierarchicalCategories = generateHierarchicalCategories(item.genre);
 
-			// This CSV has no name:/uri: subject or geography columns, so these stay empty.
-			const parsedTestField = [];
+			// Subjects come from the plain-text SubjectAI column (no authority URIs in this CSV).
+			// The UI reads `subjectAI` on item pages and /subject/ browse pages, so populate that.
+			const parsedTestField = cleanArray(item.SubjectAI ? item.SubjectAI.split('|').map((sub) => sub.trim()) : []);
+			// This CSV has no geography place-name/URI or coordinate columns, so geography stays empty.
 			const parsedGeographyField = [];
 
 			// Process start and end dates
