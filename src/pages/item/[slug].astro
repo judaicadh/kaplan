@@ -53,8 +53,9 @@ const uniqueNames = normalizeNames(itemData.name, itemData.peopleAI, itemData.pe
 const subjectLinks = makeLinks(itemData.subjectAI);
 const geoLinks = makeLinks(itemData.geography);
 
-// Canonical host (pick one)
-const CANON = 'https://www.kaplancollection.org';
+// Canonical host (single source of truth)
+import { SITE_URL } from '../../utils/site';
+const CANON = SITE_URL;
 const websiteId = `${CANON}#website`;
 const orgId = `${CANON}#org`;
 
@@ -85,12 +86,27 @@ const placeNodes = (itemData.geography || [])
 // Prefer Person objects, but strings also work fine
 const authors = uniqueNames.map(n => ({ '@type': 'Person', name: n }));
 
+// Human-readable type label (fall back to the schema.org type)
+const typeLabel = toArray(itemData.type).filter(Boolean)[0] || 'item';
+const placeName = getGeoName(toArray(itemData.geography)[0]);
+
+// Meta description fallback: many records ship with an empty `description`,
+// which would otherwise leave 16k+ pages with a blank <meta name="description">.
+// Compose something meaningful from the record's own metadata instead.
+const metaDescription =
+	(itemData.description && itemData.description.trim()) ||
+	[
+		itemData.title,
+		placeName ? `— ${typeLabel} from ${placeName}` : `— ${typeLabel}`,
+		`in the ${itemData.collection || 'Arnold & Deanne Kaplan Collection of Early American Judaica'}.`
+	].filter(Boolean).join(' ');
+
 // Build item node and page graph
 const itemNode = {
 	'@type': getSchemaType(itemData.type || 'CreativeWork'),
 	'@id': itemId,
 	name: itemData.title,
-	description: itemData.description || 'No description available.',
+	description: metaDescription,
 	url: itemUrl,
 	mainEntityOfPage: itemUrl,
 	isPartOf: { '@id': websiteId },
@@ -103,16 +119,31 @@ const itemNode = {
 	inLanguage: itemData.language || 'en'
 };
 
-const pageGraph = [ itemNode, ...placeNodes ];
+const breadcrumb = {
+	'@type': 'BreadcrumbList',
+	itemListElement: [
+		{ '@type': 'ListItem', position: 1, name: 'Home', item: `${CANON}/` },
+		{ '@type': 'ListItem', position: 2, name: 'Search', item: `${CANON}/search` },
+		{ '@type': 'ListItem', position: 3, name: itemData.title, item: itemUrl }
+	]
+};
+
+const pageGraph = [ itemNode, breadcrumb, ...placeNodes ];
 ---
 
 <BaseLayout
 	title={itemData.title || "Untitled"}
-	description={itemData.description || ""}
+	description={metaDescription}
 	ogImage={itemData.thumbnail}
 	ogType="article"
 	headGraph={pageGraph}
 >
+	<!-- IIIF manifest discovery: lets IIIF-aware clients and crawlers find the
+	     linked-data manifest(s) for this object. -->
+	{manifestUrls.map((m) => (
+		<link slot="headContent" rel="alternate" type="application/ld+json" href={m} title="IIIF Manifest" />
+	))}
+
 
 
 	<section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">

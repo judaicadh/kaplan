@@ -41,7 +41,8 @@ const allSubjects = subjectItems.flatMap((it) => it.subjectAI || [])
 const candidates  = allSubjects.filter((s) => slugify(subjectNameOf(s)) === slug)
 const canonical   = candidates.find((s) => subjectUriOf(s)) || candidates[0]
 
-const CANON       = 'https://www.kaplancollection.org'
+import { SITE_URL } from '../../utils/site'
+const CANON       = SITE_URL
 const subjectName = subjectNameOf(canonical) || 'Unknown Subject'
 const rawUri      = subjectUriOf(canonical)
 
@@ -131,6 +132,14 @@ const pageGraph = [
 		numberOfItems: listUrls.length,
 		itemListElement: listUrls.map((url, i) => ({ "@type": "ListItem", position: i + 1, url })),
 		isPartOf: { "@id": websiteId }
+	},
+	{
+		"@type": "BreadcrumbList",
+		itemListElement: [
+			{ "@type": "ListItem", position: 1, name: "Home", item: `${CANON}/` },
+			{ "@type": "ListItem", position: 2, name: "Subjects", item: `${CANON}/subject` },
+			{ "@type": "ListItem", position: 3, name, item: `${CANON}/subject/${slug}` }
+		]
 	}
 ];
 

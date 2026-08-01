@@ -59,7 +59,8 @@ const sameAs  = uriOf(geography)
 	? (uriOf(geography).startsWith('http') ? uriOf(geography) : `https://www.wikidata.org/wiki/${encodeURIComponent(uriOf(geography))}`)
 	: undefined;
 // Build a simple list of item URLs for JSON-LD ItemList
-const CANON = 'https://kaplancollection.org'; // keep this consistent sitewide
+import { SITE_URL } from '../../utils/site';
+const CANON = SITE_URL; // canonical host, shared sitewide
 const listUrls = geoItems.map((it) => {
 	const s = it.slug || slugify(it.title);
 	return `${CANON}/item/${encodeURIComponent(s)}`;
@@ -84,6 +85,14 @@ const pageGraph = [
 		numberOfItems: listUrls.length,
 		itemListElement: listUrls.map((url, i) => ({ "@type": "ListItem", position: i + 1, url })),
 		isPartOf: { "@id": websiteId }
+	},
+	{
+		"@type": "BreadcrumbList",
+		itemListElement: [
+			{ "@type": "ListItem", position: 1, name: "Home", item: `${CANON}/` },
+			{ "@type": "ListItem", position: 2, name: "Geography", item: `${CANON}/geography` },
+			{ "@type": "ListItem", position: 3, name: geoName, item: `${CANON}/geography/${slug}` }
+		]
 	}
 ];
 

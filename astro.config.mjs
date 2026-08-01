@@ -12,7 +12,9 @@ import { unified } from '@astrojs/markdown-remark';
 import markdoc from "@astrojs/markdoc";
 
 export default defineConfig({
-  site: "https://kaplancollection.org",
+  // Canonical host must match the CNAME (www) so the sitemap, canonical tags,
+  // and JSON-LD @ids all agree — see src/utils/site.ts.
+  site: "https://www.kaplancollection.org",
   base: "/",
 
   // If you want SSR on Netlify (Functions/Edge):
