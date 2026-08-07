@@ -4,28 +4,85 @@ export const prerender = true;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POSTERS
-// These are the printable teaching posters your team created. They are hosted
-// externally. Replace `href` (the full-size download / PDF) and `img` (the
-// thumbnail) with the real URLs. Add or remove entries as needed.
+// Printable teaching posters created by the team. The full-size, print-quality
+// PDFs are hosted on Box (too large to serve from the site). Thumbnails live in
+// public/images/posters/. `href` is the Box download; swap in per-poster Box
+// links when available (currently all point to the shared poster folder).
 // ─────────────────────────────────────────────────────────────────────────────
+const POSTERS_BOX_URL = "https://upenn.box.com/s/fb3yzpxl2k6rdmuhbrmllzjt8b9aogbc";
+
 const posters = [
   {
-    title: "Poster One",
-    description: "Short description of what this poster covers and how to use it in the classroom.",
-    href: "#", // TODO: replace with full-size / PDF URL
-    img: "/images/kaplan_logo.png", // TODO: replace with poster thumbnail URL
+    title: "Refuge",
+    description: "How the Americas became a haven for Jews fleeing persecution and seeking a new home.",
+    img: "/images/posters/refuge.jpg",
+    href: POSTERS_BOX_URL,
   },
   {
-    title: "Poster Two",
-    description: "Short description of what this poster covers and how to use it in the classroom.",
-    href: "#",
-    img: "/images/kaplan_logo.png",
+    title: "Liberty",
+    description: "Religious freedom and the promise of liberty in early American Jewish life.",
+    img: "/images/posters/liberty.jpg",
+    href: POSTERS_BOX_URL,
   },
   {
-    title: "Poster Three",
-    description: "Short description of what this poster covers and how to use it in the classroom.",
-    href: "#",
-    img: "/images/kaplan_logo.png",
+    title: "American Judaism",
+    description: "The shaping of Jewish religious practice and community across the Americas.",
+    img: "/images/posters/american-judaism.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Trade & Commerce",
+    description: "Jewish merchants, peddlers, and firms in the commercial life of the Atlantic world.",
+    img: "/images/posters/trade-commerce.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Civic Participation",
+    description: "Jews as citizens, voters, and public servants in a new democracy.",
+    img: "/images/posters/civic-participation.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Intolerance",
+    description: "Confronting prejudice and antisemitism in American history.",
+    img: "/images/posters/intolerance.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Labor & Social Justice",
+    description: "Jewish involvement in labor movements and the pursuit of social justice.",
+    img: "/images/posters/labor-social-justice.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Tzedakah",
+    description: "Charity, mutual aid, and the tradition of philanthropy in Jewish communities.",
+    img: "/images/posters/tzedakah.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Language",
+    description: "Hebrew, Yiddish, Ladino, and the many languages of Jewish life.",
+    img: "/images/posters/language.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Learning",
+    description: "Education, scholarship, and the value placed on study.",
+    img: "/images/posters/learning.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Creativity",
+    description: "Art, music, and cultural expression in Jewish American life.",
+    img: "/images/posters/creativity.jpg",
+    href: POSTERS_BOX_URL,
+  },
+  {
+    title: "Zion",
+    description: "The enduring connection to Zion and the story of Jewish peoplehood.",
+    img: "/images/posters/zion.jpg",
+    href: POSTERS_BOX_URL,
   },
 ];
 
@@ -105,7 +162,7 @@ const guides = [
         Download and print these posters for your classroom, library, or hallway. Each is designed to
         spark curiosity about the people, objects, and stories in the collection.
       </p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {posters.map((poster) => (
           <a
             href={poster.href}
@@ -113,10 +170,11 @@ const guides = [
             rel="noopener"
             class="group flex flex-col bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg transition overflow-hidden"
           >
-            <div class="aspect-[3/4] bg-gray-100 overflow-hidden flex items-center justify-center">
+            <div class="aspect-[2/3] bg-gray-100 overflow-hidden flex items-center justify-center">
               <img
                 src={poster.img}
-                alt={poster.title}
+                alt={`${poster.title} poster`}
+                loading="lazy"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
