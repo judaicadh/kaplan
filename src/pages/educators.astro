@@ -1,0 +1,256 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+export const prerender = true;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// POSTERS
+// These are the printable teaching posters your team created. They are hosted
+// externally. Replace `href` (the full-size download / PDF) and `img` (the
+// thumbnail) with the real URLs. Add or remove entries as needed.
+// ─────────────────────────────────────────────────────────────────────────────
+const posters = [
+  {
+    title: "Poster One",
+    description: "Short description of what this poster covers and how to use it in the classroom.",
+    href: "#", // TODO: replace with full-size / PDF URL
+    img: "/images/kaplan_logo.png", // TODO: replace with poster thumbnail URL
+  },
+  {
+    title: "Poster Two",
+    description: "Short description of what this poster covers and how to use it in the classroom.",
+    href: "#",
+    img: "/images/kaplan_logo.png",
+  },
+  {
+    title: "Poster Three",
+    description: "Short description of what this poster covers and how to use it in the classroom.",
+    href: "#",
+    img: "/images/kaplan_logo.png",
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CURATED ITEM SETS — themed groupings that point into the existing collection.
+// These link to subject / subcollection pages that already exist on the site.
+// ─────────────────────────────────────────────────────────────────────────────
+const itemSets = [
+  {
+    title: "Immigration & Migration",
+    description: "Passports, ship manifests, and letters tracing Jewish migration across the Atlantic world.",
+    href: "/search?q=immigration",
+  },
+  {
+    title: "Jewish Business Life",
+    description: "Ledgers, trade cards, and correspondence documenting merchants, peddlers, and firms.",
+    href: "/subcollections",
+  },
+  {
+    title: "Community & Religious Life",
+    description: "Synagogue records, ceremonial objects, and communal ephemera.",
+    href: "/search?q=synagogue",
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PRIMARY SOURCE GUIDES — how-to guides for using primary sources in class.
+// ─────────────────────────────────────────────────────────────────────────────
+const guides = [
+  {
+    title: "Reading a Primary Source",
+    description: "A step-by-step framework for analyzing manuscripts, prints, and ephemera with students.",
+    href: "#", // TODO: link to guide / PDF
+  },
+  {
+    title: "From Object to Argument",
+    description: "Helping students build historical claims from collection materials.",
+    href: "#",
+  },
+];
+---
+
+<BaseLayout
+  title="For Educators"
+  description="Teaching resources from the Kaplan Collection of Early American Judaica: printable posters, exhibits, lesson plans, curated item sets, primary source guides, and media."
+>
+  <!-- Hero -->
+  <section class="bg-indigo-50">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12 py-16 lg:py-24">
+      <h6 class="text-lg text-indigo-600 font-medium mb-2">For Educators</h6>
+      <h1 class="text-gray-900 text-4xl lg:text-5xl font-bold mb-4">
+        Bring early American Jewish history into your classroom
+      </h1>
+      <p class="text-gray-600 text-lg leading-relaxed max-w-3xl">
+        Free, ready-to-use teaching resources built from the Arnold &amp; Deanne Kaplan Collection of
+        Early American Judaica — printable posters, exhibits, lesson plans, curated item sets, primary
+        source guides, and media.
+      </p>
+      <nav class="mt-8 flex flex-wrap gap-3" aria-label="Jump to section">
+        <a href="#posters" class="px-4 py-2 bg-white text-indigo-700 text-sm font-medium rounded-lg shadow-sm hover:bg-indigo-100 transition">Posters</a>
+        <a href="#exhibits" class="px-4 py-2 bg-white text-indigo-700 text-sm font-medium rounded-lg shadow-sm hover:bg-indigo-100 transition">Exhibits</a>
+        <a href="#lessons" class="px-4 py-2 bg-white text-indigo-700 text-sm font-medium rounded-lg shadow-sm hover:bg-indigo-100 transition">Lesson Plans</a>
+        <a href="#item-sets" class="px-4 py-2 bg-white text-indigo-700 text-sm font-medium rounded-lg shadow-sm hover:bg-indigo-100 transition">Curated Item Sets</a>
+        <a href="#guides" class="px-4 py-2 bg-white text-indigo-700 text-sm font-medium rounded-lg shadow-sm hover:bg-indigo-100 transition">Primary Source Guides</a>
+        <a href="#media" class="px-4 py-2 bg-white text-indigo-700 text-sm font-medium rounded-lg shadow-sm hover:bg-indigo-100 transition">Videos &amp; Podcast</a>
+      </nav>
+    </div>
+  </section>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-12">
+
+    <!-- POSTERS -->
+    <section id="posters" class="py-16 border-b border-gray-200 scroll-mt-24">
+      <h6 class="text-lg text-indigo-600 font-medium mb-2">Print &amp; Display</h6>
+      <h2 class="text-gray-900 text-3xl lg:text-4xl font-bold mb-4">Posters</h2>
+      <p class="text-gray-600 text-base leading-relaxed max-w-3xl mb-10">
+        Download and print these posters for your classroom, library, or hallway. Each is designed to
+        spark curiosity about the people, objects, and stories in the collection.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posters.map((poster) => (
+          <a
+            href={poster.href}
+            target="_blank"
+            rel="noopener"
+            class="group flex flex-col bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg transition overflow-hidden"
+          >
+            <div class="aspect-[3/4] bg-gray-100 overflow-hidden flex items-center justify-center">
+              <img
+                src={poster.img}
+                alt={poster.title}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <h3 class="text-gray-900 text-xl font-semibold mb-2">{poster.title}</h3>
+              <p class="text-gray-500 text-sm leading-relaxed flex-1">{poster.description}</p>
+              <span class="mt-4 inline-flex items-center text-indigo-600 text-sm font-medium group-hover:text-indigo-800">
+                Download
+                <svg class="ml-1 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v9.586l2.293-2.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 13.586V4a1 1 0 011-1z" clip-rule="evenodd" />
+                  <path d="M4 15a1 1 0 011 1v1h10v-1a1 1 0 112 0v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2a1 1 0 011-1z" />
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- EXHIBITS -->
+    <section id="exhibits" class="py-16 border-b border-gray-200 scroll-mt-24">
+      <h6 class="text-lg text-indigo-600 font-medium mb-2">Explore</h6>
+      <h2 class="text-gray-900 text-3xl lg:text-4xl font-bold mb-4">Exhibits</h2>
+      <div class="rounded-lg border-2 border-dashed border-indigo-200 bg-indigo-50/50 p-10 text-center">
+        <span class="inline-block px-3 py-1 mb-4 bg-indigo-600 text-white text-xs font-semibold uppercase tracking-wide rounded-full">
+          Coming Soon
+        </span>
+        <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+          Online exhibits that weave collection items into narratives you can walk students through are
+          on the way. Check back soon.
+        </p>
+      </div>
+    </section>
+
+    <!-- LESSON PLANS -->
+    <section id="lessons" class="py-16 border-b border-gray-200 scroll-mt-24">
+      <h6 class="text-lg text-indigo-600 font-medium mb-2">Teach</h6>
+      <h2 class="text-gray-900 text-3xl lg:text-4xl font-bold mb-4">Lesson Plans &amp; Activities</h2>
+      <div class="rounded-lg border-2 border-dashed border-indigo-200 bg-indigo-50/50 p-10 text-center">
+        <span class="inline-block px-3 py-1 mb-4 bg-indigo-600 text-white text-xs font-semibold uppercase tracking-wide rounded-full">
+          Coming Soon
+        </span>
+        <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+          Downloadable lesson plans, worksheets, and classroom activities built around the collection
+          are in development.
+        </p>
+      </div>
+    </section>
+
+    <!-- CURATED ITEM SETS -->
+    <section id="item-sets" class="py-16 border-b border-gray-200 scroll-mt-24">
+      <h6 class="text-lg text-indigo-600 font-medium mb-2">Browse</h6>
+      <h2 class="text-gray-900 text-3xl lg:text-4xl font-bold mb-4">Curated Item Sets</h2>
+      <p class="text-gray-600 text-base leading-relaxed max-w-3xl mb-10">
+        Themed groupings of collection items, ready to explore or assign.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {itemSets.map((set) => (
+          <a
+            href={set.href}
+            class="group flex flex-col bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-indigo-300 transition p-6"
+          >
+            <h3 class="text-gray-900 text-xl font-semibold mb-2 group-hover:text-indigo-700">{set.title}</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">{set.description}</p>
+            <span class="mt-4 inline-flex items-center text-indigo-600 text-sm font-medium group-hover:text-indigo-800">
+              Explore set
+              <svg class="ml-1 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- PRIMARY SOURCE GUIDES -->
+    <section id="guides" class="py-16 border-b border-gray-200 scroll-mt-24">
+      <h6 class="text-lg text-indigo-600 font-medium mb-2">Skills</h6>
+      <h2 class="text-gray-900 text-3xl lg:text-4xl font-bold mb-4">Primary Source Guides</h2>
+      <p class="text-gray-600 text-base leading-relaxed max-w-3xl mb-10">
+        Practical guides for helping students read and interpret the collection's primary sources.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {guides.map((guide) => (
+          <a
+            href={guide.href}
+            class="group flex items-start gap-4 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-indigo-300 transition p-6"
+          >
+            <svg class="w-8 h-8 text-indigo-600 flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+            </svg>
+            <div>
+              <h3 class="text-gray-900 text-xl font-semibold mb-2 group-hover:text-indigo-700">{guide.title}</h3>
+              <p class="text-gray-500 text-sm leading-relaxed">{guide.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- VIDEOS & PODCAST -->
+    <section id="media" class="py-16 scroll-mt-24">
+      <h6 class="text-lg text-indigo-600 font-medium mb-2">Watch &amp; Listen</h6>
+      <h2 class="text-gray-900 text-3xl lg:text-4xl font-bold mb-4">Videos &amp; Podcast</h2>
+      <p class="text-gray-600 text-base leading-relaxed max-w-3xl mb-10">
+        Media that brings the collection's stories to life — great for sparking discussion or assigning
+        as background.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <a
+          href="/podcast"
+          class="group flex flex-col justify-between bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-indigo-300 transition p-8"
+        >
+          <div>
+            <h3 class="text-gray-900 text-2xl font-semibold mb-2 group-hover:text-indigo-700">Podcast</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">
+              Conversations and stories drawn from the collection.
+            </p>
+          </div>
+          <span class="mt-6 inline-flex items-center text-indigo-600 text-sm font-medium group-hover:text-indigo-800">
+            Listen now
+            <svg class="ml-1 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+          </span>
+        </a>
+        <div class="flex flex-col justify-center bg-white rounded-lg border-2 border-dashed border-indigo-200 bg-indigo-50/50 p-8 text-center">
+          <span class="inline-block px-3 py-1 mb-3 bg-indigo-600 text-white text-xs font-semibold uppercase tracking-wide rounded-full self-center">
+            Coming Soon
+          </span>
+          <p class="text-gray-600 text-sm">Educational videos are on the way.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>

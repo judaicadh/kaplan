@@ -26,3 +26,7 @@ pnpm-debug.log*
 *storybook.log
 # Local Netlify folder
 .netlify
+.claude/launch.json
+
+# local-only: source PDFs for educator poster thumbnails (do not commit)
+_poster-pdfs/
